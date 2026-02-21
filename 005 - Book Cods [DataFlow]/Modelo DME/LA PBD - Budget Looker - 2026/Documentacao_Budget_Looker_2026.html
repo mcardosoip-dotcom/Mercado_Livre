@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação Completa - Budget Looker 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav-index {
+            background: #f8f9fa;
+            padding: 20px 40px;
+            border-bottom: 3px solid #667eea;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-index h3 {
+            margin-bottom: 15px;
+            color: #1e3c72;
+        }
+
+        .nav-index ul {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            list-style: none;
+        }
+
+        .nav-index a {
+            display: block;
+            padding: 10px 15px;
+            background: white;
+            border-left: 4px solid #667eea;
+            text-decoration: none;
+            color: #1e3c72;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .nav-index a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        section {
+            margin-bottom: 50px;
+            scroll-margin-top: 100px;
+        }
+
+        h2 {
+            color: #1e3c72;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #2a5298;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+        }
+
+        h4 {
+            color: #667eea;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tbody tr:hover {
+            background: #f5f5f5;
+            transition: background 0.3s;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: white;
+        }
+
+        .badge-sheets { background: #ec4899; }
+        .badge-stg { background: #f59e0b; }
+        .badge-tbl { background: #3b82f6; }
+        .badge-opex { background: #10b981; }
+        .badge-union { background: #8b5cf6; }
+        .badge-transform { background: #06b6d4; }
+
+        .flow-diagram {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .flow-diagram pre {
+            margin: 0;
+            white-space: pre;
+            line-height: 1.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .stat-card h4 {
+            color: white;
+            margin: 0 0 10px 0;
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .collapsible {
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+
+        .collapsible:hover {
+            background: #5568d3;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .collapsible-content-inner {
+            padding: 20px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin-top: 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-box h4 {
+            color: #0c5460;
+            margin-top: 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .success-box h4 {
+            color: #155724;
+            margin-top: 0;
+        }
+
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+            font-size: 0.9em;
+        }
+
+        .field-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .field-list ul {
+            columns: 2;
+            column-gap: 20px;
+            list-style-position: inside;
+        }
+
+        .field-list li {
+            padding: 3px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        @media print {
+            .nav-index, .collapsible {
+                display: none;
+            }
+            .collapsible-content {
+                max-height: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Documentação Completa - Budget Looker 2026</h1>
+            <p>Legales Analytics - Processo de Orçamento e Dados Reais</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Gerado em: <span id="currentDate"></span></p>
+        </header>
+
+        <nav class="nav-index">
+            <h3>📑 Índice de Navegação</h3>
+            <ul>
+                <li><a href="#visao-geral">1. Visão Geral do Processo</a></li>
+                <li><a href="#fontes-dados">2. Fontes de Dados</a></li>
+                <li><a href="#fluxo-completo">3. Fluxo Completo de Dados</a></li>
+                <li><a href="#step1">4. Step 1 - Carga Google Sheets</a></li>
+                <li><a href="#step2">5. Step 2 - Budget Themis Final</a></li>
+                <li><a href="#step3">6. Step 3 - Budget Real (OPEX)</a></li>
+                <li><a href="#step5">7. Step 5 - Budget Real Atualizado</a></li>
+                <li><a href="#step6">8. Step 6 - Looker Input (Final)</a></li>
+                <li><a href="#tabelas">9. Tabelas Criadas</a></li>
+                <li><a href="#conexoes">10. Conexões e Chaves</a></li>
+                <li><a href="#transformacoes">11. Transformações</a></li>
+                <li><a href="#estatisticas">12. Estatísticas</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <!-- SEÇÃO 1: VISÃO GERAL -->
+            <section id="visao-geral">
+                <h2>1. Visão Geral do Processo</h2>
+
+                <div class="info-box">
+                    <h4>🎯 Objetivo do Processo</h4>
+                    <p>Este processo integra dados de <strong>orçamento planejado (Budget Themis)</strong> e <strong>dados reais de despesas (OPEX S4)</strong> para criar uma base consolidada de análise financeira para a área Legales. Os dados são preparados para consumo no Looker, permitindo comparações entre Budget vs Real em diferentes dimensões (ano, mês, país, equipe, fornecedor, etc.).</p>
+                </div>
+
+                <div class="success-box">
+                    <h4>✅ Características Principais</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Integração de dados de orçamento planejado (Google Sheets - Themis)</li>
+                        <li>Integração de dados reais de despesas (OPEX S4 - Data Warehouse)</li>
+                        <li>Cobertura de anos: 2025 e 2026</li>
+                        <li>Granularidade mensal com unpivot de colunas</li>
+                        <li>Enriquecimento com dicionários de mapeamento</li>
+                        <li>Normalização de Business Units e Equipes</li>
+                        <li>Valores em USD e moeda local</li>
+                    </ul>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Steps Ativos</h4>
+                        <div class="number">6</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Fontes de Dados</h4>
+                        <div class="number">5</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Tabelas Criadas</h4>
+                        <div class="number">12</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Anos Cobertos</h4>
+                        <div class="number">2</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 2: FONTES DE DADOS -->
+            <section id="fontes-dados">
+                <h2>2. Fontes de Dados</h2>
+
+                <h3>2.1. Google Sheets (External Tables)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome da Fonte</th>
+                            <th>Tipo</th>
+                            <th>URL/Range</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Budget Themis 2025</strong></td>
+                            <td><span class="badge badge-sheets">GOOGLE_SHEETS</span></td>
+                            <td><code>Themis_2025!A:BU</code><br>
+                                <small>ID: 15DHeKGmkzHWyQqYcMrYcHtginknI9G5mn3Epn13OAvk</small>
+                            </td>
+                            <td>Dados de orçamento planejado para 2025</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Budget Themis 2026</strong></td>
+                            <td><span class="badge badge-sheets">GOOGLE_SHEETS</span></td>
+                            <td><code>Themis_2026!A:BU</code><br>
+                                <small>ID: 15DHeKGmkzHWyQqYcMrYcHtginknI9G5mn3Epn13OAvk</small>
+                            </td>
+                            <td>Dados de orçamento planejado para 2026</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dicionário</strong></td>
+                            <td><span class="badge badge-sheets">GOOGLE_SHEETS</span></td>
+                            <td><code>Diccionario!A:F</code><br>
+                                <small>ID: 1-r2-qYifcntHzLeQaXVXYMnj0IBHJLrHkCdHpqA39yg</small>
+                            </td>
+                            <td>Mapeamento: Area, Sub_Area, Business_Unit, Direccion, Owner, Equipo</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dicionário Vendor</strong></td>
+                            <td><span class="badge badge-sheets">GOOGLE_SHEETS</span></td>
+                            <td><code>Diccionario!M:N</code><br>
+                                <small>ID: 1-r2-qYifcntHzLeQaXVXYMnj0IBHJLrHkCdHpqA39yg</small>
+                            </td>
+                            <td>Mapeamento: Vendor_desc → Vendor_desc_final</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>2.2. Data Warehouse - OPEX S4</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome da Fonte</th>
+                            <th>Tipo</th>
+                            <th>Localização</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>BT_CRS_FPS_OPEX_SUPLIER_DETAIL_S4</strong></td>
+                            <td><span class="badge badge-opex">DATA WAREHOUSE</span></td>
+                            <td><code>meli-bi-data.WHOWNER.BT_CRS_FPS_OPEX_SUPLIER_DETAIL_S4</code></td>
+                            <td>Dados reais de despesas operacionais detalhadas por fornecedor (S4)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="warning-box">
+                    <h4>⚠️ Filtros Aplicados na Fonte OPEX</h4>
+                    <ul style="margin-left: 20px;">
+                        <li><code>AGRUPADOR_1 IN ('BU/ Area Expenses', 'Legal Fees', 'Others')</code></li>
+                        <li><code>BU_AREA = 'Legales'</code></li>
+                        <li><code>FISCAL_PERIOD IN ('202501' a '202512', '202601' a '202612')</code></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 3: FLUXO COMPLETO -->
+            <section id="fluxo-completo">
+                <h2>3. Fluxo Completo de Dados</h2>
+
+                <div class="flow-diagram">
+                    <h3>Diagrama Geral do Processo</h3>
+                    <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                        FONTES EXTERNAS                           │
+├─────────────────────────────────────────────────────────────────┤
+│  Google Sheets                  │  Data Warehouse               │
+│  ├─ Budget Themis 2025          │  └─ OPEX S4 (2025+2026)      │
+│  ├─ Budget Themis 2026          │                               │
+│  ├─ Dicionário                  │                               │
+│  └─ Dicionário Vendor           │                               │
+└────────────┬────────────────────┴──────────────┬────────────────┘
+             │                                    │
+             │ STEP 1: CREATE EXTERNAL TABLE      │ STEP 3: CREATE TABLE
+             │                                    │
+             ▼                                    ▼
+┌────────────────────────────┐    ┌──────────────────────────────┐
+│ STG.LK_PBD_LA_BUDGET_      │    │ STG.LK_PBD_LA_BUDGET_REAL    │
+│ ├─ THEMIS_2025_FATO        │    │ ├─ Base_Real_2025            │
+│ ├─ THEMIS_2026_FATO        │    │ └─ Base_Real_2026            │
+│ ├─ DICIONARIO_FATO         │    │   (UNION ALL)                │
+│ └─ DICIONARIO_VENDOR_FATO  │    └──────────────┬───────────────┘
+└────────────┬───────────────┘                   │
+             │                                    │
+             │ STEP 2: UNION ALL + UNPIVOT        │ STEP 5: LEFT JOIN
+             │        (meses → linhas)            │        (ajustes)
+             ▼                                    ▼
+┌────────────────────────────┐    ┌──────────────────────────────┐
+│ STG.LK_PBD_LA_BUDGET_      │    │ STG.LK_PBD_LA_BUDGET_REAL_   │
+│     THEMIS_FINAL           │    │     Atualizada               │
+│ (12 colunas → 12 linhas)   │    │ (com ajustes do dicionário)  │
+└────────────┬───────────────┘    └──────────────┬───────────────┘
+             │                                    │
+             │                                    │
+             └────────────────┬───────────────────┘
+                              │
+                              │ STEP 6: UNION ALL
+                              │        (Budget + Real)
+                              ▼
+                    ┌─────────────────────┐
+                    │ STG.LK_PBD_LA_      │
+                    │ BUDGET_LOOKER_INPUT │
+                    │   (TABELA FINAL)    │
+                    └─────────────────────┘
+                              │
+                              ▼
+                    [ Looker / Dashboards ]
+                    </pre>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 4: STEP 1 -->
+            <section id="step1">
+                <h2>4. Step 1 - Carga Google Sheets</h2>
+
+                <div class="info-box">
+                    <h4>📥 Descrição</h4>
+                    <p>Este step cria tabelas externas conectadas ao Google Sheets e copia os dados para tabelas físicas (FATO).</p>
+                </div>
+
+                <h3>4.1. Tabelas Criadas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tabela External</th>
+                            <th>Tabela FATO</th>
+                            <th>Campos</th>
+                            <th>Operação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><code>STG.LK_PBD_LA_BUDGET_THEMIS_2025</code></td>
+                            <td><code>STG.LK_PBD_LA_BUDGET_THEMIS_2025_FATO</code></td>
+                            <td>73 campos</td>
+                            <td>DELETE + INSERT</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><code>STG.LK_PBD_LA_BUDGET_THEMIS_2026</code></td>
+                            <td><code>STG.LK_PBD_LA_BUDGET_THEMIS_2026_FATO</code></td>
+                            <td>73 campos</td>
+                            <td>DELETE + INSERT</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><code>STG.LK_PBD_LA_BUDGET_DICIONARIO</code></td>
+                            <td><code>STG.LK_PBD_LA_BUDGET_DICIONARIO_FATO</code></td>
+                            <td>6 campos</td>
+                            <td>DELETE + INSERT</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><code>STG.LK_PBD_LA_BUDGET_DICIONARIO_VENDOR</code></td>
+                            <td><code>STG.LK_PBD_LA_BUDGET_DICIONARIO_VENDOR_FATO</code></td>
+                            <td>2 campos</td>
+                            <td>DELETE + INSERT</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button class="collapsible">📋 Ver Schema Completo - Budget Themis (73 campos)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <div class="field-list">
+                            <h4>Campos Principais:</h4>
+                            <ul>
+                                <li>owner</li>
+                                <li>created_by</li>
+                                <li>subsegment_name</li>
+                                <li>subsegment_code</li>
+                                <li>account_name</li>
+                                <li>supplier_name</li>
+                                <li>supplier_external_id</li>
+                                <li>business_unit</li>
+                                <li>subarea</li>
+                                <li>allocation</li>
+                                <li>society</li>
+                                <li>mur_refund</li>
+                                <li>is_it_a_new_service</li>
+                                <li>service</li>
+                                <li>grouper_name</li>
+                                <li>grouper_description</li>
+                                <li>category_name</li>
+                                <li>currency_name</li>
+                                <li>currency_symbol</li>
+                                <li>currency_code</li>
+                                <li>department_name</li>
+                                <li>department_external_id</li>
+                                <li>initiative_name</li>
+                                <li>initiative_external_code</li>
+                                <li>initiative_id</li>
+                                <li>year</li>
+                            </ul>
+
+                            <h4>Valores Mensais USD (12 campos):</h4>
+                            <ul>
+                                <li>january_usd</li>
+                                <li>february_usd</li>
+                                <li>march_usd</li>
+                                <li>april_usd</li>
+                                <li>may_usd</li>
+                                <li>june_usd</li>
+                                <li>july_usd</li>
+                                <li>august_usd</li>
+                                <li>september_usd</li>
+                                <li>october_usd</li>
+                                <li>november_usd</li>
+                                <li>december_usd</li>
+                            </ul>
+
+                            <h4>Moeda Local:</h4>
+                            <ul>
+                                <li>local_currency_name</li>
+                                <li>local_currency_symbol</li>
+                                <li>local_currency_code</li>
+                                <li>january_local a december_local (12 campos)</li>
+                            </ul>
+
+                            <h4>Campos Adicionais:</h4>
+                            <ul>
+                                <li>quantity</li>
+                                <li>unit_price_usd</li>
+                                <li>unit_price_local</li>
+                                <li>subtotal_usd</li>
+                                <li>hash_group</li>
+                                <li>base_price</li>
+                                <li>updated_at</li>
+                                <li>layer_from</li>
+                                <li>layer_to</li>
+                                <li>increase_type</li>
+                                <li>distributable</li>
+                                <li>comments</li>
+                                <li>bu_area</li>
+                                <li>agrupador_1</li>
+                                <li>agrupador_2</li>
+                                <li>subsegment_new</li>
+                                <li>vertical</li>
+                                <li>equipo</li>
+                                <li>supplier_unificado</li>
+                                <li>ytd</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>4.2. Dicionários</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dicionário</th>
+                            <th>Campos</th>
+                            <th>Uso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>DICIONARIO</strong></td>
+                            <td>Area, Sub_Area, Business_Unit, Direccion, Owner, Equipo</td>
+                            <td>Mapeamento de áreas, sub-áreas e equipes por BU</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DICIONARIO_VENDOR</strong></td>
+                            <td>Vendor_desc, Vendor_desc_final</td>
+                            <td>Normalização de nomes de fornecedores</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SEÇÃO 5: STEP 2 -->
+            <section id="step2">
+                <h2>5. Step 2 - Budget Themis Final</h2>
+
+                <div class="info-box">
+                    <h4>🔄 Descrição</h4>
+                    <p>Este step unifica os dados de 2025 e 2026 e realiza <strong>unpivot</strong> das colunas mensais, transformando 12 colunas (janeiro a dezembro) em 12 linhas por registro.</p>
+                </div>
+
+                <h3>5.1. Operações Realizadas</h3>
+                <ol style="margin-left: 20px;">
+                    <li><strong>UNION ALL</strong>: Combina dados de 2025 e 2026</li>
+                    <li><strong>CROSS JOIN UNNEST</strong>: Unpivot de colunas mensais para linhas</li>
+                    <li><strong>Seleção de Campos</strong>: Campos relevantes para análise</li>
+                    <li><strong>Padronização</strong>: Versao = 'Budget', Ano convertido para INT64</li>
+                </ol>
+
+                <h3>5.2. Transformação Unpivot</h3>
+                <div class="flow-diagram">
+                    <pre>
+ANTES (Wide Format - 1 linha):
+┌──────┬─────────────┬──────────────┬────────────┬─────┐
+│ Year │ january_usd │ february_usd │ ...        │ ... │
+├──────┼─────────────┼──────────────┼────────────┼─────┤
+│ 2025 │ 1000.00     │ 1500.00      │ ...        │ ... │
+└──────┴─────────────┴──────────────┴────────────┴─────┘
+
+DEPOIS (Long Format - 12 linhas):
+┌──────┬──────────┬───────────┐
+│ Year │ Mes      │ Valor_USD │
+├──────┼──────────┼───────────┤
+│ 2025 │ January  │ 1000.00   │
+│ 2025 │ February │ 1500.00   │
+│ 2025 │ March    │ ...       │
+│ ...  │ ...      │ ...       │
+└──────┴──────────┴───────────┘
+                    </pre>
+                </div>
+
+                <h3>5.3. Campos Output</h3>
+                <div class="field-list">
+                    <ul>
+                        <li>Versao (fixo: 'Budget')</li>
+                        <li>Ano</li>
+                        <li>Mes</li>
+                        <li>BU (Business_unit)</li>
+                        <li>Subarea</li>
+                        <li>Society</li>
+                        <li>Service</li>
+                        <li>Category_name</li>
+                        <li>Grouper_name</li>
+                        <li>supplier_name</li>
+                        <li>COUNTRY (Subsegment_name)</li>
+                        <li>AREA (BU_AREA)</li>
+                        <li>EQUIPO</li>
+                        <li>Agrupador_1</li>
+                        <li>Agrupador_2</li>
+                        <li>VERTICAL</li>
+                        <li>Item_Text (Supplier_unificado)</li>
+                        <li>Account_name</li>
+                        <li>Currency_code</li>
+                        <li>Department_name</li>
+                        <li>Valor_USD</li>
+                        <li>Valor_Local</li>
+                    </ul>
+                </div>
+
+                <h3>5.4. Tabela de Saída</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tabela</th>
+                            <th>Operação</th>
+                            <th>Linhas Esperadas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>STG.LK_PBD_LA_BUDGET_THEMIS_FINAL</code></td>
+                            <td>CREATE OR REPLACE TABLE</td>
+                            <td>N registros × 12 meses × 2 anos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SEÇÃO 6: STEP 3 -->
+            <section id="step3">
+                <h2>6. Step 3 - Budget Real (OPEX)</h2>
+
+                <div class="info-box">
+                    <h4>📊 Descrição</h4>
+                    <p>Este step extrai dados <strong>reais de despesas</strong> do Data Warehouse (OPEX S4) para os anos 2025 e 2026, agregando por múltiplas dimensões e aplicando filtros específicos para a área Legales.</p>
+                </div>
+
+                <h3>6.1. Fonte de Dados</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tabela Fonte</th>
+                            <th>Schema</th>
+                            <th>Filtros Aplicados</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>BT_CRS_FPS_OPEX_SUPLIER_DETAIL_S4</code></td>
+                            <td><code>meli-bi-data.WHOWNER</code></td>
+                            <td>
+                                • AGRUPADOR_1 IN ('BU/ Area Expenses', 'Legal Fees', 'Others')<br>
+                                • BU_AREA = 'Legales'<br>
+                                • FISCAL_PERIOD: 202501-202512, 202601-202612
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>6.2. Agregações e Dimensões</h3>
+                <div class="field-list">
+                    <h4>Dimensões de Agrupamento (GROUP BY):</h4>
+                    <ul>
+                        <li>COMPANY_ID</li>
+                        <li>FISCAL_PERIOD</li>
+                        <li>COUNTRY</li>
+                        <li>AGRUPADOR_1</li>
+                        <li>AGRUPADOR_2</li>
+                        <li>PL_L0_ID</li>
+                        <li>PL_L8_ID</li>
+                        <li>VENDOR_ID</li>
+                        <li>VENDOR_DESC</li>
+                        <li>ITEM_TEXT</li>
+                        <li>AREA</li>
+                        <li>SUBAREA</li>
+                        <li>BU</li>
+                        <li>BUSINESS_UNIT_SUBBU</li>
+                        <li>BU_AREA</li>
+                        <li>ALLOCATION</li>
+                        <li>DOCUMENT_TYPE</li>
+                        <li>DOCUMENT_TYPE_DESC</li>
+                        <li>DOCUMENT_ID</li>
+                        <li>ACCOUNT_ID</li>
+                        <li>ACCOUNT_DESC</li>
+                        <li>COST_CENTER</li>
+                    </ul>
+
+                    <h4>Métricas Agregadas (SUM):</h4>
+                    <ul>
+                        <li>AMOUNT_LC (moeda local)</li>
+                        <li>AMOUNT_LC2_GLOB (USD)</li>
+                    </ul>
+                </div>
+
+                <h3>6.3. Transformações Aplicadas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Transformação</th>
+                            <th>Campo Origem</th>
+                            <th>Campo Destino</th>
+                            <th>Lógica</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Constante</td>
+                            <td>-</td>
+                            <td>Versao</td>
+                            <td>'Real'</td>
+                        </tr>
+                        <tr>
+                            <td>Constante</td>
+                            <td>-</td>
+                            <td>Ano</td>
+                            <td>2025 ou 2026</td>
+                        </tr>
+                        <tr>
+                            <td>Parse Data</td>
+                            <td>FISCAL_PERIOD</td>
+                            <td>Mes</td>
+                            <td>FORMAT_DATE('%B', PARSE_DATE('%Y%m', ...))</td>
+                        </tr>
+                        <tr>
+                            <td>Formatação</td>
+                            <td>AMOUNT_LC</td>
+                            <td>Valor_Local</td>
+                            <td>FORMAT('%0.2f', SAFE_CAST(...))</td>
+                        </tr>
+                        <tr>
+                            <td>Formatação</td>
+                            <td>AMOUNT_LC2_GLOB</td>
+                            <td>Valor_USD</td>
+                            <td>FORMAT('%0.2f', SAFE_CAST(...))</td>
+                        </tr>
+                        <tr>
+                            <td>Normalização BU</td>
+                            <td>BU</td>
+                            <td>BU</td>
+                            <td>
+                                MARKETPLACE GENERAL → MARKETPLACE<br>
+                                PAYMENTS GENERAL → PAYMENTS<br>
+                                CREDITS GENERAL → CREDITS<br>
+                                SHIPPING GENERAL → SHIPPING
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Mapeamento Equipe</td>
+                            <td>AREA, SUBAREA, BU</td>
+                            <td>EQUIPO</td>
+                            <td>
+                                LEFT JOIN com DICIONARIO_FATO<br>
+                                Se AREA = 'LEGALES OPS' → 'Legal Central'
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>6.4. CTEs Utilizados</h3>
+                <ol style="margin-left: 20px;">
+                    <li><strong>Base_Real_2025</strong>: Dados reais de 2025 com transformações</li>
+                    <li><strong>Base_Real_2026</strong>: Dados reais de 2026 com transformações</li>
+                    <li><strong>Base_Real</strong>: UNION ALL de 2025 e 2026</li>
+                    <li><strong>SELECT Final</strong>: JOIN com dicionário + normalização BU</li>
+                </ol>
+
+                <h3>6.5. Tabela de Saída</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tabela</th>
+                            <th>Operação</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>STG.LK_PBD_LA_BUDGET_REAL</code></td>
+                            <td>CREATE OR REPLACE TABLE</td>
+                            <td>Dados reais agregados com enriquecimento de dicionário</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SEÇÃO 7: STEP 5 -->
+            <section id="step5">
+                <h2>7. Step 5 - Budget Real Atualizado</h2>
+
+                <div class="info-box">
+                    <h4>🔧 Descrição</h4>
+                    <p>Este step aplica <strong>ajustes e correções</strong> nos dados reais usando uma tabela de ajustes manuais (<code>LK_PBD_LA_BUDGET_REAL_FINAL_ajustes</code>).</p>
+                </div>
+
+                <h3>7.1. Lógica de Atualização</h3>
+                <div class="flow-diagram">
+                    <pre>
+1. LEFT JOIN entre LK_PBD_LA_BUDGET_REAL e LK_PBD_LA_BUDGET_REAL_FINAL_ajustes
+
+2. Chaves de JOIN:
+   - UPPER(COUNTRY) = UPPER(COUNTRY)
+   - UPPER(Vendor_Desc) = UPPER(Vendor_Desc)
+   - UPPER(Area) = UPPER(Area)
+   - UPPER(Subarea) = UPPER(Subarea)
+
+3. Substituição com COALESCE:
+   - AREA → COALESCE(T2.AREA, T1.AREA)
+   - SUBAREA → COALESCE(T2.SUBAREA, T1.SUBAREA)
+   - EQUIPO → COALESCE(T2.EQUIPO, T1.EQUIPO)
+
+4. Resultado:
+   - Se houver match → usa valor da tabela de ajustes
+   - Se NÃO houver match → mantém valor original
+                    </pre>
+                </div>
+
+                <h3>7.2. Campos Atualizáveis</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Origem Padrão</th>
+                            <th>Origem Ajuste</th>
+                            <th>Lógica</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>AREA</code></td>
+                            <td>LK_PBD_LA_BUDGET_REAL</td>
+                            <td>LK_PBD_LA_BUDGET_REAL_FINAL_ajustes</td>
+                            <td>COALESCE(ajuste, original)</td>
+                        </tr>
+                        <tr>
+                            <td><code>SUBAREA</code></td>
+                            <td>LK_PBD_LA_BUDGET_REAL</td>
+                            <td>LK_PBD_LA_BUDGET_REAL_FINAL_ajustes</td>
+                            <td>COALESCE(ajuste, original)</td>
+                        </tr>
+                        <tr>
+                            <td><code>EQUIPO</code></td>
+                            <td>LK_PBD_LA_BUDGET_REAL</td>
+                            <td>LK_PBD_LA_BUDGET_REAL_FINAL_ajustes</td>
+                            <td>COALESCE(ajuste, original)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>7.3. Tabela de Saída</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tabela</th>
+                            <th>Operação</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>STG.LK_PBD_LA_BUDGET_REAL_Atualizada</code></td>
+                            <td>CREATE OR REPLACE TABLE</td>
+                            <td>Dados reais com ajustes de classificação aplicados</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="warning-box">
+                    <h4>⚠️ Observação Importante</h4>
+                    <p>A tabela <code>LK_PBD_LA_BUDGET_REAL_FINAL_ajustes</code> é uma tabela de ajustes manuais que deve ser mantida e atualizada conforme necessário. Ela permite correções pontuais de classificação sem alterar a lógica principal do ETL.</p>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 8: STEP 6 -->
+            <section id="step6">
+                <h2>8. Step 6 - Looker Input (Tabela Final)</h2>
+
+                <div class="success-box">
+                    <h4>🎯 Descrição</h4>
+                    <p>Este é o <strong>step final</strong> do processo. Ele unifica os dados de <strong>Budget Themis</strong> e <strong>Budget Real</strong> em uma única tabela, aplicando transformações finais e padronizações para consumo no Looker.</p>
+                </div>
+
+                <h3>8.1. Estrutura da União</h3>
+                <div class="flow-diagram">
+                    <pre>
+┌──────────────────────────────────────┐
+│ real_final_data (CTE)                │
+│ Fonte: LK_PBD_LA_BUDGET_REAL_        │
+│        Atualizada                    │
+│ • Versao = 'Real'                    │
+│ • Account_name = '' (vazio)          │
+│ • Vendor_Desc (original)             │
+└──────────────┬───────────────────────┘
+               │
+               │ UNION ALL
+               │
+┌──────────────▼───────────────────────┐
+│ themis_final_data (CTE)              │
+│ Fonte: LK_PBD_LA_BUDGET_THEMIS_FINAL │
+│ • Versao = 'Budget'                  │
+│ • Account_name (original)            │
+│ • Vendor_Desc = supplier_name        │
+└──────────────┬───────────────────────┘
+               │
+               │ UNION ALL
+               │
+               ▼
+┌──────────────────────────────────────┐
+│ raw_union (CTE)                      │
+│ União bruta de todas as linhas       │
+└──────────────┬───────────────────────┘
+               │
+               │ SELECT com transformações
+               │
+               ▼
+┌──────────────────────────────────────┐
+│ STG.LK_PBD_LA_BUDGET_LOOKER_INPUT    │
+│ (Tabela Final)                       │
+└──────────────────────────────────────┘
+                    </pre>
+                </div>
+
+                <h3>8.2. Transformações Finais</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Transformação</th>
+                            <th>Lógica</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Ano</code></td>
+                            <td>Conversão de Tipo</td>
+                            <td>CAST(Ano AS STRING)</td>
+                        </tr>
+                        <tr>
+                            <td><code>AREA</code></td>
+                            <td>Normalização de Equipe</td>
+                            <td>
+                                CASE<br>
+                                &nbsp;&nbsp;WHEN UPPER(EQUIPO) = 'LEGAL CENTRAL' → 'LEGAL OPS'<br>
+                                &nbsp;&nbsp;WHEN UPPER(EQUIPO) IN ('LEGAL CREDITS', 'LEGAL PAYMENTS') → 'LEGAL FINTECH'<br>
+                                &nbsp;&nbsp;WHEN EQUIPO IS NULL OR UPPER(EQUIPO) = '#VALUE!' → 'Outros'<br>
+                                &nbsp;&nbsp;ELSE UPPER(EQUIPO)<br>
+                                END
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>Valor_Local</code></td>
+                            <td>Conversão de Tipo</td>
+                            <td>SAFE_CAST(Valor_Local AS NUMERIC)</td>
+                        </tr>
+                        <tr>
+                            <td><code>Valor_USD</code></td>
+                            <td>Conversão de Tipo</td>
+                            <td>SAFE_CAST(Valor_USD AS NUMERIC)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>8.3. Schema Final</h3>
+                <div class="field-list">
+                    <h4>Campos Output (13 campos):</h4>
+                    <ul>
+                        <li><strong>Versao</strong> (STRING): 'Budget' ou 'Real'</li>
+                        <li><strong>Ano</strong> (STRING): '2025' ou '2026'</li>
+                        <li><strong>Mes</strong> (STRING): 'January', 'February', etc.</li>
+                        <li><strong>COUNTRY</strong> (STRING): País da despesa</li>
+                        <li><strong>AREA</strong> (STRING): Área normalizada (LEGAL OPS, LEGAL FINTECH, etc.)</li>
+                        <li><strong>AGRUPADOR_1</strong> (STRING): Agrupador nível 1</li>
+                        <li><strong>AGRUPADOR_2</strong> (STRING): Agrupador nível 2</li>
+                        <li><strong>Account_name</strong> (STRING): Nome da conta</li>
+                        <li><strong>Vendor_Desc</strong> (STRING): Descrição do fornecedor</li>
+                        <li><strong>Item_Text</strong> (STRING): Texto do item</li>
+                        <li><strong>Valor_Local</strong> (NUMERIC): Valor em moeda local</li>
+                        <li><strong>Valor_USD</strong> (NUMERIC): Valor em USD</li>
+                    </ul>
+                </div>
+
+                <h3>8.4. Tabela de Saída</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tabela</th>
+                            <th>Operação</th>
+                            <th>Uso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>STG.LK_PBD_LA_BUDGET_LOOKER_INPUT</code></td>
+                            <td>CREATE OR REPLACE TABLE</td>
+                            <td>Tabela final para consumo em dashboards Looker</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="success-box">
+                    <h4>✅ Características da Tabela Final</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>✅ União de Budget planejado e Real executado</li>
+                        <li>✅ Granularidade: Ano, Mês, País, Área, Fornecedor</li>
+                        <li>✅ Valores em USD e moeda local</li>
+                        <li>✅ Áreas normalizadas e padronizadas</li>
+                        <li>✅ Pronta para análises comparativas Budget vs Real</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 9: TABELAS -->
+            <section id="tabelas">
+                <h2>9. Tabelas Criadas</h2>
+
+                <h3>9.1. Resumo Geral</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Step</th>
+                            <th>Tipo</th>
+                            <th>Tabelas</th>
+                            <th>Schema</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Step 1</td>
+                            <td>External + FATO</td>
+                            <td>8 tabelas (4 External + 4 FATO)</td>
+                            <td><span class="badge badge-stg">STG</span></td>
+                            <td>✅ Ativo</td>
+                        </tr>
+                        <tr>
+                            <td>Step 2</td>
+                            <td>Transformed</td>
+                            <td>1 tabela</td>
+                            <td><span class="badge badge-stg">STG</span></td>
+                            <td>✅ Ativo</td>
+                        </tr>
+                        <tr>
+                            <td>Step 3</td>
+                            <td>Transformed</td>
+                            <td>1 tabela</td>
+                            <td><span class="badge badge-stg">STG</span></td>
+                            <td>✅ Ativo</td>
+                        </tr>
+                        <tr>
+                            <td>Step 4</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>⚪ Não implementado</td>
+                        </tr>
+                        <tr>
+                            <td>Step 5</td>
+                            <td>Transformed</td>
+                            <td>1 tabela</td>
+                            <td><span class="badge badge-stg">STG</span></td>
+                            <td>✅ Ativo</td>
+                        </tr>
+                        <tr>
+                            <td>Step 6</td>
+                            <td>Final</td>
+                            <td>1 tabela</td>
+                            <td><span class="badge badge-stg">STG</span></td>
+                            <td>✅ Ativo</td>
+                        </tr>
+                        <tr>
+                            <td>Steps 7-12</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>⚪ Não implementados</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>9.2. Detalhamento Completo</h3>
+                <button class="collapsible">📋 Ver todas as 12 tabelas criadas</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-content-inner">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nome da Tabela</th>
+                                    <th>Tipo</th>
+                                    <th>Campos</th>
+                                    <th>Origem</th>
+                                    <th>Step</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_THEMIS_2025</code></td>
+                                    <td>EXTERNAL</td>
+                                    <td>73</td>
+                                    <td>Google Sheets</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_THEMIS_2025_FATO</code></td>
+                                    <td>TABLE</td>
+                                    <td>73</td>
+                                    <td>External #1</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_THEMIS_2026</code></td>
+                                    <td>EXTERNAL</td>
+                                    <td>73</td>
+                                    <td>Google Sheets</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_THEMIS_2026_FATO</code></td>
+                                    <td>TABLE</td>
+                                    <td>73</td>
+                                    <td>External #3</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_DICIONARIO</code></td>
+                                    <td>EXTERNAL</td>
+                                    <td>6</td>
+                                    <td>Google Sheets</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_DICIONARIO_FATO</code></td>
+                                    <td>TABLE</td>
+                                    <td>6</td>
+                                    <td>External #5</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_DICIONARIO_VENDOR</code></td>
+                                    <td>EXTERNAL</td>
+                                    <td>2</td>
+                                    <td>Google Sheets</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_DICIONARIO_VENDOR_FATO</code></td>
+                                    <td>TABLE</td>
+                                    <td>2</td>
+                                    <td>External #7</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_THEMIS_FINAL</code></td>
+                                    <td>TABLE</td>
+                                    <td>22</td>
+                                    <td>FATO #2 + #4 (UNION)</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_REAL</code></td>
+                                    <td>TABLE</td>
+                                    <td>~20</td>
+                                    <td>OPEX S4 Warehouse</td>
+                                    <td>3</td>
+                                </tr>
+                                <tr>
+                                    <td>11</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_REAL_Atualizada</code></td>
+                                    <td>TABLE</td>
+                                    <td>~20</td>
+                                    <td>TABLE #10 + Ajustes</td>
+                                    <td>5</td>
+                                </tr>
+                                <tr>
+                                    <td>12</td>
+                                    <td><code>STG.LK_PBD_LA_BUDGET_LOOKER_INPUT</code></td>
+                                    <td>TABLE (FINAL)</td>
+                                    <td>13</td>
+                                    <td>TABLE #9 + #11 (UNION)</td>
+                                    <td>6</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 10: CONEXÕES -->
+            <section id="conexoes">
+                <h2>10. Conexões e Chaves</h2>
+
+                <h3>10.1. Conexões Externas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo de Conexão</th>
+                            <th>Endpoint</th>
+                            <th>Autenticação</th>
+                            <th>Uso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge badge-sheets">GOOGLE_SHEETS</span></td>
+                            <td>Google Drive API</td>
+                            <td>Service Account (BigQuery)</td>
+                            <td>Carga de dados de orçamento e dicionários</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-opex">DATA WAREHOUSE</span></td>
+                            <td>meli-bi-data.WHOWNER</td>
+                            <td>BigQuery Internal</td>
+                            <td>Consulta de dados reais OPEX S4</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>10.2. URLs Google Sheets</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Planilha</th>
+                            <th>Spreadsheet ID</th>
+                            <th>Range</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Budget Themis 2025/2026</td>
+                            <td><code>15DHeKGmkzHWyQqYcMrYcHtginknI9G5mn3Epn13OAvk</code></td>
+                            <td>Themis_2025!A:BU<br>Themis_2026!A:BU</td>
+                        </tr>
+                        <tr>
+                            <td>Dicionários</td>
+                            <td><code>1-r2-qYifcntHzLeQaXVXYMnj0IBHJLrHkCdHpqA39yg</code></td>
+                            <td>Diccionario!A:F<br>Diccionario!M:N</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>10.3. Chaves de JOIN</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>JOIN</th>
+                            <th>Tabela Esquerda</th>
+                            <th>Tabela Direita</th>
+                            <th>Chaves</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Real + Dicionário</td>
+                            <td>LK_PBD_LA_BUDGET_REAL</td>
+                            <td>LK_PBD_LA_BUDGET_DICIONARIO_FATO</td>
+                            <td>
+                                UPPER(SUBAREA) = UPPER(Sub_Area)<br>
+                                UPPER(BU) = UPPER(BUSINESS_UNIT)
+                            </td>
+                            <td>LEFT JOIN</td>
+                        </tr>
+                        <tr>
+                            <td>Real + Ajustes</td>
+                            <td>LK_PBD_LA_BUDGET_REAL</td>
+                            <td>LK_PBD_LA_BUDGET_REAL_FINAL_ajustes</td>
+                            <td>
+                                UPPER(COUNTRY) = UPPER(COUNTRY)<br>
+                                UPPER(Vendor_Desc) = UPPER(Vendor_Desc)<br>
+                                UPPER(Area) = UPPER(Area)<br>
+                                UPPER(Subarea) = UPPER(Subarea)
+                            </td>
+                            <td>LEFT JOIN</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>10.4. Chaves Primárias/Únicas</h3>
+                <div class="info-box">
+                    <h4>ℹ️ Observação sobre Chaves</h4>
+                    <p>Este processo não utiliza chaves primárias explícitas (PRIMARY KEY). A granularidade dos dados é definida pela combinação de dimensões:</p>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Versao</strong> (Budget/Real)</li>
+                        <li><strong>Ano</strong> (2025/2026)</li>
+                        <li><strong>Mes</strong> (January-December)</li>
+                        <li><strong>COUNTRY</strong></li>
+                        <li><strong>AREA/Equipo</strong></li>
+                        <li><strong>Vendor_Desc</strong></li>
+                        <li><strong>Item_Text</strong></li>
+                        <li><strong>Account_name</strong></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 11: TRANSFORMAÇÕES -->
+            <section id="transformacoes">
+                <h2>11. Transformações Principais</h2>
+
+                <h3>11.1. Unpivot de Colunas Mensais</h3>
+                <div class="info-box">
+                    <h4>🔄 Técnica: CROSS JOIN UNNEST</h4>
+                    <p>Transforma 12 colunas de valores mensais (january_usd, february_usd, ...) em 12 linhas por registro, facilitando análises temporais.</p>
+                </div>
+                <div class="flow-diagram">
+                    <pre>
+CROSS JOIN UNNEST([
+    STRUCT('January'    AS Mes, rd.january_usd AS Valor_USD, ...),
+    STRUCT('February'   AS Mes, rd.february_usd AS Valor_USD, ...),
+    STRUCT('March'      AS Mes, rd.march_usd AS Valor_USD, ...),
+    ...
+    STRUCT('December'   AS Mes, rd.december_usd AS Valor_USD, ...)
+]) AS m
+                    </pre>
+                </div>
+
+                <h3>11.2. Normalização de Business Units</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Valor Original</th>
+                            <th>Valor Normalizado</th>
+                            <th>Aplicado em</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MARKETPLACE GENERAL</td>
+                            <td>MARKETPLACE</td>
+                            <td>Step 3</td>
+                        </tr>
+                        <tr>
+                            <td>PAYMENTS GENERAL</td>
+                            <td>PAYMENTS</td>
+                            <td>Step 3</td>
+                        </tr>
+                        <tr>
+                            <td>CREDITS GENERAL</td>
+                            <td>CREDITS</td>
+                            <td>Step 3</td>
+                        </tr>
+                        <tr>
+                            <td>SHIPPING GENERAL</td>
+                            <td>SHIPPING</td>
+                            <td>Step 3</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>11.3. Normalização de Equipes</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Valor Original (EQUIPO)</th>
+                            <th>Valor Final (AREA)</th>
+                            <th>Aplicado em</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>LEGAL CENTRAL</td>
+                            <td>LEGAL OPS</td>
+                            <td>Step 6</td>
+                        </tr>
+                        <tr>
+                            <td>LEGAL CREDITS</td>
+                            <td>LEGAL FINTECH</td>
+                            <td>Step 6</td>
+                        </tr>
+                        <tr>
+                            <td>LEGAL PAYMENTS</td>
+                            <td>LEGAL FINTECH</td>
+                            <td>Step 6</td>
+                        </tr>
+                        <tr>
+                            <td>NULL ou #VALUE!</td>
+                            <td>Outros</td>
+                            <td>Step 6</td>
+                        </tr>
+                        <tr>
+                            <td>Outros valores</td>
+                            <td>UPPER(EQUIPO)</td>
+                            <td>Step 6</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>11.4. Conversões de Tipo</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Tipo Origem</th>
+                            <th>Tipo Destino</th>
+                            <th>Função</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>FISCAL_PERIOD</td>
+                            <td>STRING (YYYYMM)</td>
+                            <td>STRING (Month Name)</td>
+                            <td>FORMAT_DATE('%B', PARSE_DATE('%Y%m', ...))</td>
+                        </tr>
+                        <tr>
+                            <td>AMOUNT_LC</td>
+                            <td>FLOAT64</td>
+                            <td>STRING (2 decimais)</td>
+                            <td>FORMAT('%0.2f', SAFE_CAST(...))</td>
+                        </tr>
+                        <tr>
+                            <td>Valor_Local</td>
+                            <td>STRING</td>
+                            <td>NUMERIC</td>
+                            <td>SAFE_CAST(... AS NUMERIC)</td>
+                        </tr>
+                        <tr>
+                            <td>Valor_USD</td>
+                            <td>STRING</td>
+                            <td>NUMERIC</td>
+                            <td>SAFE_CAST(... AS NUMERIC)</td>
+                        </tr>
+                        <tr>
+                            <td>Ano</td>
+                            <td>INT64</td>
+                            <td>STRING</td>
+                            <td>CAST(Ano AS STRING)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>11.5. Agregações</h3>
+                <div class="field-list">
+                    <h4>Métricas Agregadas no Step 3 (OPEX):</h4>
+                    <ul>
+                        <li><code>SUM(AMOUNT_LC)</code> → Valor total em moeda local</li>
+                        <li><code>SUM(AMOUNT_LC2_GLOB)</code> → Valor total em USD</li>
+                        <li><code>COALESCE(..., 0)</code> → Garantir 0 em vez de NULL</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 12: ESTATÍSTICAS -->
+            <section id="estatisticas">
+                <h2>12. Estatísticas e Métricas</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Arquivos SQL</h4>
+                        <div class="number">12</div>
+                        <small>6 ativos + 6 vazios</small>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Linhas de Código</h4>
+                        <div class="number">~775</div>
+                        <small>Apenas arquivos ativos</small>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Tabelas Criadas</h4>
+                        <div class="number">12</div>
+                        <small>4 External + 8 Tables</small>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Fontes de Dados</h4>
+                        <div class="number">5</div>
+                        <small>4 Sheets + 1 Warehouse</small>
+                    </div>
+                    <div class="stat-card">
+                        <h4>JOINs</h4>
+                        <div class="number">2</div>
+                        <small>Dicionário + Ajustes</small>
+                    </div>
+                    <div class="stat-card">
+                        <h4>UNIONs</h4>
+                        <div class="number">3</div>
+                        <small>2025+2026 (múltiplos)</small>
+                    </div>
+                </div>
+
+                <h3>12.1. Distribuição por Step</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Step</th>
+                            <th>Linhas de Código</th>
+                            <th>Complexidade</th>
+                            <th>Tempo Estimado de Execução</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Step 1</td>
+                            <td>412</td>
+                            <td>⭐⭐ Média</td>
+                            <td>~30-60 segundos</td>
+                        </tr>
+                        <tr>
+                            <td>Step 2</td>
+                            <td>61</td>
+                            <td>⭐⭐⭐ Alta (UNPIVOT)</td>
+                            <td>~10-30 segundos</td>
+                        </tr>
+                        <tr>
+                            <td>Step 3</td>
+                            <td>215</td>
+                            <td>⭐⭐⭐⭐ Muito Alta (Warehouse)</td>
+                            <td>~60-120 segundos</td>
+                        </tr>
+                        <tr>
+                            <td>Step 5</td>
+                            <td>19</td>
+                            <td>⭐ Baixa</td>
+                            <td>~5-10 segundos</td>
+                        </tr>
+                        <tr>
+                            <td>Step 6</td>
+                            <td>66</td>
+                            <td>⭐⭐ Média</td>
+                            <td>~10-20 segundos</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>12.2. Operações de Dados</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operação</th>
+                            <th>Frequência</th>
+                            <th>Steps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CREATE EXTERNAL TABLE</td>
+                            <td>4</td>
+                            <td>Step 1</td>
+                        </tr>
+                        <tr>
+                            <td>CREATE OR REPLACE TABLE</td>
+                            <td>8</td>
+                            <td>Steps 1, 2, 3, 5, 6</td>
+                        </tr>
+                        <tr>
+                            <td>DELETE + INSERT</td>
+                            <td>4</td>
+                            <td>Step 1</td>
+                        </tr>
+                        <tr>
+                            <td>UNION ALL</td>
+                            <td>3</td>
+                            <td>Steps 2, 3, 6</td>
+                        </tr>
+                        <tr>
+                            <td>LEFT JOIN</td>
+                            <td>2</td>
+                            <td>Steps 3, 5</td>
+                        </tr>
+                        <tr>
+                            <td>CROSS JOIN UNNEST (Unpivot)</td>
+                            <td>1</td>
+                            <td>Step 2</td>
+                        </tr>
+                        <tr>
+                            <td>GROUP BY + Agregação</td>
+                            <td>2</td>
+                            <td>Step 3</td>
+                        </tr>
+                        <tr>
+                            <td>CASE WHEN</td>
+                            <td>~15</td>
+                            <td>Steps 2, 3, 6</td>
+                        </tr>
+                        <tr>
+                            <td>SAFE_CAST</td>
+                            <td>~10</td>
+                            <td>Steps 3, 6</td>
+                        </tr>
+                        <tr>
+                            <td>COALESCE</td>
+                            <td>~8</td>
+                            <td>Steps 3, 5</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>12.3. Granularidade dos Dados</h3>
+                <div class="info-box">
+                    <h4>📊 Dimensionalidade</h4>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Temporal</strong>: Ano × Mês (2 anos × 12 meses = 24 períodos)</li>
+                        <li><strong>Geográfica</strong>: Múltiplos países (Argentina, Brasil, México, etc.)</li>
+                        <li><strong>Organizacional</strong>: BU × SubArea × Equipo</li>
+                        <li><strong>Financeira</strong>: Fornecedor × Conta × Item</li>
+                        <li><strong>Comparativa</strong>: Budget × Real</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p><strong>Legales Analytics</strong> - Documentação Budget Looker 2026</p>
+            <p>Documento gerado automaticamente via Claude Code</p>
+            <p>© 2026 - Confidencial</p>
+        </footer>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('pt-BR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        // Collapsible functionality
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1365 @@
+{
+  "name": "Push_DR_IPEM",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "triggerAtHour": 11
+            }
+          ]
+        }
+      },
+      "id": "7244dcd4-58ab-445d-9499-3a719210d24a",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        0,
+        96
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {},
+      "id": "8a681abe-8573-4bbc-9f56-a1e1e617a696",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        448,
+        0
+      ],
+      "webhookId": "9badbe78-8f0a-4705-a983-490b7d3f9943",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1hUXO1enis6KpIk7yaV1a5rFNPXbNgardq426NOOcnKM/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hUXO1enis6KpIk7yaV1a5rFNPXbNgardq426NOOcnKM/edit#gid=0",
+          "cachedResultName": "IPEM"
+        }
+      },
+      "id": "d021dd81-ad27-434e-85f4-e8d530acd2d9",
+      "name": "Clean",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        224,
+        0
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data&pli=1"
+        },
+        "sqlQuery": "SELECT\n*\nFROM `pdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS`\nWHERE UPPER(PROCESSO_MATERIA) LIKE '%IPEM%'\n",
+        "options": {}
+      },
+      "id": "6351a61f-9693-4bc0-ba29-785d0ab9ba78",
+      "name": "Push BigQuery",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        192
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "q2jr1aemjC4H2I3t",
+          "name": "Google - Bigquery"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1hUXO1enis6KpIk7yaV1a5rFNPXbNgardq426NOOcnKM/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hUXO1enis6KpIk7yaV1a5rFNPXbNgardq426NOOcnKM/edit#gid=0",
+          "cachedResultName": "IPEM"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "DATA_DE_CITACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_DE_CITACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_ID",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_ID",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PASTA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PASTA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PAIS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PAIS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NUMERO_DO_PROCESSO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "NUMERO_DO_PROCESSO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OUTROS_NUMEROS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OUTROS_NUMEROS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "STATUS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "STATUS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SUB_AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "SUB_AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CLIENTE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CLIENTE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PARTE_CONTRARIA_NOME",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PARTE_CONTRARIA_NOME",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CUST_ID_AUTOR",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CUST_ID_AUTOR",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OUTRAS_PARTES_NAO_CLIENTES",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OUTRAS_PARTES_NAO_CLIENTES",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PAGE_REPORT_ESCRITORIORESPONSAVEL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PAGE_REPORT_ESCRITORIORESPONSAVEL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_AUDIENCIA_INICIAL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_AUDIENCIA_INICIAL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ADVOGADO_RESPONSAVEL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ADVOGADO_RESPONSAVEL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_ESTADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_ESTADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_COMARCA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_COMARCA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_FORO_TRIBUNAL_ORGAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_FORO_TRIBUNAL_ORGAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_VARA_ORGAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_VARA_ORGAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OBJETO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OBJETO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OBJETO_1",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OBJETO_1",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DETALHAMENTO_DO_OBJETO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DETALHAMENTO_DO_OBJETO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DISTRIBUICAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DISTRIBUICAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TIPO_DE_CONTINGENCIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "TIPO_DE_CONTINGENCIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RISCO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "RISCO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OBSERVACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OBSERVACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TIPO_DA_AUDIENCIA_INICIAL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "TIPO_DA_AUDIENCIA_INICIAL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VALOR_DA_CAUSA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "VALOR_DA_CAUSA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OUTROS_CLIENTES_REU",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OUTROS_CLIENTES_REU",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MODALIDADE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "MODALIDADE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_REGISTRADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_REGISTRADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CPF_CNPJ",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CPF_CNPJ",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PARTE_CONTRARIA_CPF",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PARTE_CONTRARIA_CPF",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_DE_ENCERRAMENTO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_DE_ENCERRAMENTO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_DE_REGISTRO_DO_ENCERRAMENTO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_DE_REGISTRO_DO_ENCERRAMENTO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_DO_ENVIO_AO_ESCRITORIO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_DO_ENVIO_AO_ESCRITORIO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCEDIMENTO_JUDICIAL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCEDIMENTO_JUDICIAL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RESUMO_DO_SUBSIDIO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "RESUMO_DO_SUBSIDIO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ADVOGADO_DA_PARTE_CONTRARIA_NOME",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ADVOGADO_DA_PARTE_CONTRARIA_NOME",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ADVOGADOS_PARTICIPANTES",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ADVOGADOS_PARTICIPANTES",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ADVOGADO_DA_PARTE_CONTRARIA_CPF",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ADVOGADO_DA_PARTE_CONTRARIA_CPF",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CUST_ID_CONTRAPARTE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CUST_ID_CONTRAPARTE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID_MEDIACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ID_MEDIACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CENTRO_CUSTO_NOME",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CENTRO_CUSTO_NOME",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CENTRO_DE_CUSTO_CODIGO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CENTRO_DE_CUSTO_CODIGO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VALOR_DO_RISCO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "VALOR_DO_RISCO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "COMPORTAMENTO_DO_USUARIO_CX",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "COMPORTAMENTO_DO_USUARIO_CX",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FASE_ESTADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "FASE_ESTADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FASE_ESTADO_4",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "FASE_ESTADO_4",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PARTE_CONTRARIA_CONTUMAZ",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PARTE_CONTRARIA_CONTUMAZ",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ADVOGADO_PARTE_CONTRARIA_CONTUMAZ",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ADVOGADO_PARTE_CONTRARIA_CONTUMAZ",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "USUARIO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "USUARIO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AUDIENCIA_PENDENTE_DATA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "AUDIENCIA_PENDENTE_DATA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MOTIVO_DE_ENCERRAMENTO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "MOTIVO_DE_ENCERRAMENTO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CARATULA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CARATULA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "INDICA_MENORIDADE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "INDICA_MENORIDADE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_CLASSIFICACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_CLASSIFICACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "INVOCA_HIPERVULNERABILIDAD",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "INVOCA_HIPERVULNERABILIDAD",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CAUSAS_RAIZES",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CAUSAS_RAIZES",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CAUSAS_RAIZES_1",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CAUSAS_RAIZES_1",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CAUSAS_RAIZES_2",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CAUSAS_RAIZES_2",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID_DE_SALESFORCE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ID_DE_SALESFORCE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MODELO_DE_CONTRATACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "MODELO_DE_CONTRATACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NUMERO_DE_ENVIO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "NUMERO_DE_ENVIO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "USUARIO_RECLAMOU_A_CX",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "USUARIO_RECLAMOU_A_CX",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESO_CRITICO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESO_CRITICO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CBT",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CBT",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UNIDADE_DE_NEGOCIO_IMPACTADA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "UNIDADE_DE_NEGOCIO_IMPACTADA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CAMPOS_DE_ALTERACAO_DE_VALOR_IDENTIFICACAO_DO_PAGAMENTO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "CAMPOS_DE_ALTERACAO_DE_VALOR_IDENTIFICACAO_DO_PAGAMENTO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_CUST_ID_CONTRAPARTE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_CUST_ID_CONTRAPARTE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_IDENTIFICACAO_DO_PAGAMENTO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_IDENTIFICACAO_DO_PAGAMENTO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VALOR_1_INSTANCIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "VALOR_1_INSTANCIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "INFORMACOES_COMPLEMENTARES_CUST_ID_CONTRAPARTE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "INFORMACOES_COMPLEMENTARES_CUST_ID_CONTRAPARTE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_CUST_ID_CONTRAPARTE_1",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_CUST_ID_CONTRAPARTE_1",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_APELIDO_CONTRAPARTE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_APELIDO_CONTRAPARTE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA_RESPONSAVEL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "EMPRESA_RESPONSAVEL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_IDENTIFICACAO_DO_PAGAMENTO_1",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_IDENTIFICACAO_DO_PAGAMENTO_1",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_EMPRESA_DEMANDADA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_EMPRESA_DEMANDADA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "HISP_SUBSIDIOS_ID_DA_OPERACAO_MP",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "HISP_SUBSIDIOS_ID_DA_OPERACAO_MP",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "HISP_SUBSIDIOS_STATUS_DO_PAGAMENTO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "HISP_SUBSIDIOS_STATUS_DO_PAGAMENTO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "HISP_SUBSIDIOS_CUST_ID_AUTOR",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "HISP_SUBSIDIOS_CUST_ID_AUTOR",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "HISP_SUBSIDIOS_NUMERO_DE_ENVIO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "HISP_SUBSIDIOS_NUMERO_DE_ENVIO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_CUSTID_MELI",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_CUSTID_MELI",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_REVISADO_POR_DRE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_REVISADO_POR_DRE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_ESCRITORIO_DO_ADVOGADO_DA_PARTE_CONTRARIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_ESCRITORIO_DO_ADVOGADO_DA_PARTE_CONTRARIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_MATERIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_MATERIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "JUSTICA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "JUSTICA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_OBJETO_REVISADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_OBJETO_REVISADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_REVISADO_POR_DRE_1",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_REVISADO_POR_DRE_1",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FORMA_DE_PARTICIPACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "FORMA_DE_PARTICIPACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ESCRITORIO_EXTERNO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ESCRITORIO_EXTERNO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PEDIDO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PEDIDO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_APRESENTADA_RESPOSTA_NEGATIVA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_APRESENTADA_RESPOSTA_NEGATIVA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_DE_REATIVACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_DE_REATIVACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MOTIVO_DE_REATIVACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "MOTIVO_DE_REATIVACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ACAO_1",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ACAO_1",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VALOR_OBJETO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "VALOR_OBJETO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_CONDENACAO_EM_MA_FE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_CONDENACAO_EM_MA_FE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_VALOR_ASSOCIADO_A_MA_FE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_VALOR_ASSOCIADO_A_MA_FE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_DATA_DENUNCIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_DATA_DENUNCIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_DATA_DO_PROTOCOLO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_DATA_DO_PROTOCOLO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_DATA_INSTAURACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_DATA_INSTAURACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_ESTADO_DA_DENUNCIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_ESTADO_DA_DENUNCIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_TIPO_DE_OPERACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_TIPO_DE_OPERACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_DATA_DA_OPERACAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_DATA_DA_OPERACAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_CRIME",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_CRIME",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_CRIME_2",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_CRIME_2",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_PRAZO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_PRAZO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ADVOGADO_ESCRITORIO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ADVOGADO_ESCRITORIO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_ESTADO_DE_LA_DENUNCIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_ESTADO_DE_LA_DENUNCIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DECISAO_ANALISE_DE_RESPONSABILIDADE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DECISAO_ANALISE_DE_RESPONSABILIDADE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_SUPERENDIVIDAMENTO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_SUPERENDIVIDAMENTO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AUD_INS_DTTM",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "AUD_INS_DTTM",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AUD_UPD_DTTM",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "AUD_UPD_DTTM",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PRIORIDADE_FONTE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PRIORIDADE_FONTE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_REGISTRADO_TRATADA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_REGISTRADO_TRATADA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OBJETO_CROSS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OBJETO_CROSS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID_DO_PAGAMENTO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ID_DO_PAGAMENTO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MULTA_DATA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "MULTA_DATA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MULTA_TIPO_AJUSTADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "MULTA_TIPO_AJUSTADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "REGIAO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "REGIAO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FASE_DESFECHO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "FASE_DESFECHO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OBJETO_TRATADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OBJETO_TRATADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UNIDADE_TRATADA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "UNIDADE_TRATADA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EMPRESA_TRATADA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "EMPRESA_TRATADA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MUNDO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "MUNDO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "ee5f76ee-ca57-42dd-839c-0e888b74e4cf",
+      "name": "Input Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        192
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "https://script.google.com/home/projects/1HwvwMI2O_hJEPBrkuUFNekjeRmauJiXBmdm5XDynU6MMqrvvOFcUNQS1/edit"
+      },
+      "id": "fd6e13e0-76f9-4209-a2ea-a4ebc29add20",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -320,
+        80
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Wait": {
+      "main": [
+        []
+      ]
+    },
+    "Clean": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Push BigQuery": {
+      "main": [
+        [
+          {
+            "node": "Input Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Push BigQuery",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clean",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "executionOrder": "v1"
+  },
+  "versionId": "b950c7da-203c-409e-957a-dbf118709d46",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92a7841699b7656650cb4dc0dd4f4f4fdb565d51df3f1aaf3126caa7a316a77c"
+  },
+  "id": "LVwZAclYtE6lqBYw",
+  "tags": []
+}

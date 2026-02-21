@@ -1,0 +1,334 @@
+{
+  "name": "Maca_LegalOpinion",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 11
+            }
+          ]
+        }
+      },
+      "id": "298f993d-3d31-45e3-baf1-cf6608bfc253",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        0,
+        -160
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "729faa74-c302-4273-9532-d6c501f38ed8",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.ANO_QUARTER }}",
+                    "rightValue": "2025-Q1"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "b58b2823-61dc-40a7-80df-d24bb0eb28ec",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.ANO_QUARTER }}",
+                    "rightValue": "2025-Q2"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "2554bf2e-08ee-4246-8c75-76b9bb8babf0",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.ANO_QUARTER }}",
+                    "rightValue": "2025-Q4"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "5569cb74-d6fc-4c49-b3df-49512fa9bb57",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.ANO_QUARTER }}",
+                    "rightValue": "2025-Q4"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "2f067e15-e7df-4e54-9a68-9a0863cdf56e",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.ANO_QUARTER }}",
+                    "rightValue": "2026-Q1"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7753105f-7e0a-4298-85db-6091a0fea66b",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        448,
+        -208
+      ],
+      "typeVersion": 3.3
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data&pli=1&ws=!1m0"
+        },
+        "sqlQuery": "WITH BASE_UNIFICADA AS (\n    SELECT \n        PAIS, \n        STATUS, \n        AREA_DO_DIREITO, \n        SUB_AREA_DO_DIREITO,\n        FASE_ESTADO_4, \n        FASE_ESTADO, \n        DATA_REGISTRADO,\n        PROCESSO_ID,\n        PROCESSO_MATERIA,\n        OBJETO_TRATADO,\n        VALOR_DA_CAUSA,\n        UNIDADE_TRATADA,\n        USUARIO\n    FROM `pdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_BASE_BASE_ATIVA`\n    WHERE \n        PAIS IN ('Brasil','Uruguay')\n        AND STATUS = 'Ativo'\n        AND SUB_AREA_DO_DIREITO IN ('Administrativo','Pre-Administrativo')\n        AND (\n            FASE_ESTADO_4 IN ('Inicial/Negociação')\n            OR FASE_ESTADO = 'Imputación'\n        )\n\n    UNION ALL\n\n    SELECT \n        PAIS, \n        STATUS, \n        AREA_DO_DIREITO, \n        SUB_AREA_DO_DIREITO,\n        FASE_ESTADO_4, \n        FASE_ESTADO, \n        DATA_REGISTRADO,\n        PROCESSO_ID,\n        PROCESSO_MATERIA,\n        OBJETO_TRATADO,\n        VALOR_DA_CAUSA,\n        UNIDADE_TRATADA,\n        USUARIO\n    FROM `pdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS`\n    WHERE \n        PAIS IN ('Brasil','Uruguay')\n        AND STATUS = 'Ativo'\n        AND SUB_AREA_DO_DIREITO IN ('Administrativo','Pre-Administrativo')\n        AND FASE_ESTADO_4 = 'Encerrada sem acordo'\n)\n\nSELECT \n    PROCESSO_ID,\n    EXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)) AS QUARTER,\n    CONCAT(\n        EXTRACT(YEAR FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)),\n        '-Q',\n        EXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO))\n    ) AS ANO_QUARTER,\n    AREA_DO_DIREITO,\n    SUB_AREA_DO_DIREITO,\n    PAIS,\n    DATA_REGISTRADO,\n    STATUS,\n    PROCESSO_MATERIA,\n    OBJETO_TRATADO,\n    VALOR_DA_CAUSA,\n    UNIDADE_TRATADA,\n    USUARIO\nFROM BASE_UNIFICADA\nWHERE \n    PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) >= DATE '2025-01-01'\n    AND OBJETO_TRATADO IN (\n        'CONTA INVADIDA',\n        'CANCELAMENTO',\n        'PROCESSAMENTO DE VALORES',\n        'INABILITAÇÃO/RESTRIÇÃO',\n        'BILLING & COLLECTION [MP]',\n        'DESCONHECIMENTO DE CONTRATAÇÃO DO CRÉDITO',\n        'NEGATIVAÇÃO',\n        'COBRANÇA'\n    );\n",
+        "options": {}
+      },
+      "id": "2c8cc108-23b8-427b-89d1-213f300b76b5",
+      "name": "Push base",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        -160
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1cXJBk_YHvRui1VC1R31tHVuwU5zaYw0zmTYD35K9jrk/edit?gid=276361019#gid=276361019"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $json.ANO_QUARTER }}"
+        }
+      },
+      "id": "52e04257-32db-4849-834d-882154a9d395",
+      "name": "Clean",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        672,
+        -160
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1cXJBk_YHvRui1VC1R31tHVuwU5zaYw0zmTYD35K9jrk/edit?gid=276361019#gid=276361019"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Switch').item.json.ANO_QUARTER }}"
+        },
+        "columns": {
+          "value": {},
+          "schema": [],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "93860f0b-a827-47aa-98f3-a869e745720c",
+      "name": "Input",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        896,
+        -160
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Clean": {
+      "main": [
+        [
+          {
+            "node": "Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Clean",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Clean",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Clean",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Clean",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Clean",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Push base": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Push base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a3d11843-d302-431d-8188-4e354d3e23f8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92a7841699b7656650cb4dc0dd4f4f4fdb565d51df3f1aaf3126caa7a316a77c"
+  },
+  "id": "MkVouzdfoPcYNsm1",
+  "tags": []
+}

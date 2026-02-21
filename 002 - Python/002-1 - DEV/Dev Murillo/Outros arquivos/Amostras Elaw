@@ -1,0 +1,377 @@
+# ========================================================================
+# Arquivo: amostra_planilhas_com_matriz.py
+# Objetivo: 
+#   - Listar arquivos Excel em um diretório específico (sem descer em subpastas), 
+#     ignorando nomes que contenham uma substring específica.
+#   - Para cada aba de cada arquivo Excel, detectar automaticamente a linha de cabeçalho 
+#     (baseado na linha que tem o máximo de células não-nulas nas primeiras NROWS_MAX linhas).
+#   - Ler até NROWS_MAX linhas de dados após o cabeçalho detectado, remover linhas completamente vazias 
+#     e extrair as 10 primeiras linhas não-vazias como amostra.
+#   - Salvar cada amostra em um arquivo intermediário na pasta temporária do Desktop.
+#   - Gerar um arquivo Excel consolidado contendo:
+#       1) Aba "Lista_Arquivos" com nome, extensão e tamanho de cada arquivo original.
+#       2) Aba "Analise_Colunas" com matriz indicando em quais arquivo-aba cada coluna aparece.
+#       3) Abas posteriores, cada uma correspondendo a um arquivo intermediário contendo a amostra.
+# Data: 2025-06-05
+# ========================================================================
+
+import os
+import shutil
+import pandas as pd
+
+# ========== CONFIGURAÇÕES ==========
+
+# 1) Diretório onde estão seus arquivos originais (não desce em subpastas):
+diretorio = r"G:\Drives compartilhados\Legales_Analytics_Legado\001 - Databases_e_dimensões"
+
+# 2) Substring para excluir arquivos cujo nome a contenha (ex.: "Dim_"):
+excluir_substr = "Dim_"
+
+# 3) Pasta temporária na Área de Trabalho do usuário (onde salvaremos as amostras intermediárias):
+desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+temp_folder = os.path.join(desktop, "temp_samples")
+
+# 4) Nome/caminho do arquivo Excel final que conterá todas as abas combinadas:
+output_file = os.path.join(diretorio, "amostra_combinada.xlsx")
+
+# 5) Quantas linhas máximas vamos ler para “descobrir” o cabeçalho e para extrair até 10 linhas:
+NROWS_MAX = 100
+# ====================================
+
+def format_size(bytes_size):
+    """
+    Converte um valor em bytes para uma string legível (KB, MB, etc.).
+    """
+    for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+        if bytes_size < 1024:
+            return f"{bytes_size:.2f} {unit}"
+        bytes_size /= 1024
+    return f"{bytes_size:.2f} PB"
+
+def listar_arquivos_sem_subpastas(diretorio, excluir_substr):
+    """
+    Retorna lista de nomes de arquivo (somente arquivos) diretamente dentro de 'diretorio',
+    descartando aqueles cujo nome contenha 'excluir_substr'.
+    """
+    print(f"[1] Listando itens no diretório: {diretorio}")
+    try:
+        itens = os.listdir(diretorio)
+    except (FileNotFoundError, PermissionError) as e:
+        print(f"    → Erro ao listar '{diretorio}': {e}")
+        return []
+
+    arquivos = []
+    for item in itens:
+        if excluir_substr and excluir_substr in item:
+            print(f"    • Pulando arquivo (contém '{excluir_substr}'): {item}")
+            continue
+        caminho = os.path.join(diretorio, item)
+        if os.path.isfile(caminho):
+            arquivos.append(item)
+            print(f"    • Encontrou arquivo: {item}")
+    print(f"[1] Total de arquivos encontrados (após filtro): {len(arquivos)}\n")
+    return arquivos
+
+def cria_temp_folder(path):
+    """
+    Remove a pasta temporária se já existir e cria uma nova vazia.
+    """
+    if os.path.exists(path):
+        print(f"[2] Pasta temporária já existe. Removendo: {path}")
+        shutil.rmtree(path)
+    print(f"[2] Criando pasta temporária em: {path}")
+    os.makedirs(path)
+    print(f"[2] Pasta temporária criada com sucesso.\n")
+
+def detectar_header_row(caminho, aba):
+    """
+    Lê as primeiras NROWS_MAX linhas de 'aba' em 'caminho' sem header (header=None),
+    conta quantas células não nulas existem em cada linha, e retorna o índice da primeira
+    linha que atinge o máximo de células não-nulas. Esse será nosso header_row.
+    """
+    try:
+        df_pequeno = pd.read_excel(
+            caminho,
+            sheet_name=aba,
+            header=None,
+            nrows=NROWS_MAX,
+            engine="openpyxl"
+        )
+    except Exception as e:
+        raise RuntimeError(f"Erro ao ler as primeiras {NROWS_MAX} linhas da aba '{aba}': {e}")
+
+    contagem_nao_nulos = df_pequeno.notna().sum(axis=1)
+    max_nao_nulos = contagem_nao_nulos.max()
+    candidate_rows = contagem_nao_nulos[contagem_nao_nulos == max_nao_nulos].index
+    if len(candidate_rows) == 0:
+        return None
+    header_row = int(candidate_rows[0])
+    return header_row
+
+def salvar_amostras_em_pequenos_arquivos(diretorio, arquivos, temp_folder):
+    """
+    Para cada arquivo Excel em 'arquivos', itera sobre cada aba:
+      1) Detecta automaticamente a linha do cabeçalho
+      2) Lê as colunas usando header=header_row, carregando até NROWS_MAX linhas de dados
+      3) Descarta linhas totalmente vazias e pega as primeiras 10 não-vazias
+      4) Salva essa amostra como um XLSX separado em 'temp_folder'
+    O nome do arquivo salvo usa apenas o que vem após "Report_eLAW_" no nome original + "_" + nome da aba.
+    """
+    print(f"[3] Iniciando geração de amostras em '{temp_folder}'\n")
+    contador_arquivos = 0
+
+    for nome_arquivo in arquivos:
+        nome_lower = nome_arquivo.lower()
+        if not (nome_lower.endswith(".xls") or nome_lower.endswith(".xlsx")):
+            print(f"    • Pulando (não é Excel): {nome_arquivo}")
+            continue
+
+        contador_arquivos += 1
+        caminho = os.path.join(diretorio, nome_arquivo)
+        print(f"[3.{contador_arquivos}] Processando arquivo: {nome_arquivo}")
+
+        try:
+            xls = pd.ExcelFile(caminho, engine="openpyxl")
+        except Exception as e:
+            print(f"    → Aviso: não consegui abrir '{nome_arquivo}' como Excel ({e}). Pulando.\n")
+            continue
+
+        nome_base_original = os.path.splitext(nome_arquivo)[0]
+        if "Report_eLAW_" in nome_base_original:
+            base_trim = nome_base_original.split("Report_eLAW_", 1)[1]
+        else:
+            base_trim = nome_base_original
+
+        contador_abas = 0
+        for aba in xls.sheet_names:
+            contador_abas += 1
+            print(f"    [{contador_arquivos}.{contador_abas}] Detectando header na aba: '{aba}'")
+
+            try:
+                header_row = detectar_header_row(caminho, aba)
+            except RuntimeError as e:
+                print(f"        → {e}\n")
+                continue
+
+            if header_row is None:
+                print(f"        → Nenhum header válido detectado nos primeiros {NROWS_MAX} registros. Pulando aba.\n")
+                continue
+
+            print(f"        • Header encontrado na linha: {header_row} (0-based)")
+
+            try:
+                df_data = pd.read_excel(
+                    caminho,
+                    sheet_name=aba,
+                    header=header_row,
+                    nrows=NROWS_MAX,
+                    engine="openpyxl"
+                )
+            except Exception as e:
+                print(f"        → Erro ao recarregar a aba '{aba}' com header={header_row}: {e}\n")
+                continue
+
+            total_linhas = len(df_data)
+            print(f"        • Linhas lidas (após header) no trecho inicial: {total_linhas}")
+
+            df_data_limpo = df_data.dropna(how="all")
+            linhas_apos_limpeza = len(df_data_limpo)
+            print(f"        • Linhas após dropna(how='all'): {linhas_apos_limpeza}")
+
+            df_amostra = df_data_limpo.head(10)
+            selecionadas = len(df_amostra)
+            print(f"        • Selecionando as {selecionadas} linha(s) não-vazia(s) (máximo 10)")
+
+            if selecionadas == 0:
+                print(f"        → Não há linhas não-vazias. Pulando aba.\n")
+                continue
+
+            safe_aba = aba.replace("/", "_").replace("\\", "_")
+            nome_pequeno = f"{base_trim}_{safe_aba}.xlsx"
+            caminho_saida = os.path.join(temp_folder, nome_pequeno)
+
+            try:
+                df_amostra.to_excel(caminho_saida, index=False)
+                print(f"        • Amostra salva em: {caminho_saida}\n")
+            except Exception as e:
+                print(f"        → Erro ao salvar amostra '{nome_pequeno}': {e}\n")
+
+    if contador_arquivos == 0:
+        print("[3] Não foram encontrados arquivos Excel para processar.\n")
+    else:
+        print(f"[3] Concluído processamento de {contador_arquivos} arquivo(s) Excel.\n")
+
+def combina_todos_temp_em_um_excel(temp_folder, output_file, lista_arquivos_info):
+    """
+    Cria um Excel final cujo primeiro sheet contém:
+      - Lista_Arquivos: nome, extensão e tamanho
+      - Analise_Colunas: matriz de presença de colunas
+      - Categorias_Temas: COLUNA, FREQUÊNCIA e CATEGORIA
+      - Demais sheets: as amostras individuais
+    """
+    print(f"[4] Iniciando combinação dos arquivos temporários em um único Excel.")
+    arquivos_temp = sorted(os.listdir(temp_folder))
+    total_temp = len(arquivos_temp)
+    print(f"[4] Total de arquivos temporários encontrados: {total_temp}\n")
+
+    # 1) contagem de frequência e presença
+    col_freq = {}
+    presenca = {}
+    for nome_pequeno in arquivos_temp:
+        caminho_pequeno = os.path.join(temp_folder, nome_pequeno)
+        try:
+            df_header = pd.read_excel(caminho_pequeno, nrows=0, engine="openpyxl")
+        except Exception as e:
+            print(f"    → Aviso: não consegui ler header de '{nome_pequeno}': {e}")
+            continue
+
+        for col in df_header.columns:
+            key = str(col).strip()
+            normalized = key.upper()
+            col_freq[normalized] = col_freq.get(normalized, 0) + 1
+            presenca.setdefault(normalized, set()).add(key)
+
+    # 2) DataFrame de análise de colunas
+    df_analise = pd.DataFrame(
+        sorted(col_freq.items(), key=lambda x: (-x[1], x[0])),
+        columns=["COLUNA", "FREQUÊNCIA"]
+    )
+    for nome_pequeno in arquivos_temp:
+        df_analise[nome_pequeno] = df_analise["COLUNA"].apply(
+            lambda c: "x" if c in presenca and nome_pequeno.replace(".xlsx","") in presenca[c] else ""
+        )
+
+    # 3) DataFrame de categorias
+    def categorize(name):
+        n = name.upper()
+        if "DATA" in n:
+            return "Datas"
+        if "ÁREA DO DIREITO" in n or "SUB-ÁREA DO DIREITO" in n or "MATÉRIA" in n or "MODALIDADE" in n:
+            return "Áreas de Atuação"
+        if "PROCEDIMENTO JUDICIAL" in n:
+            return "Procedimento Jurídico"
+        if n.startswith("(PROCESSO)") or "PROCESSO -" in n:
+            return "Detalhes de Processo"
+        if n == "ID" or n.startswith("ID ") or n.endswith(" ID") or " ID" in n:
+            return "Identificação"
+        if "CPF" in n or "CNPJ" in n:
+            return "Identificação"
+        if "RESULTADO" in n:
+            return "Resultados"
+        if "OBSERVAÇÃO" in n or "DESCRIÇÃO" in n:
+            return "Descrições e Observações"
+        if "PRAZO" in n:
+            return "Prazos"
+        if "AÇÃO" in n:
+            return "Ações Judiciais"
+        if "AUDIENCIA" in n:
+            return "Audiências"
+        if n.startswith("TAREFAS -"):
+            return "Tarefas"
+        if "SUBSÍDIO" in n:
+            return "Subsídios"
+        if "OBJETO" in n:
+            return "Objetos"
+        if any(x in n for x in ["ADVOGADO","PARTE CONTRÁRIA","CLIENTE","EMPRESA"]):
+            return "Partes"
+        if any(x in n for x in ["COMARCA","FORO","TRIBUNAL","ESTADO","PAÍS"]):
+            return "Localização"
+        if any(x in n for x in ["WORKFLOW","FASE","STATUS"]):
+            return "Fluxo/Status"
+        if any(x in n for x in ["VALOR","RISCO","CUSTO"]):
+            return "Financeiro"
+        if any(x in n for x in ["PAGEREPORT","ESCRITÓRIO","PASTA"]):
+            return "Metadados"
+        if "PEDIDO" in n:
+            return "Pedidos"
+        if "CAUSAS RAÍZES" in n:
+            return "Causas"
+        if "CENTRO" in n:
+            return "Centro de Custo"
+        if "COMPORTAMENTO" in n:
+            return "Comportamento"
+        if "DISTRIBUIÇÃO" in n:
+            return "Distribuição"
+        if "JUIZ" in n or "DECISÃO" in n:
+            return "Decisões"
+        if "PROVEDOR" in n or "AGÊNCIA" in n or "BANCO" in n:
+            return "Provedores"
+        return "Diversos"
+
+    df_categorias = df_analise[["COLUNA","FREQUÊNCIA"]].copy()
+    df_categorias["CATEGORIA"] = df_categorias["COLUNA"].apply(categorize)
+
+    # 4) Gravação de todas as abas no mesmo writer
+    with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
+        # Lista_Arquivos
+        df_lista = pd.DataFrame(lista_arquivos_info, columns=["Nome do Arquivo","Extensão","Tamanho"])
+        print("    [4.0] Gravando 'Lista_Arquivos'")
+        df_lista.to_excel(writer, sheet_name="Lista_Arquivos", index=False)
+
+        # Analise_Colunas
+        print("    [4.1] Gravando 'Analise_Colunas'")
+        df_analise.to_excel(writer, sheet_name="Analise_Colunas", index=False)
+
+        # Categorias_Temas
+        print("    [4.2] Gravando 'Categorias_Temas'")
+        df_categorias.to_excel(writer, sheet_name="Categorias_Temas", index=False)
+
+        # Abas das amostras individuais
+        for i, nome_pequeno in enumerate(arquivos_temp, start=1):
+            caminho_pequeno = os.path.join(temp_folder, nome_pequeno)
+            print(f"    [4.{i+2}] Lendo amostra: {nome_pequeno}")
+            try:
+                df = pd.read_excel(caminho_pequeno, engine="openpyxl")
+            except Exception as e:
+                print(f"        → Aviso: não consegui ler '{nome_pequeno}': {e}")
+                continue
+
+            # nome de aba único com sufixo
+            suffix = f"_{i}"
+            max_base = 31 - len(suffix)
+            base = os.path.splitext(nome_pequeno)[0][:max_base]
+            sheet = f"{base}{suffix}"
+            print(f"        • Gravando aba: '{sheet}'")
+            df.to_excel(writer, sheet_name=sheet, index=False)
+
+    print(f"[4] Combinação concluída! Arquivo final salvo em: {output_file}\n")
+
+def main():
+    print("\n===== INÍCIO DO PROCESSO =====\n")
+
+    if not os.path.isdir(diretorio):
+        print(f"Erro: '{diretorio}' não é um diretório válido.")
+        return
+    print(f"[0] Diretório válido: {diretorio}\n")
+
+    arquivos = listar_arquivos_sem_subpastas(diretorio, excluir_substr)
+    if not arquivos:
+        print("[1] Fim do processo: nenhum arquivo encontrado para processar.\n")
+        return
+
+    lista_info = []
+    for nome in arquivos:
+        ext = os.path.splitext(nome)[1].lstrip('.') or "-"
+        tamanho_bytes = os.path.getsize(os.path.join(diretorio, nome))
+        tamanho_fmt = format_size(tamanho_bytes)
+        lista_info.append((nome, ext, tamanho_fmt))
+
+    if os.path.exists(temp_folder) and os.listdir(temp_folder):
+        print(f"[!] Detecção: '{temp_folder}' já existe e não está vazia.")
+        print("    Pulando geração das amostras e partindo direto para o compilado.\n")
+    else:
+        cria_temp_folder(temp_folder)
+        salvar_amostras_em_pequenos_arquivos(diretorio, arquivos, temp_folder)
+
+    combina_todos_temp_em_um_excel(temp_folder, output_file, lista_info)
+
+    print("===== FIM DO PROCESSO =====\n")
+    print(f"Pasta temporária onde estão os arquivos intermediários:\n  {temp_folder}")
+    print(f"Arquivo final combinado:\n  {output_file}\n")
+
+    # Caso queira remover a pasta temporária após processamento, descomente abaixo:
+    # shutil.rmtree(temp_folder)
+    # print(f"Pasta temporária '{temp_folder}' removida.")
+
+if __name__ == "__main__":
+    main()

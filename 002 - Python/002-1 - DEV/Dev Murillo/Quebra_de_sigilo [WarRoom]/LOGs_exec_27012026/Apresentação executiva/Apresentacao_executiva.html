@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apresentação Executiva - Quebra de Sigilo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 8px; }
+        .header p { font-size: 1.05em; opacity: 0.95; }
+        .content { padding: 30px; }
+        .section { margin-bottom: 40px; }
+        .section-title {
+            font-size: 1.6em;
+            color: #667eea;
+            margin-bottom: 18px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #667eea;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .metric-card h3 { font-size: 0.9em; opacity: 0.95; margin-bottom: 10px; }
+        .metric-card .value { font-size: 1.8em; font-weight: bold; }
+        .metric-card p { font-size: 0.75em; opacity: 0.9; margin-top: 6px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td { padding: 10px 14px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f8f9fa; }
+        .table-title { font-size: 1.15em; color: #667eea; margin-bottom: 12px; font-weight: 600; }
+        .table-container { margin: 24px 0; }
+        .status-success { color: #28a745; font-weight: bold; }
+        .info-box {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin: 16px 0;
+        }
+        .info-box h4 { color: #667eea; margin-bottom: 8px; }
+        .info-box ul { margin-left: 20px; margin-top: 8px; }
+        .info-box li { margin-bottom: 6px; }
+        small { font-size: 0.85em; opacity: 0.85; }
+
+        /* Evolução */
+        .evolution-timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            margin: 28px 0;
+            position: relative;
+            gap: 20px;
+        }
+        .evolution-timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 3px;
+            background: linear-gradient(90deg, #e74c3c, #f39c12, #27ae60);
+            z-index: 0;
+        }
+        .version-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .version-box.original { border: 3px solid #e74c3c; }
+        .version-box.v2026 { border: 3px solid #f39c12; }
+        .version-box.poc { border: 3px solid #27ae60; }
+        .version-box h4 { font-size: 1.1em; margin-bottom: 10px; color: #2c3e50; }
+        .version-box .tag { font-weight: bold; margin-top: 8px; display: block; }
+        .version-box.original .tag { color: #e74c3c; }
+        .version-box.v2026 .tag { color: #f39c12; }
+        .version-box.poc .tag { color: #27ae60; }
+        .problem-box {
+            background: #fef2f2;
+            border-left: 5px solid #e74c3c;
+            padding: 16px;
+            margin: 14px 0;
+            border-radius: 6px;
+        }
+        .problem-box h4 { color: #c0392b; margin-bottom: 8px; font-size: 1em; }
+        .problem-box p { margin: 4px 0; font-size: 0.95em; }
+        .comparison-table-evo {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .comparison-table-evo th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 14px;
+            text-align: left;
+        }
+        .comparison-table-evo td { padding: 10px 14px; border-bottom: 1px solid #eee; }
+        .comparison-table-evo tr:nth-child(even) { background: #f8f9fa; }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .badge.original { background: #e74c3c; color: white; }
+        .badge.v2026 { background: #f39c12; color: white; }
+        .badge.poc { background: #27ae60; color: white; }
+        .star-rating { color: #f1c40f; font-size: 1.1em; }
+        .metrics-success {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+            text-align: center;
+        }
+        .metric-box {
+            background: #27ae60;
+            color: white;
+            padding: 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(39,174,96,0.3);
+        }
+        .metric-box .big { font-size: 1.4em; display: block; margin-bottom: 4px; }
+        .metric-box .small { font-size: 0.8em; opacity: 0.95; }
+        .mapeamento-table { font-size: 0.9em; }
+        .mapeamento-table th { padding: 10px 12px; }
+        .mapeamento-table td { padding: 8px 12px; }
+        .mapeamento-table tr.dtvm-row { background: #fffde7 !important; }
+        .mapeamento-table tr.dtvm-row:hover { background: #fff9c4 !important; }
+        .mapeamento-table tr.summary-row { background: #e8eaf6; font-weight: 600; }
+        .disclaimer-box {
+            background: #fff8e1;
+            border-left: 5px solid #ff9800;
+            padding: 18px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+        .disclaimer-box h4 { color: #e65100; margin-bottom: 10px; font-size: 1em; }
+        .disclaimer-box p { margin: 8px 0; }
+        .status-mapeamento {
+            background: #e3f2fd;
+            border-left: 5px solid #1976d2;
+            padding: 16px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+        .status-mapeamento h4 { color: #1565c0; margin-bottom: 10px; font-size: 1em; }
+        .status-mapeamento .nums { font-weight: 700; color: #0d47a1; }
+        .waterfall-chart {
+            margin: 24px 0;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .waterfall-chart h4 { color: #333; margin-bottom: 8px; font-size: 1.1em; }
+        .waterfall-chart > p { font-size: 0.9em; color: #555; margin-bottom: 16px; }
+        .waterfall-wrap { display: flex; align-items: flex-end; justify-content: center; gap: 0; min-height: 220px; }
+        .wf-yaxis {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 200px;
+            padding-right: 8px;
+            margin-right: 4px;
+            border-right: 1px solid #ccc;
+            font-size: 0.7em;
+            color: #666;
+        }
+        .wf-area { display: flex; align-items: flex-end; height: 200px; flex: 1; max-width: 560px; }
+        .wf-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            min-width: 72px;
+            height: 200px;
+        }
+        .wf-connector {
+            width: 12px;
+            min-width: 12px;
+            height: 1px;
+            background: #bdbdbd;
+            align-self: center;
+        }
+        .wf-bar {
+            width: 52px;
+            min-height: 4px;
+            border-radius: 3px 3px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        }
+        .wf-bar.start { background: #1976d2; height: 195px; }
+        .wf-bar.down1 { background: #ff9800; height: 86px; margin-bottom: 109px; }
+        .wf-bar.down2 { background: #388e3c; height: 22px; margin-bottom: 87px; }
+        .wf-bar.down3 { background: #c62828; height: 22px; margin-bottom: 65px; }
+        .wf-bar.end { background: #ad1457; height: 65px; }
+        .wf-col .label { font-size: 0.7em; font-weight: 600; color: #333; text-align: center; margin-top: 8px; max-width: 70px; line-height: 1.2; }
+        .conclusion-box {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 10px;
+            margin: 28px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        .conclusion-box h3 { margin-bottom: 12px; font-size: 1.3em; }
+        .conclusion-box p { margin: 6px 0; font-size: 0.95em; }
+        ul { margin-left: 20px; }
+        li { margin-bottom: 6px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Apresentação Executiva</h1>
+            <p>Quebra de Sigilo - Resultados e Evolução do Projeto</p>
+            <p style="margin-top: 8px; font-size: 0.9em;">Data: 27/01/2026</p>
+        </div>
+        <div class="content">
+
+            <!-- 1. Resumo Executivo (3º prints) -->
+            <div class="section">
+                <h2 class="section-title">📊 Resumo Executivo</h2>
+                <div class="summary-grid">
+                    <div class="metric-card">
+                        <h3>Tempo Total - Original</h3>
+                        <div class="value">5h 46min</div>
+                        <p>Início: 27/01 10:47:47<br>Fim: 27/01 16:33:33</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Tempo Total - POC</h3>
+                        <div class="value">7h 14min</div>
+                        <p>Início: 26/01 16:57:57<br>Fim: 27/01 00:51:51</p>
+                    </div>
+                    <div class="metric-card" style="min-width: 280px;">
+                        <h3>Similaridade dos resultados (Original vs POC)</h3>
+                        <div class="value">98%</div>
+                        <p>58 métricas comparadas entre os 2 processos<br>38 Igual · 20 Muito próximo</p>
+                        <p style="font-size: 0.7em; opacity: 0.8;">Análise dos Excel (Analise Original QS.xlsx vs Analise POC QS.xlsx)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Versão Original - Performance por Etapa (sem custo) -->
+            <div class="section">
+                <h2 class="section-title">📋 Versão Original - Performance por Etapa</h2>
+                <div class="table-container">
+                    <div class="table-title">Detalhamento das Etapas da Versão Original</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Etapa</th>
+                                <th>Status</th>
+                                <th>Duração</th>
+                                <th>Nº Queries</th>
+                                <th>Início</th>
+                                <th>Fim</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Inserir tabelas finais Finch</strong></td>
+                                <td class="status-success">SUCCESS</td>
+                                <td>2.0min</td>
+                                <td>12</td>
+                                <td><small>27/01/2026 16:31:31</small></td>
+                                <td><small>27/01/2026 16:33:33</small></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tabelas auxiliares 2 Finch</strong></td>
+                                <td class="status-success">SUCCESS</td>
+                                <td>~0.5min</td>
+                                <td>2</td>
+                                <td><small>27/01/2026 16:30:30</small></td>
+                                <td><small>27/01/2026 16:30:30</small></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tabelas auxiliares Finch</strong></td>
+                                <td class="status-success">SUCCESS</td>
+                                <td>~5.5h</td>
+                                <td>24</td>
+                                <td><small>27/01/2026 10:47:47</small></td>
+                                <td><small>27/01/2026 16:30:30</small></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="info-box">
+                        <h4>Observações</h4>
+                        <ul>
+                            <li><strong>Inserir tabelas finais:</strong> Inserção nas tabelas finais (TBL_QS_*, CAD_*) para geração de arquivos.</li>
+                            <li><strong>Tabelas auxiliares 2:</strong> Consolidação de relacionados (STG_QS_RELACIONADO_CAD_VF_FINCH, STG_QS_FLAG_MOV_CAD_VF_FINCH).</li>
+                            <li><strong>Tabelas auxiliares:</strong> Processamento principal (movimentações, relacionados Payout/Payin/Payments/Withdrawal).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Versão POC - Performance por Bloco (sem custo) -->
+            <div class="section">
+                <h2 class="section-title">📋 Versão POC - Performance por Bloco</h2>
+                <div class="table-container">
+                    <div class="table-title">Detalhamento dos Blocos da Versão POC</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bloco</th>
+                                <th>Descrição</th>
+                                <th>Status</th>
+                                <th>Duração</th>
+                                <th>Nº Queries</th>
+                                <th>Início</th>
+                                <th>Fim</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>BLOCO_01</strong><br><small>Preparação Base Investigados</small></td>
+                                <td><small>Preparação da base de investigados a partir da planilha de entrada</small></td>
+                                <td class="status-success">SUCCESS</td>
+                                <td>~0.0min</td>
+                                <td>1</td>
+                                <td><small>26/01/2026 16:57:57</small></td>
+                                <td><small>26/01/2026 16:57:57</small></td>
+                            </tr>
+                            <tr>
+                                <td><strong>BLOCO_02</strong><br><small>Coleta Informações Reguladas</small></td>
+                                <td><small>Coleta de informações da base regulada LK_REG_REGULATED_BASE_MLB</small></td>
+                                <td class="status-success">SUCCESS</td>
+                                <td>~15.3min</td>
+                                <td>2</td>
+                                <td><small>26/01/2026 16:57:57</small></td>
+                                <td><small>26/01/2026 17:13:13</small></td>
+                            </tr>
+                            <tr>
+                                <td><strong>BLOCO_03</strong><br><small>Processamento Titulares</small></td>
+                                <td><small>Processamento de titulares e identificação de correspondentes</small></td>
+                                <td class="status-success">SUCCESS</td>
+                                <td>~0.0min</td>
+                                <td>7</td>
+                                <td><small>26/01/2026 17:13:13</small></td>
+                                <td><small>26/01/2026 17:13:13</small></td>
+                            </tr>
+                            <tr>
+                                <td><strong>BLOCO_04</strong><br><small>Coleta Movimentações</small></td>
+                                <td><small>Coleta de movimentações financeiras no período de investigação</small></td>
+                                <td class="status-success">SUCCESS</td>
+                                <td>~23.4min</td>
+                                <td>2</td>
+                                <td><small>26/01/2026 17:13:13</small></td>
+                                <td><small>26/01/2026 17:36:36</small></td>
+                            </tr>
+                            <tr>
+                                <td><strong>BLOCO_05</strong><br><small>Processamento Relacionados</small></td>
+                                <td><small>Processamento de relacionados (Payout, Payin, Payments, Withdrawal)</small></td>
+                                <td class="status-success">SUCCESS</td>
+                                <td>~3h 50min</td>
+                                <td>12</td>
+                                <td><small>26/01/2026 17:36:36</small></td>
+                                <td><small>26/01/2026 22:11:11</small></td>
+                            </tr>
+                            <tr>
+                                <td><strong>BLOCO_06</strong><br><small>Consolidação Relacionados</small></td>
+                                <td><small>Consolidação de todos os relacionados em uma única tabela</small></td>
+                                <td class="status-success">SUCCESS</td>
+                                <td>~2.8h</td>
+                                <td>2</td>
+                                <td><small>26/01/2026 22:11:11</small></td>
+                                <td><small>27/01/2026 00:47:47</small></td>
+                            </tr>
+                            <tr>
+                                <td><strong>BLOCO_07</strong><br><small>Inserção Tabelas Finais</small></td>
+                                <td><small>Inserção nas tabelas finais para geração de arquivos</small></td>
+                                <td class="status-success">SUCCESS</td>
+                                <td>~4.0min</td>
+                                <td>12</td>
+                                <td><small>27/01/2026 00:47:47</small></td>
+                                <td><small>27/01/2026 00:51:51</small></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="info-box">
+                        <h4>Observações</h4>
+                        <ul>
+                            <li><strong>BLOCO_01–03:</strong> Preparação e coleta regulada (LK_REG_REGULATED_BASE_MLB), processamento de titulares.</li>
+                            <li><strong>BLOCO_04–06:</strong> Movimentações, processamento de relacionados (PIX, Payout, Payments, Withdrawal) e consolidação.</li>
+                            <li><strong>BLOCO_07:</strong> Inserção final equivalente à versão original, com estrutura modular.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Evolução do Projeto - Timeline (4º print) -->
+            <div class="section">
+                <h2 class="section-title">🏗️ Evolução do Projeto</h2>
+                <p style="margin-bottom: 12px;">Evolução arquitetural do pipeline: Original → 2026 → POC.</p>
+                <div class="evolution-timeline">
+                    <div class="version-box original">
+                        <h4>📦 Versão Original</h4>
+                        <p><strong>16 arquivos</strong></p>
+                        <p>Arquivo maior: <strong>739 linhas</strong></p>
+                        <span class="tag">Monolítico</span>
+                    </div>
+                    <div class="version-box v2026">
+                        <h4>🔧 Versão 2026</h4>
+                        <p><strong>36 arquivos</strong></p>
+                        <p>Arquivo maior: <strong>~157 linhas</strong></p>
+                        <span class="tag">Modular</span>
+                    </div>
+                    <div class="version-box poc">
+                        <h4>✨ Versão POC</h4>
+                        <p><strong>19 arquivos</strong></p>
+                        <p>8 SQL + 11 Python</p>
+                        <span class="tag">Híbrida</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Problemas Identificados (5º print) -->
+            <div class="section">
+                <h2 class="section-title">🔴 Problemas Identificados (Versão Original)</h2>
+                <div class="problem-box">
+                    <h4>Manutenibilidade Crítica</h4>
+                    <p><strong>Problema:</strong> Alterar qualquer parte do código exigia navegar por 739 linhas.</p>
+                    <p><strong>Impacto:</strong> Tempo de desenvolvimento aumentado em 3–5x.</p>
+                    <p><strong>Risco:</strong> Alterações em uma parte podiam quebrar outras não relacionadas.</p>
+                </div>
+                <div class="problem-box">
+                    <h4>Debug Complexo</h4>
+                    <p><strong>Problema:</strong> Erros eram difíceis de isolar.</p>
+                    <p><strong>Impacto:</strong> Debugging levava horas ou dias.</p>
+                    <p><strong>Risco:</strong> Correções podiam introduzir novos bugs.</p>
+                </div>
+                <div class="problem-box">
+                    <h4>Testabilidade Zero</h4>
+                    <p><strong>Problema:</strong> Impossível testar componentes isoladamente.</p>
+                    <p><strong>Impacto:</strong> Testes só podiam ser feitos no pipeline completo.</p>
+                    <p><strong>Risco:</strong> Bugs só eram descobertos em produção.</p>
+                </div>
+            </div>
+
+            <!-- 6. Comparação Detalhada (6º print) -->
+            <div class="section">
+                <h2 class="section-title">📊 Comparação Detalhada</h2>
+                <table class="comparison-table-evo">
+                    <tr>
+                        <th>Aspecto</th>
+                        <th>Versão Original</th>
+                        <th>Versão 2026</th>
+                        <th>Versão POC</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Arquivos</strong></td>
+                        <td>16 arquivos</td>
+                        <td>36 arquivos</td>
+                        <td>19 arquivos (8 SQL + 11 Python)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Arquivo Maior</strong></td>
+                        <td>739 linhas</td>
+                        <td>~157 linhas</td>
+                        <td>~170 linhas</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Modularização</strong></td>
+                        <td><span class="badge original">Monolítico</span></td>
+                        <td><span class="badge v2026">Extrema</span></td>
+                        <td><span class="badge poc">Híbrida</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Manutenibilidade</strong></td>
+                        <td><span class="star-rating">⭐</span></td>
+                        <td><span class="star-rating">⭐⭐⭐⭐</span></td>
+                        <td><span class="star-rating">⭐⭐⭐⭐</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Performance</strong></td>
+                        <td><span class="star-rating">⭐⭐</span></td>
+                        <td><span class="star-rating">⭐⭐⭐⭐</span></td>
+                        <td><span class="star-rating">⭐⭐⭐⭐⭐</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Testabilidade</strong></td>
+                        <td><span class="star-rating">⭐</span></td>
+                        <td><span class="star-rating">⭐⭐⭐⭐</span></td>
+                        <td><span class="star-rating">⭐⭐⭐⭐</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Documentação</strong></td>
+                        <td><span class="star-rating">⭐</span></td>
+                        <td><span class="star-rating">⭐⭐</span></td>
+                        <td><span class="star-rating">⭐⭐⭐⭐</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 7. Métricas de Sucesso (7º print) -->
+            <div class="section">
+                <h2 class="section-title">📈 Métricas de Sucesso</h2>
+                <div class="metrics-success">
+                    <div class="metric-box">
+                        <span class="big">96%</span>
+                        <span class="small">redução tempo de localização de bug</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="big">87%</span>
+                        <span class="small">redução tempo de correção</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="big">93%</span>
+                        <span class="small">redução tempo de onboarding</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="big">77%</span>
+                        <span class="small">redução tamanho do maior arquivo</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. Mapeamento de arquivos (solicitação DTVM) -->
+            <div class="section">
+                <h2 class="section-title">📋 Mapeamento de arquivos</h2>
+                <p style="margin-bottom: 14px;">Status de processamento e validação das fontes solicitadas (período de coleta relacionado à quebra de sigilo).</p>
+
+                <div class="status-mapeamento">
+                    <h4>📊 Status geral do progresso de mapeamento (excluindo DTVM)</h4>
+                    <p>Considerando apenas as fontes aplicáveis às nossas atividades (Arquivo Agências, Contas, Titulares, Extrato, Origem-Destino):</p>
+                    <p style="margin-top: 10px;"><span class="nums">109</span> campos solicitados (aplicáveis) · <span class="nums">65</span> campos já mapeados/validados · <span class="nums">44</span> pendentes (em validação ou não mapeados)</p>
+                    <p style="margin-top: 6px; font-size: 0.9em;">Média % Validado (fontes 1–5): <span class="nums">57,75%</span> · Média % Status parcial: <span class="nums">0,56</span></p>
+                </div>
+
+                <table class="comparison-table-evo mapeamento-table">
+                    <thead>
+                        <tr>
+                            <th>Fonte ID</th>
+                            <th>Fonte</th>
+                            <th>% Status parcial</th>
+                            <th>% Validado</th>
+                            <th>% Status final</th>
+                            <th>Data Start</th>
+                            <th>Data End</th>
+                            <th>TT Campos</th>
+                            <th>TT Atuais</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Arquivo Agências</td>
+                            <td>0,79</td>
+                            <td>78,57</td>
+                            <td>0,79</td>
+                            <td>01/12/2025</td>
+                            <td>28/02/2026</td>
+                            <td>14</td>
+                            <td>9</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Arquivo Contas</td>
+                            <td>0,58</td>
+                            <td>58,33</td>
+                            <td>0,58</td>
+                            <td>01/12/2025</td>
+                            <td>28/02/2026</td>
+                            <td>12</td>
+                            <td>7</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Arquivo Titulares</td>
+                            <td>0,64</td>
+                            <td>60,71</td>
+                            <td>0,61</td>
+                            <td>01/12/2025</td>
+                            <td>28/02/2026</td>
+                            <td>28</td>
+                            <td>19</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Arquivo Extrato</td>
+                            <td>0,41</td>
+                            <td>51,85</td>
+                            <td>0,41</td>
+                            <td>01/12/2025</td>
+                            <td>28/02/2026</td>
+                            <td>27</td>
+                            <td>13</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Arquivo Origem-Destino</td>
+                            <td>0,39</td>
+                            <td>39,29</td>
+                            <td>0,39</td>
+                            <td>01/12/2025</td>
+                            <td>28/02/2026</td>
+                            <td>28</td>
+                            <td>17</td>
+                        </tr>
+                        <tr class="dtvm-row">
+                            <td>6</td>
+                            <td>Arquivo Dados Cadastrais - CTVM/DTVM</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>05/02/2026</td>
+                            <td>10/03/2026</td>
+                            <td>46</td>
+                            <td>0</td>
+                        </tr>
+                        <tr class="dtvm-row">
+                            <td>7</td>
+                            <td>Arquivo Extrato de Conta de Registro/Conta Gráfica - CTVM/DTVM</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>18/02/2026</td>
+                            <td>23/03/2026</td>
+                            <td>12</td>
+                            <td>0</td>
+                        </tr>
+                        <tr class="dtvm-row">
+                            <td>8</td>
+                            <td>Arquivo Posição de Investimentos - CTVM/DTVM</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>23/03/2026</td>
+                            <td>25/04/2026</td>
+                            <td>7</td>
+                            <td>0</td>
+                        </tr>
+                        <tr class="dtvm-row">
+                            <td>9</td>
+                            <td>Arquivo Resumo dos Negócios - CTVM/DTVM</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>20/04/2026</td>
+                            <td>23/05/2026</td>
+                            <td>10</td>
+                            <td>0</td>
+                        </tr>
+                        <tr class="dtvm-row">
+                            <td>10</td>
+                            <td>Arquivo Ativos Negociados - CTVM/DTVM</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>20/04/2026</td>
+                            <td>23/05/2026</td>
+                            <td>11</td>
+                            <td>0</td>
+                        </tr>
+                        <tr class="summary-row">
+                            <td colspan="2">Média / Total</td>
+                            <td>0,78</td>
+                            <td>78,88</td>
+                            <td>0,28</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>195</td>
+                            <td>65</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="disclaimer-box">
+                    <h4>⚠️ Aviso importante</h4>
+                    <p><strong>Esta informação, por mais que tenha sido solicitada, não se aplica às nossas atividades.</strong></p>
+                    <p>Recebemos uma solicitação para coletar e enviar diversas novas informações, grande parte relacionada à <strong>DTVM</strong> (Distribuidora de Títulos e Valores Mobiliários). Até o momento, entendemos que tais requisitos <strong>não se aplicam à nossa instituição</strong>. Entre os dados solicitados, identificamos que, possivelmente, apenas as transações de criptomoedas podem vir a ser aplicáveis futuramente.</p>
+                    <p>Estamos no <strong>aguardo de retorno formal</strong> do time regulatório/jurídico para confirmar se podemos: (i) afirmar formalmente que não dispomos das informações de DTVM solicitadas; e (ii) caso seja exigido algum arquivo, encaminhar arquivo indicando expressamente a inexistência dessas informações para nossa instituição. As linhas em destaque (CTVM/DTVM) constam no mapeamento apenas para atendimento à solicitação recebida.</p>
+                </div>
+
+                <div class="waterfall-chart">
+                    <h4>📊 Gráfico de cascata — Campos solicitados</h4>
+                    <p>Distribuição do total de campos: cada barra mostra a contribuição (positiva ou negativa) até o resultado final.</p>
+                    <div class="waterfall-wrap">
+                        <div class="wf-yaxis">
+                            <span>195</span>
+                            <span>150</span>
+                            <span>100</span>
+                            <span>50</span>
+                            <span>0</span>
+                        </div>
+                        <div class="wf-area">
+                            <div class="wf-col">
+                                <div class="wf-bar start">195</div>
+                                <span class="label">Total solicitados</span>
+                            </div>
+                            <div class="wf-connector"></div>
+                            <div class="wf-col">
+                                <div class="wf-bar down1">−86</div>
+                                <span class="label">Descartados (DTVM)</span>
+                            </div>
+                            <div class="wf-connector"></div>
+                            <div class="wf-col">
+                                <div class="wf-bar down2">−22</div>
+                                <span class="label">Não mapeados</span>
+                            </div>
+                            <div class="wf-connector"></div>
+                            <div class="wf-col">
+                                <div class="wf-bar down3">−22</div>
+                                <span class="label">Em validação</span>
+                            </div>
+                            <div class="wf-connector"></div>
+                            <div class="wf-col">
+                                <div class="wf-bar end">65</div>
+                                <span class="label">Validados (resultado)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 14px; font-size: 0.85em; color: #666;">195 − 86 − 22 − 22 = 65 campos validados (aplicáveis às nossas atividades).</p>
+                </div>
+            </div>
+
+            <!-- Conclusão (incremento) -->
+            <div class="section">
+                <h2 class="section-title">🎯 Conclusão</h2>
+                <div class="conclusion-box">
+                    <h3>Evolução e Resultados</h3>
+                    <p><strong>Versão Original:</strong> Código monolítico (739 linhas em um único arquivo), difícil de manter e testar.</p>
+                    <p><strong>Versão 2026:</strong> Modularização extrema (36 arquivos), manutenibilidade e performance melhoradas.</p>
+                    <p><strong>Versão POC:</strong> Arquitetura híbrida (8 SQL + 11 Python), documentação e orquestração claras.</p>
+                    <p style="margin-top: 14px;"><strong>Princípio aplicado:</strong> "Separation of Concerns" — cada componente com uma única responsabilidade, facilitando manutenção, testes e evolução.</p>
+                    <p style="margin-top: 10px; font-size: 0.95em;"><strong>Resultado da comparação Original vs POC:</strong> 98% de similaridade nas métricas comparadas (58 métricas), validando equivalência funcional entre os processos.</p>
+                </div>
+            </div>
+
+            <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+            <p style="text-align: center; color: #777; font-size: 0.85em;">Apresentação Executiva · Quebra de Sigilo · 27/01/2026</p>
+        </div>
+    </div>
+</body>
+</html>

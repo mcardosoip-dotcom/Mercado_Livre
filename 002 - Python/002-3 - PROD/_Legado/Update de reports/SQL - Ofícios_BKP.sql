@@ -1,0 +1,370 @@
+CREATE
+OR REPLACE TABLE `<ENV>.STG.TBL_FINAL_CONSOLIDADA_OFICIOS_EMBARGOS` AS 
+WITH base_parcial_ativos AS (
+  SELECT
+    *,
+    'N' AS LEGALES_REITERATORIO
+  FROM
+    `<ENV>.TBL.LK_PBD_LA_ELAW_CONTENCIOSO_BRASIL_INCOMING`
+),
+elaw_reativados AS (
+  SELECT
+    *,
+    CASE
+      WHEN Pais = "Brasil"
+      AND STATUS = "Reativado" THEN 'S'
+      ELSE 'N'
+    END AS LEGALES_REITERATORIO
+  FROM
+    `<ENV>.TBL.LK_PBD_LA_ELAW_CONTENCIOSO_BRASIL_ONGOING`
+  WHERE
+    STATUS = "Reativado"
+),
+union_all_completo AS (
+  SELECT
+    *
+  FROM
+    base_parcial_ativos
+  UNION
+  DISTINCT
+  SELECT
+    *
+  FROM
+    elaw_reativados
+),
+elaw_final_consolidada AS (
+  SELECT
+    DISTINCT a.PROCESSO_ID,
+    a.STATUS,
+    a.AREA_DO_DIREITO,
+    a.SUB_AREA_DO_DIREITO,
+    a.PAGE_REPORT_ESCRITORIORESPONSAVEL,
+    a.PROCESSO_ESTADO,
+    a.OBJETO,
+    CAST(a.DATA_DE_CITACAO AS STRING) AS DATA_DE_CITACAO,
+    CAST(a.DATA_REGISTRADO AS STRING) AS DATA_REGISTRADO,
+    CAST(a.DATA_DE_ENCERRAMENTO AS STRING) AS DATA_DE_ENCERRAMENTO,
+    a.VALOR_DO_RISCO,
+    a.USUARIO,
+    a.PROCESSO_MATERIA,
+    a.ESCRITORIO_EXTERNO,
+    a.PROCESSO_PRAZO,
+    CAST(a.LEGALES_REITERATORIO AS STRING) AS LEGALES_REITERATORIO,
+    "Finch" AS PROVEDOR,
+    "Brasil" AS Pais,
+    CAST(
+      CASE
+        WHEN a.PROCESSO_APRESENTADA_RESPOSTA_NEGATIVA = "Sim" THEN "Sem informação"
+        WHEN a.PROCESSO_APRESENTADA_RESPOSTA_NEGATIVA = "Não" THEN "Com informação"
+        ELSE NULL
+      END AS STRING
+    ) AS Tipo_Resposta,
+    b.OBJETO_NOVO,
+    b.UNIDADE,
+    b.EMPRESA_CODE
+  FROM
+    union_all_completo a
+    LEFT JOIN `<ENV>.TBL.LK_PBD_LA_DIM_OBJETOS_2` b ON UPPER(a.OBJETO) = UPPER(b.OBJETO)
+  WHERE
+    a.AREA_DO_DIREITO = "Requerimentos"
+    AND a.SUB_AREA_DO_DIREITO = "Ofícios"
+    AND SAFE.PARSE_DATE('%d/%m/%Y', a.DATA_REGISTRADO) > DATE '2023-01-01'
+),
+elaw_final_consolidada_ordenado AS (
+  SELECT
+    processo_id,
+    STATUS,
+    AREA_DO_DIREITO,
+    SUB_AREA_DO_DIREITO,
+    PAGE_REPORT_ESCRITORIORESPONSAVEL,
+    PROCESSO_ESTADO,
+    OBJETO,
+    DATA_DE_CITACAO,
+    DATA_REGISTRADO,
+    DATA_DE_ENCERRAMENTO,
+    VALOR_DO_RISCO,
+    USUARIO,
+    PROCESSO_MATERIA,
+    ESCRITORIO_EXTERNO,
+    PROCESSO_PRAZO,
+    PROVEDOR,
+    Pais,
+    Tipo_Resposta,
+    OBJETO_NOVO,
+    UNIDADE,
+    EMPRESA_CODE,
+    LEGALES_REITERATORIO
+  FROM
+    elaw_final_consolidada
+),
+Oficios_Salesforce_incoming AS (
+  SELECT
+    ISSUE_NUMBER,
+    Pais,
+    RESPUESTA_NEGATIVA,
+    CAST(
+      CASE
+        WHEN TRIM(LEGALES_REITERATORIO) = '1' THEN 'S'
+        WHEN TRIM(LEGALES_REITERATORIO) = '0' THEN 'N'
+        ELSE 'N'
+      END AS STRING
+    ) AS LEGALES_REITERATORIO,
+    SAFE.PARSE_DATE('%d/%m/%Y', ISSUE_FECHA_DE_CREACION) AS Data_Registrado,
+    CAST(
+      CASE
+        WHEN RESPUESTA_NEGATIVA = 'Não' THEN 'Com informação'
+        WHEN RESPUESTA_NEGATIVA = 'Sim' THEN 'Sem informação'
+        ELSE 'Não'
+      END AS STRING
+    ) AS Tipo_Resposta
+  FROM
+    `<ENV>.TBL.LK_PBD_LA_SALESFORCE_INCOMING_OFICIOS`
+),
+Oficios_Salesforce_outgoing AS (
+  SELECT
+    ISSUE_NUMBER,
+    ISSUE_ULTIMA_MODIFICACION_POR,
+    SAFE.PARSE_DATE('%d/%m/%Y', LEGALES_FECHA_APROBACION) AS Data_de_encerramento
+  FROM
+    `<ENV>.TBL.LK_PBD_LA_SALESFORCE_OUTCOMING_OFICIOS`
+),
+Oficios_Salesforce_pendentes AS (
+  SELECT
+    ISSUE_NUMBER
+  FROM
+    `<ENV>.TBL.LK_PBD_LA_SALESFORCE_PENDING_INFORMATIVOS`
+),
+Oficios_Salesforce_Final_temp AS (
+  SELECT
+    inc.ISSUE_NUMBER,
+    FORMAT_DATE('%d/%m/%Y', inc.Data_Registrado) AS DATA_REGISTRADO,
+    FORMAT_DATE('%d/%m/%Y', out.Data_de_encerramento) AS DATA_DE_ENCERRAMENTO,
+    out.ISSUE_ULTIMA_MODIFICACION_POR AS Usuario,
+    "SEGEN" AS PROVEDOR,
+    dim.PAIS AS pais_normalizado,
+    "Informativo HSP" AS Processo_materia,
+    inc.Tipo_Resposta,
+    inc.LEGALES_REITERATORIO
+  FROM
+    Oficios_Salesforce_incoming inc
+    LEFT JOIN Oficios_Salesforce_outgoing out ON inc.ISSUE_NUMBER = out.ISSUE_NUMBER
+    LEFT JOIN `<ENV>.TBL.LK_PBD_LA_DIM_SIGLA_PAIS` dim ON inc.Pais = dim.Sigla
+),
+Oficios_Salesforce_Final AS (
+  SELECT
+    f.*,
+    CASE
+      WHEN p.ISSUE_NUMBER IS NOT NULL THEN "Ativo"
+      ELSE "Encerrado"
+    END AS Status
+  FROM
+    Oficios_Salesforce_Final_temp f
+    LEFT JOIN Oficios_Salesforce_pendentes p ON f.ISSUE_NUMBER = p.ISSUE_NUMBER
+),
+Embargos_Salesforce_incoming AS (
+  SELECT
+    ISSUE_NUMBER,
+    Pais,
+    RESPUESTA_NEGATIVA,
+    SAFE.PARSE_DATE('%d/%m/%Y', ISSUE_FECHA_DE_CREACION) AS Data_Registrado,
+    CAST(
+      CASE
+        WHEN RESPUESTA_NEGATIVA = 'Não' THEN 'Com informação'
+        WHEN RESPUESTA_NEGATIVA = 'Sim' THEN 'Sem informação'
+        ELSE 'Não'
+      END AS STRING
+    ) AS Tipo_Resposta,
+    LEGALES_REITERATORIO
+  FROM
+    `<ENV>.TBL.LK_PBD_LA_SALESFORCE_INCOMING_EMBARGOS`
+),
+Embargos_Salesforce_outgoing AS (
+  SELECT
+    ISSUE_NUMBER,
+    ISSUE_ULTIMA_MODIFICACION_POR,
+    SAFE.PARSE_DATE('%d/%m/%Y', LEGALES_FECHA_APROBACION) AS Data_de_encerramento
+  FROM
+    `<ENV>.TBL.LK_PBD_LA_SALESFORCE_OUTGOING_EMBARGOS`
+),
+Embargos_Salesforce_pendentes AS (
+  SELECT
+    ISSUE_NUMBER
+  FROM
+    `<ENV>.TBL.LK_PBD_LA_SALESFORCE_PENDING_EMBARGOS_BCRA_E_NAO_BCRA`
+),
+Embargos_Salesforce_Final_temp AS (
+  SELECT
+    inc.ISSUE_NUMBER,
+    FORMAT_DATE('%d/%m/%Y', inc.Data_Registrado) AS DATA_REGISTRADO,
+    FORMAT_DATE('%d/%m/%Y', out.Data_de_encerramento) AS DATA_DE_ENCERRAMENTO,
+    out.ISSUE_ULTIMA_MODIFICACION_POR AS Usuario,
+    "Enlighten" AS PROVEDOR,
+    dim.PAIS AS pais_normalizado,
+    "Embargos" AS Processo_materia,
+    inc.Tipo_Resposta,
+    CAST(
+      CASE
+        WHEN TRIM(inc.LEGALES_REITERATORIO) = '1' THEN 'S'
+        WHEN TRIM(inc.LEGALES_REITERATORIO) = '0' THEN 'N'
+        ELSE 'N'
+      END AS STRING
+    ) AS LEGALES_REITERATORIO
+  FROM
+    Embargos_Salesforce_incoming inc
+    LEFT JOIN Embargos_Salesforce_outgoing out ON inc.ISSUE_NUMBER = out.ISSUE_NUMBER
+    LEFT JOIN `<ENV>.TBL.LK_PBD_LA_DIM_SIGLA_PAIS` dim ON inc.Pais = dim.Sigla
+),
+Embargos_Salesforce_Final AS (
+  SELECT
+    f.*,
+    CASE
+      WHEN p.ISSUE_NUMBER IS NOT NULL THEN "Ativo"
+      ELSE "Encerrado"
+    END AS Status
+  FROM
+    Embargos_Salesforce_Final_temp f
+    LEFT JOIN Embargos_Salesforce_pendentes p ON f.ISSUE_NUMBER = p.ISSUE_NUMBER
+),
+Consolidado_Salesforce AS (
+  SELECT
+    ISSUE_NUMBER AS processo_id,
+    CAST(Status AS STRING) AS STATUS,
+    CAST(NULL AS STRING) AS AREA_DO_DIREITO,
+    CAST(NULL AS STRING) AS SUB_AREA_DO_DIREITO,
+    CAST(NULL AS STRING) AS PAGE_REPORT_ESCRITORIORESPONSAVEL,
+    CAST(NULL AS STRING) AS PROCESSO_ESTADO,
+    CAST(NULL AS STRING) AS OBJETO,
+    CAST(NULL AS STRING) AS DATA_DE_CITACAO,
+    DATA_REGISTRADO,
+    DATA_DE_ENCERRAMENTO,
+    CAST(NULL AS STRING) AS VALOR_DO_RISCO,
+    Usuario AS USUARIO,
+    Processo_materia AS PROCESSO_MATERIA,
+    CAST(NULL AS STRING) AS ESCRITORIO_EXTERNO,
+    CAST(NULL AS STRING) AS PROCESSO_PRAZO,
+    PROVEDOR,
+    pais_normalizado AS Pais,
+    Tipo_Resposta,
+    CAST(NULL AS STRING) AS OBJETO_NOVO,
+    CAST(NULL AS STRING) AS UNIDADE,
+    CAST(NULL AS STRING) AS EMPRESA_CODE,
+    LEGALES_REITERATORIO
+  FROM
+    Oficios_Salesforce_Final
+  UNION
+  ALL
+  SELECT
+    ISSUE_NUMBER AS processo_id,
+    CAST(Status AS STRING) AS STATUS,
+    CAST(NULL AS STRING) AS AREA_DO_DIREITO,
+    CAST(NULL AS STRING) AS SUB_AREA_DO_DIREITO,
+    CAST(NULL AS STRING) AS PAGE_REPORT_ESCRITORIORESPONSAVEL,
+    CAST(NULL AS STRING) AS PROCESSO_ESTADO,
+    CAST(NULL AS STRING) AS OBJETO,
+    CAST(NULL AS STRING) AS DATA_DE_CITACAO,
+    DATA_REGISTRADO,
+    DATA_DE_ENCERRAMENTO,
+    CAST(NULL AS STRING) AS VALOR_DO_RISCO,
+    Usuario AS USUARIO,
+    Processo_materia AS PROCESSO_MATERIA,
+    CAST(NULL AS STRING) AS ESCRITORIO_EXTERNO,
+    CAST(NULL AS STRING) AS PROCESSO_PRAZO,
+    PROVEDOR,
+    pais_normalizado AS Pais,
+    Tipo_Resposta,
+    CAST(NULL AS STRING) AS OBJETO_NOVO,
+    CAST(NULL AS STRING) AS UNIDADE,
+    CAST(NULL AS STRING) AS EMPRESA_CODE,
+    LEGALES_REITERATORIO
+  FROM
+    Embargos_Salesforce_Final
+),
+consolidacao AS (
+  SELECT
+    *
+  FROM
+    Consolidado_Salesforce
+  UNION
+  ALL
+  SELECT
+    *
+  FROM
+    elaw_final_consolidada_ordenado
+),
+ajuste_fino_1 AS (
+  SELECT
+    *,
+    CASE
+      WHEN SAFE.PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) IS NOT NULL
+      AND SAFE.PARSE_DATE('%d/%m/%Y', DATA_DE_ENCERRAMENTO) IS NOT NULL THEN DATE_DIFF(
+        SAFE.PARSE_DATE('%d/%m/%Y', DATA_DE_ENCERRAMENTO),
+        SAFE.PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO),
+        DAY
+      )
+      ELSE NULL
+    END AS TEMPO_MEDIO_RESPOSTA
+  FROM
+    consolidacao
+),
+preview AS (
+  SELECT
+    DISTINCT processo_id,
+    STATUS,
+    AREA_DO_DIREITO,
+    SUB_AREA_DO_DIREITO,
+    PAGE_REPORT_ESCRITORIORESPONSAVEL,
+    PROCESSO_ESTADO,
+    OBJETO,
+    SAFE.PARSE_DATE('%d/%m/%Y', DATA_DE_CITACAO) AS DATA_DE_CITACAO,
+    SAFE.PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) AS DATA_REGISTRADO,
+    SAFE.PARSE_DATE('%d/%m/%Y', DATA_DE_ENCERRAMENTO) AS DATA_DE_ENCERRAMENTO,
+    VALOR_DO_RISCO,
+    USUARIO,
+    PROCESSO_MATERIA,
+    ESCRITORIO_EXTERNO,
+    PROCESSO_PRAZO,
+    CASE
+      WHEN PROVEDOR IN ('SEGEN', 'Enlighten') THEN PROVEDOR
+      ELSE 'Finch'
+    END AS PROVEDOR,
+    Pais,
+    CASE
+      WHEN Tipo_Resposta IN ('Com informação', 'Sem informação') THEN Tipo_Resposta
+      ELSE 'Sem informação'
+    END AS Tipo_Resposta,
+    OBJETO_NOVO,
+    UNIDADE,
+    EMPRESA_CODE,
+    LEGALES_REITERATORIO,
+    TEMPO_MEDIO_RESPOSTA
+  FROM
+    ajuste_fino_1
+)
+SELECT
+  DISTINCT *
+FROM
+  preview
+
+
+
+/* CODIGO APLICADO DENTRO DO TABLEAU
+
+WITH
+
+MaxConfirmacaoPorProcesso AS (
+  SELECT 
+    PROCESSO_ID,
+    MAX(PARSE_DATE('%d/%m/%Y', DATA_DE_CONFIRMACAO)) AS DATA_DE_CONFIRMACAO_MAX_TAREFA
+  FROM `pdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_VW_TAREFAS_AGENDAMENTOS_CLEAN`
+  WHERE DATA_DE_CONFIRMACAO IS NOT NULL
+  GROUP BY PROCESSO_ID
+)
+
+SELECT 
+ Final.*,
+ m.DATA_DE_CONFIRMACAO_MAX_TAREFA
+FROM `pdme000426-c1s7scatwm0-furyid.STG.TBL_FINAL_CONSOLIDADA_OFICIOS_EMBARGOS` Final
+LEFT JOIN MaxConfirmacaoPorProcesso m
+  ON m.PROCESSO_ID = Final.processo_id
+
+*/

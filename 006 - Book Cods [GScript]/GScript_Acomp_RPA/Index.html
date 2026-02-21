@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Proxima Nova', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #EEEEEE;
+      min-height: 100vh;
+      padding: 20px 15px;
+    }
+
+    .info-card {
+      background: linear-gradient(135deg, #3483FA 0%, #2968C8 100%);
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(52, 131, 250, 0.2);
+      padding: 20px 24px;
+      max-width: 680px;
+      margin: 0 auto 16px auto;
+      color: white;
+      animation: slideUp 0.4s ease-out;
+    }
+
+    .info-card h1 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card p {
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .info-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .info-card li {
+      font-size: 12px;
+      line-height: 1.6;
+      padding: 6px 0;
+      padding-left: 20px;
+      position: relative;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .info-card li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #FFE600;
+      font-weight: bold;
+    }
+
+    .info-card strong {
+      color: #FFE600;
+      font-weight: 600;
+    }
+
+    .card {
+      background: #FFFFFF;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+      padding: 24px;
+      max-width: 680px;
+      margin: auto;
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    /* Sistema de popup/notificação customizado */
+    .notification-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 20px;
+    }
+
+    .notification-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .notification-popup {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 450px;
+      width: 100%;
+      transform: scale(0.7) translateY(-20px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .notification-overlay.show .notification-popup {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    .notification-header {
+      padding: 24px 24px 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #F0F0F0;
+    }
+
+    .notification-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      animation: pulse 0.6s ease-out;
+    }
+
+    .notification-icon.success {
+      background: linear-gradient(135deg, #00A650 0%, #008C44 100%);
+    }
+
+    .notification-icon.error {
+      background: linear-gradient(135deg, #FF6B6B 0%, #EE5A52 100%);
+    }
+
+    .notification-icon.warning {
+      background: linear-gradient(135deg, #FFE600 0%, #F7D900 100%);
+    }
+
+    .notification-title {
+      flex: 1;
+    }
+
+    .notification-title h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .notification-title p {
+      font-size: 13px;
+      color: #666;
+      margin: 0;
+    }
+
+    .notification-body {
+      padding: 20px 24px;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .notification-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #F0F0F0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .notification-btn {
+      padding: 10px 24px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .notification-btn.primary {
+      background: #3483FA;
+      color: white;
+    }
+
+    .notification-btn.primary:hover {
+      background: #2968C8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(52, 131, 250, 0.3);
+    }
+
+    .notification-btn.secondary {
+      background: #F5F5F5;
+      color: #666;
+    }
+
+    .notification-btn.secondary:hover {
+      background: #E6E6E6;
+    }
+
+    .notification-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #F5F5F5;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #666;
+      transition: all 0.2s ease;
+    }
+
+    .notification-close:hover {
+      background: #E6E6E6;
+      transform: rotate(90deg);
+    }
+
+    h2 {
+      color: #333333;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      animation: fadeIn 0.6s ease-out 0.2s both;
+    }
+
+    p {
+      color: #666666;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      font-size: 13px;
+      animation: fadeIn 0.6s ease-out 0.3s both;
+    }
+
+    label {
+      display: block;
+      color: #333333;
+      font-weight: 400;
+      margin-bottom: 6px;
+      font-size: 13px;
+      transition: color 0.2s ease;
+    }
+
+    label.required::after {
+      content: ' *';
+      color: #FF6B6B;
+      font-weight: 600;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #E6E6E6;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: #FFFFFF;
+      color: #333333;
+      font-family: inherit;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #3483FA;
+      box-shadow: 0 0 0 2px rgba(52, 131, 250, 0.1);
+      transform: translateY(-1px);
+    }
+
+    select:hover, input:hover, textarea:hover {
+      border-color: #3483FA;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    select:invalid, input:invalid, textarea:invalid {
+      border-color: #FF6B6B;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    button {
+      background: #3483FA;
+      color: white;
+      border: none;
+      padding: 11px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    button:active::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    button:hover {
+      background: #2968C8;
+      box-shadow: 0 4px 12px rgba(52, 131, 250, 0.3);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: scale(0.98) translateY(0);
+    }
+
+    button.secondary {
+      background: #FFFFFF;
+      color: #3483FA;
+      border: 1px solid #3483FA;
+    }
+
+    button.secondary:hover {
+      background: #F5F5F5;
+      box-shadow: 0 4px 12px rgba(52, 131, 250, 0.2);
+    }
+
+    button.template {
+      background: #FFE600;
+      color: #333333;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    button.template:hover {
+      background: #F7D900;
+      box-shadow: 0 4px 12px rgba(255, 230, 0, 0.4);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    #descricaoContainer {
+      background: #F5F5F5;
+      padding: 16px;
+      border-radius: 6px;
+      margin: 16px 0;
+      border-left: 3px solid #3483FA;
+      animation: slideUp 0.4s ease-out;
+    }
+
+    #descricaoTexto {
+      color: #333333;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      animation: fadeIn 0.5s ease-out both;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      animation: fadeIn 0.5s ease-out both;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.15s; }
+    .form-group:nth-child(3) { animation-delay: 0.2s; }
+    .form-group:nth-child(4) { animation-delay: 0.25s; }
+    .form-group:nth-child(5) { animation-delay: 0.3s; }
+    .form-group:nth-child(6) { animation-delay: 0.35s; }
+    .form-group:nth-child(7) { animation-delay: 0.4s; }
+    .form-group:nth-child(8) { animation-delay: 0.45s; }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input-wrapper input[type=file] {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .file-input-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px dashed #CCCCCC;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: #FAFAFA;
+      color: #666666;
+      font-weight: 400;
+      font-size: 13px;
+    }
+
+    .file-input-label:hover {
+      border-color: #3483FA;
+      background: #F5F5F5;
+      color: #3483FA;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(52, 131, 250, 0.15);
+    }
+
+    .file-input-label:hover span:first-child {
+      animation: pulse 0.6s ease-in-out infinite;
+    }
+
+    .file-name {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #666666;
+      font-style: italic;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      animation: fadeIn 0.6s ease-out 0.5s both;
+    }
+
+    .button-group button {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      margin-left: 6px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 15px 10px;
+      }
+
+      .info-card {
+        padding: 16px 20px;
+      }
+
+      .info-card h1 {
+        font-size: 16px;
+      }
+
+      .info-card p, .info-card li {
+        font-size: 12px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .form-row .form-group {
+        margin-bottom: 16px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .button-group button {
+        width: 100%;
+      }
+
+      .notification-popup {
+        margin: 0 10px;
+      }
+
+      .notification-header {
+        padding: 20px 20px 12px 20px;
+      }
+
+      .notification-body {
+        padding: 16px 20px;
+      }
+
+      .notification-footer {
+        padding: 12px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="info-card">
+    <h1>🤖 Formulário de Solicitação - Robô ATS</h1>
+    <p>Este formulário deve ser utilizado para solicitar o apoio do Robô da ATS na captura massiva de telas, tanto para a esteira de Ofícios quanto para a de Subsídios.</p>
+    <ul>
+      <li><strong>Solicitação de Ofícios:</strong> somente serão aceitas demandas com mais de 80 Cust ID</li>
+      <li><strong>Solicitação de Subsídios:</strong> somente serão aceitas demandas a partir de 100 telas</li>
+    </ul>
+  </div>
+
+  <div class="card" id="formPrincipal">
+    <h2>🤖 Nova Solicitação RPA</h2>
+    <p>Preencha os campos abaixo para registrar sua solicitação.</p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="required">📁 Filtrar por Grupo</label>
+        <select id="grupo" onchange="carregarTipos()" required>
+          <option value="">Selecione um grupo...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="required">⚙️ Tipo de RPA</label>
+        <select id="tipoRPA" onchange="mostrarDescricao()" required>
+          <option value="">Selecione um tipo...</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="descricaoContainer" style="display:none;">
+      <p id="descricaoTexto"></p>
+      <button id="btnTemplate" class="template" style="display:none;" onclick="abrirTemplate()">
+        📎 Baixar Template
+      </button>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="required">👤 Solicitante (Nome)</label>
+        <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+      </div>
+
+      <div class="form-group">
+        <label class="required">📧 Email do Solicitante</label>
+        <input type="email" id="email" placeholder="exemplo@empresa.com" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="required">📅 Prazo</label>
+      <input type="date" id="prazo" required>
+    </div>
+
+    <div class="form-group">
+      <label>📎 Anexar Arquivo</label>
+      <div class="file-input-wrapper">
+        <input type="file" id="arquivo" accept=".xls,.xlsx,.csv,.pdf" onchange="updateFileName(this, 'fileName')">
+        <label for="arquivo" class="file-input-label">
+          <span>📁</span>
+          <span>Clique para selecionar um arquivo</span>
+        </label>
+      </div>
+      <div id="fileName" class="file-name"></div>
+    </div>
+
+    <div class="form-group">
+      <label>🔗 Anexar Link de Arquivo</label>
+      <input type="url" id="linkArquivo" placeholder="https://...">
+    </div>
+
+    <div class="form-group">
+      <label class="required">📝 Notas Adicionais</label>
+      <textarea id="notas" rows="4" placeholder="Adicione informações complementares..." required></textarea>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" onclick="enviarPrincipal(event)">
+        <span>✅ Enviar Solicitação</span>
+      </button>
+      <button type="button" class="secondary" onclick="mostrarFormOutros()">
+        <span>🔍 Não encontrei meu RPA</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="formOutros">
+    <h2>🆕 Nova Solicitação de RPA</h2>
+    <p>Preencha os detalhes do processo que deve ser automatizado.</p>
+
+    <div style="margin-bottom: 16px;">
+      <button class="template" onclick="abrirTemplateNovoRPA()">
+        📎 Baixar Template de Novo RPA
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label class="required">👤 Nome</label>
+      <input type="text" id="nomeOutros" placeholder="Digite seu nome completo" required>
+    </div>
+
+    <div class="form-group">
+      <label class="required">📧 Email</label>
+      <input type="email" id="emailOutros" placeholder="exemplo@empresa.com" required>
+    </div>
+
+    <div class="form-group">
+      <label class="required">📅 Prazo</label>
+      <input type="date" id="prazoOutros" required>
+    </div>
+
+    <div class="form-group">
+      <label class="required">📝 Notas</label>
+      <input type="text" id="notasOutros" placeholder="Informações adicionais" required>
+    </div>
+
+    <div class="form-group">
+      <label class="required">📋 Descrição do Processo</label>
+      <textarea id="descricaoOutros" rows="5" placeholder="Descreva detalhadamente o processo que precisa ser automatizado..." required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>📎 Anexar Arquivo</label>
+      <div class="file-input-wrapper">
+        <input type="file" id="arquivoOutros" accept=".pdf,.xlsx,.xls,.csv,.txt,.docx" onchange="updateFileName(this, 'fileNameOutros')">
+        <label for="arquivoOutros" class="file-input-label">
+          <span>📁</span>
+          <span>Clique para selecionar um arquivo</span>
+        </label>
+      </div>
+      <div id="fileNameOutros" class="file-name"></div>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" onclick="enviarOutros(event)">
+        <span>✅ Enviar Solicitação</span>
+      </button>
+      <button type="button" class="secondary" onclick="mostrarFormPrincipal()">
+        <span>← Voltar</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Sistema de popup/notificação customizado -->
+  <div class="notification-overlay" id="notificationOverlay">
+    <div class="notification-popup">
+      <button class="notification-close" onclick="fecharNotificacao()">×</button>
+      <div class="notification-header">
+        <div class="notification-icon" id="notificationIcon">
+          ✓
+        </div>
+        <div class="notification-title">
+          <h3 id="notificationTitle">Título</h3>
+          <p id="notificationSubtitle">Subtítulo</p>
+        </div>
+      </div>
+      <div class="notification-body" id="notificationBody">
+        Mensagem
+      </div>
+      <div class="notification-footer">
+        <button class="notification-btn primary" onclick="fecharNotificacao()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let tiposMap = {};
+    let linkTemplate = "";
+
+    function mostrarNotificacao(tipo, titulo, subtitulo, mensagem) {
+      const overlay = document.getElementById('notificationOverlay');
+      const icon = document.getElementById('notificationIcon');
+      const titleEl = document.getElementById('notificationTitle');
+      const subtitleEl = document.getElementById('notificationSubtitle');
+      const bodyEl = document.getElementById('notificationBody');
+
+      // Configurar ícone e classe baseado no tipo
+      icon.className = 'notification-icon ' + tipo;
+      if (tipo === 'success') {
+        icon.textContent = '✓';
+      } else if (tipo === 'error') {
+        icon.textContent = '✕';
+      } else if (tipo === 'warning') {
+        icon.textContent = '⚠';
+      }
+
+      titleEl.textContent = titulo;
+      subtitleEl.textContent = subtitulo;
+      bodyEl.innerHTML = mensagem;
+
+      overlay.classList.add('show');
+    }
+
+    function fecharNotificacao() {
+      const overlay = document.getElementById('notificationOverlay');
+      overlay.classList.remove('show');
+    }
+
+    // Fechar ao clicar fora do popup
+    document.getElementById('notificationOverlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        fecharNotificacao();
+      }
+    });
+
+    function updateFileName(input, targetId) {
+      const target = document.getElementById(targetId);
+      if (input.files.length > 0) {
+        target.textContent = `📄 ${input.files[0].name}`;
+        target.style.color = '#3483FA';
+      } else {
+        target.textContent = '';
+      }
+    }
+
+    google.script.run.withSuccessHandler(function(data){
+      tiposMap = data.tipos;
+      const grupoSelect = document.getElementById("grupo");
+      grupoSelect.innerHTML = '<option value="">Selecione um grupo...</option>' + 
+        data.grupos.map(g => `<option value="${g}">${g}</option>`).join("");
+    }).getMappings();
+
+    function carregarTipos(){
+      const grupo = document.getElementById("grupo").value;
+      const tipos = tiposMap[grupo] || [];
+      const tipoSelect = document.getElementById("tipoRPA");
+      tipoSelect.innerHTML = '<option value="">Selecione um tipo...</option>' + 
+        tipos.map(t => `<option value="${t}">${t}</option>`).join("");
+      document.getElementById("descricaoContainer").style.display = "none";
+    }
+
+    function mostrarDescricao(){
+      const tipo = document.getElementById("tipoRPA").value;
+      if(!tipo){
+        document.getElementById("descricaoContainer").style.display = "none";
+        return;
+      }
+      google.script.run.withSuccessHandler(function(res){
+        if(res){
+          document.getElementById("descricaoContainer").style.display = "block";
+          document.getElementById("descricaoTexto").textContent = res.descricao || "Sem descrição disponível.";
+          if(res.link){
+            linkTemplate = res.link;
+            document.getElementById("btnTemplate").style.display = "inline-block";
+          } else {
+            document.getElementById("btnTemplate").style.display = "none";
+          }
+        }
+      }).getDescricaoRPA(tipo);
+    }
+
+    function abrirTemplate(){
+      if(linkTemplate) window.open(linkTemplate, "_blank");
+      else {
+        mostrarNotificacao('warning', 'Template não disponível', 'Atenção', 'Nenhum template disponível para este tipo de RPA.');
+      }
+    }
+
+    function abrirTemplateNovoRPA(){
+      window.location.href = "https://docs.google.com/document/d/1eHhea1HCsYa1FwpwUZZzY3KOo_yjrRWj/export?format=docx";
+    }
+
+    function mostrarFormOutros(){
+      document.getElementById("formPrincipal").classList.add("hidden");
+      document.getElementById("formOutros").classList.remove("hidden");
+    }
+
+    function mostrarFormPrincipal(){
+      document.getElementById("formOutros").classList.add("hidden");
+      document.getElementById("formPrincipal").classList.remove("hidden");
+    }
+
+    function addLoadingToButton(button) {
+      button.disabled = true;
+      const originalText = button.innerHTML;
+      button.innerHTML = originalText + '<span class="spinner"></span>';
+      return originalText;
+    }
+
+    function removeLoadingFromButton(button, originalText) {
+      button.disabled = false;
+      button.innerHTML = originalText;
+    }
+
+    function validarCamposPrincipal() {
+      const grupo = document.getElementById("grupo").value;
+      const tipoRPA = document.getElementById("tipoRPA").value;
+      const nome = document.getElementById("nome").value;
+      const email = document.getElementById("email").value;
+      const prazo = document.getElementById("prazo").value;
+      const notas = document.getElementById("notas").value;
+
+      if (!grupo || !tipoRPA || !nome || !email || !prazo || !notas) {
+        mostrarNotificacao('warning', 'Campos obrigatórios', 'Atenção', 'Por favor, preencha todos os campos obrigatórios (marcados com <span style="color: #FF6B6B;">*</span>)');
+        return false;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        mostrarNotificacao('error', 'Email inválido', 'Erro de validação', 'Por favor, insira um endereço de email válido.');
+        return false;
+      }
+
+      return true;
+    }
+
+    function validarCamposOutros() {
+      const nome = document.getElementById("nomeOutros").value;
+      const email = document.getElementById("emailOutros").value;
+      const prazo = document.getElementById("prazoOutros").value;
+      const notas = document.getElementById("notasOutros").value;
+      const descricao = document.getElementById("descricaoOutros").value;
+
+      if (!nome || !email || !prazo || !notas || !descricao) {
+        mostrarNotificacao('warning', 'Campos obrigatórios', 'Atenção', 'Por favor, preencha todos os campos obrigatórios (marcados com <span style="color: #FF6B6B;">*</span>)');
+        return false;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        mostrarNotificacao('error', 'Email inválido', 'Erro de validação', 'Por favor, insira um endereço de email válido.');
+        return false;
+      }
+
+      return true;
+    }
+
+    function enviarPrincipal(event){
+      event.preventDefault();
+      
+      if (!validarCamposPrincipal()) {
+        return;
+      }
+
+      const button = event.target;
+      const originalText = addLoadingToButton(button);
+
+      const formData = {
+        grupo: document.getElementById("grupo").value,
+        tipoRPA: document.getElementById("tipoRPA").value,
+        nome: document.getElementById("nome").value,
+        email: document.getElementById("email").value,
+        prazo: document.getElementById("prazo").value,
+        notas: document.getElementById("notas").value,
+        linkArquivoExterno: document.getElementById("linkArquivo").value || '' // Captura o link externo
+      };
+
+      const fileInput = document.getElementById("arquivo");
+
+      if(fileInput.files.length > 0){
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e){
+          const base64 = e.target.result.split(',')[1];
+          google.script.run.withSuccessHandler(function(uploadRes){
+            formData.linkArquivo = uploadRes.url;
+            formData.nomeArquivo = uploadRes.nomeArquivo;
+            formData.idArquivo = uploadRes.idArquivo;
+            google.script.run.withSuccessHandler(function(){
+              removeLoadingFromButton(button, originalText);
+              mostrarNotificacao('success', 'Solicitação enviada!', 'Sucesso', 'Sua solicitação foi registrada com sucesso. Em breve você receberá um email de confirmação.');
+              setTimeout(limparFormPrincipal, 1500);
+            }).withFailureHandler(function(error){
+              removeLoadingFromButton(button, originalText);
+              mostrarNotificacao('error', 'Erro ao salvar', 'Erro', 'Ocorreu um erro ao salvar sua solicitação: ' + error);
+            }).salvarSolicitacao(formData);
+          }).withFailureHandler(function(error){
+            removeLoadingFromButton(button, originalText);
+            mostrarNotificacao('error', 'Erro no upload', 'Erro', 'Ocorreu um erro ao fazer upload do arquivo: ' + error);
+          }).uploadArquivo(base64, file.name, file.type);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        google.script.run.withSuccessHandler(function(){
+          removeLoadingFromButton(button, originalText);
+          mostrarNotificacao('success', 'Solicitação enviada!', 'Sucesso', 'Sua solicitação foi registrada com sucesso. Em breve você receberá um email de confirmação.');
+          setTimeout(limparFormPrincipal, 1500);
+        }).withFailureHandler(function(error){
+          removeLoadingFromButton(button, originalText);
+          mostrarNotificacao('error', 'Erro ao salvar', 'Erro', 'Ocorreu um erro ao salvar sua solicitação: ' + error);
+        }).salvarSolicitacao(formData);
+      }
+    }
+
+    function enviarOutros(event){
+      event.preventDefault();
+      
+      if (!validarCamposOutros()) {
+        return;
+      }
+
+      const button = event.target;
+      const originalText = addLoadingToButton(button);
+
+      const formData = {
+        nome: document.getElementById("nomeOutros").value,
+        email: document.getElementById("emailOutros").value,
+        prazo: document.getElementById("prazoOutros").value,
+        notas: document.getElementById("notasOutros").value,
+        descricao: document.getElementById("descricaoOutros").value
+      };
+
+      const fileInput = document.getElementById("arquivoOutros");
+
+      if(fileInput.files.length > 0){
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e){
+          const base64 = e.target.result.split(',')[1];
+          google.script.run.withSuccessHandler(function(uploadRes){
+            formData.linkArquivo = uploadRes.url;
+            formData.nomeArquivo = uploadRes.nomeArquivo;
+            formData.idArquivo = uploadRes.idArquivo;
+            google.script.run.withSuccessHandler(function(){
+              removeLoadingFromButton(button, originalText);
+              mostrarNotificacao('success', 'Solicitação enviada!', 'Sucesso', 'Sua solicitação de novo RPA foi registrada com sucesso. Em breve você receberá um email de confirmação.');
+              setTimeout(() => {
+                limparCamposOutros();
+                mostrarFormPrincipal();
+              }, 1500);
+            }).withFailureHandler(function(error){
+              removeLoadingFromButton(button, originalText);
+              mostrarNotificacao('error', 'Erro ao salvar', 'Erro', 'Ocorreu um erro ao salvar sua solicitação: ' + error);
+            }).salvarSolicitacaoOutros(formData);
+          }).withFailureHandler(function(error){
+            removeLoadingFromButton(button, originalText);
+            mostrarNotificacao('error', 'Erro no upload', 'Erro', 'Ocorreu um erro ao fazer upload do arquivo: ' + error);
+          }).uploadArquivoOutros(base64, file.name, file.type);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        google.script.run.withSuccessHandler(function(){
+          removeLoadingFromButton(button, originalText);
+          mostrarNotificacao('success', 'Solicitação enviada!', 'Sucesso', 'Sua solicitação de novo RPA foi registrada com sucesso. Em breve você receberá um email de confirmação.');
+          setTimeout(() => {
+            limparCamposOutros();
+            mostrarFormPrincipal();
+          }, 1500);
+        }).withFailureHandler(function(error){
+          removeLoadingFromButton(button, originalText);
+          mostrarNotificacao('error', 'Erro ao salvar', 'Erro', 'Ocorreu um erro ao salvar sua solicitação: ' + error);
+        }).salvarSolicitacaoOutros(formData);
+      }
+    }
+
+    function limparFormPrincipal(){
+      document.getElementById("grupo").value = "";
+      document.getElementById("tipoRPA").innerHTML = '<option value="">Selecione um tipo...</option>';
+      document.getElementById("nome").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("prazo").value = "";
+      document.getElementById("arquivo").value = "";
+      document.getElementById("fileName").textContent = "";
+      document.getElementById("linkArquivo").value = "";
+      document.getElementById("notas").value = "";
+      document.getElementById("descricaoContainer").style.display = "none";
+    }
+
+    function limparCamposOutros(){
+      ["nomeOutros", "emailOutros", "prazoOutros", "notasOutros", "descricaoOutros", "arquivoOutros"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+      document.getElementById("fileNameOutros").textContent = "";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,521 @@
+{
+  "name": "Push_Amélia_Input",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "url",
+            "value": "https://drive.google.com/drive/u/0/folders/1_YMwSIYMLf1Dos-Z1v2_MsIHHkm7P9_g"
+          }
+        },
+        "options": {}
+      },
+      "id": "240ca929-feae-4735-9d0f-8df25004ad2d",
+      "name": "Lista arquivos",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        64,
+        -320
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "8322325b-5d85-4895-a936-fe9932102471",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "Database_eLAW_Amelia.xlsx"
+            },
+            {
+              "id": "0f489c5f-d09f-43e3-bcda-89f6b715930c",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "20563bec-3454-486c-95b4-4dedaae7de70",
+      "name": "Filtro Amélia",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        512,
+        -320
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "triggerAtHour": 11
+            }
+          ]
+        }
+      },
+      "id": "fe052740-8aaa-4f91-bac0-c47924b5cc7f",
+      "name": "Start | Automático",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -384,
+        -320
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "3d0cef31-b0c1-4f76-b9bf-adf4ba84501e",
+      "name": "Download Amélia",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        736,
+        -320
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('PushNome').item.json.nomeArquivo }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "0ACBw3NYCjEQfUk9PVA",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/0ACBw3NYCjEQfUk9PVA",
+          "cachedResultName": "Legales_Analytics"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://drive.google.com/drive/u/0/folders/1V-zr5YTwyGz06NJ3Zav1aEenasK5iPu7"
+        },
+        "options": {}
+      },
+      "id": "43d9735f-abb8-4b0e-8734-bb344e2b9d79",
+      "name": "Upload em drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        960,
+        -320
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "url",
+            "value": "https://drive.google.com/drive/u/0/folders/1QX_D7bdBwpkNK-7Tc9Ao9Q7nMeSBTigK"
+          }
+        },
+        "options": {}
+      },
+      "id": "b2ae818e-a5f2-45c1-bcfc-7b82097b4387",
+      "name": "Lista arquivos | Summary",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -160,
+        -96
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "27715b1b-0c8c-47f4-bb40-c6814cc9fba9",
+              "name": "name",
+              "type": "string",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "id": "b40e2413-caee-4fcf-b70c-4e3d7a42017c",
+              "name": "id",
+              "type": "string",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ab4d8130-4ea1-4d5d-93d0-7b63ce94dc2b",
+      "name": "Edit. Lista",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        288,
+        -320
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "5d39290b-027c-4007-80e5-3ff5d2a4aee7",
+      "name": "Download Summary Amélia",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        288,
+        -96
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "27715b1b-0c8c-47f4-bb40-c6814cc9fba9",
+              "name": "name",
+              "type": "string",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "id": "b40e2413-caee-4fcf-b70c-4e3d7a42017c",
+              "name": "id",
+              "type": "string",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2ddcd5b2-c604-408e-ae70-1f7048452903",
+      "name": "Edita Summary Amélia",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        64,
+        -96
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "id": "78639028-bb1e-47b0-9c7f-f85386d74713",
+      "name": "Extract Summary Amélia",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        512,
+        -96
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4f39b071-90e8-493a-98be-f064b6b349d7",
+              "name": "Data",
+              "type": "string",
+              "value": "={{ $json.Data }}"
+            },
+            {
+              "id": "fb0e8ae2-6fb6-4545-8fa2-2b8d290f721a",
+              "name": "Quantidade de Casos",
+              "type": "number",
+              "value": "={{ $json['Quantidade de Casos'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "88501915-2638-4f2d-bbe3-6430c3a54d7e",
+      "name": "Edit. Summary Amélia",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        736,
+        -96
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "pythonCode": "from datetime import datetime\n\nhoje = datetime.now()\n\ndia = hoje.strftime('%d')\nmes = hoje.strftime('%m')\nano = hoje.strftime('%Y')\n\nnome_arquivo = f\"Database_eLAW_Amelia_{dia}_{mes}_{ano}.xlsx\"\n\nreturn [\n    {\n        \"json\": {\n            \"nomeArquivo\": nome_arquivo\n        }\n    }\n]\n"
+      },
+      "id": "36521b0b-4be4-499b-9cff-f7f746dc687a",
+      "name": "PushNome",
+      "type": "n8n-nodes-base.verdiCode",
+      "position": [
+        -176,
+        -320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "pythonCode": "from datetime import datetime, timedelta\n\n# Converte serial do Excel para DD/MM/YYYY (aceita número ou string \"46071\")\ndef excel_date_to_str(serial):\n    if serial is None:\n        return \"—\"\n    try:\n        n = float(serial)\n        base = datetime(1899, 12, 30)\n        return (base + timedelta(days=int(n))).strftime('%d/%m/%Y')\n    except (ValueError, TypeError):\n        return str(serial) if serial is not None else \"—\"\n\n# Dados do nó anterior\ninput_data = [item[\"json\"] for item in _input.all()]\n# Exclui linhas com quantidade zero\ninput_data = [row for row in input_data if (row.get(\"Quantidade de Casos\") or 0) > 0]\n\n# Calcula total de casos\ntotal_casos = sum((row.get(\"Quantidade de Casos\") or 0) for row in input_data)\n\n# Período considerado (data mín. e máx. dos dados)\nserials = []\nfor row in input_data:\n    d = row.get(\"Data\")\n    if d is not None:\n        try:\n            serials.append(float(d))\n        except (ValueError, TypeError):\n            pass\nif serials:\n    periodo_txt = \"{} a {}\".format(excel_date_to_str(min(serials)), excel_date_to_str(max(serials)))\nelse:\n    periodo_txt = \"—\"\n\n# Monta as linhas da tabela\nrows = []\nfor i, row in enumerate(input_data):\n    data_formatada = excel_date_to_str(row.get(\"Data\"))\n    quantidade = row.get(\"Quantidade de Casos\") or 0\n    bg_color = \"#ffffff\" if i % 2 == 0 else \"#f8f9fa\"\n    \n    rows.append(\n        '<tr style=\"background-color: {};\">'\n        '<td style=\"padding: 14px 16px; border-bottom: 1px solid #e0e0e0; color: #333333; font-size: 14px;\">{}</td>'\n        '<td style=\"padding: 14px 16px; border-bottom: 1px solid #e0e0e0; color: #333333; font-size: 14px; text-align: center; font-weight: 600;\">{}</td>'\n        '</tr>'.format(bg_color, data_formatada, quantidade)\n    )\n\ntable_rows = \"\".join(rows)\n\n# Assunto do e-mail\nhoje = datetime.now()\nemail_subject = \"Atualização - Projeto Amelia - {}\".format(\n    hoje.strftime('%d/%m/%Y')\n)\n\n# HTML final com design Mercado Livre\nhtml_content = \"\"\"\n<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>{subject}</title>\n</head>\n<body style=\"margin: 0; padding: 0; background-color: #f5f5f5; font-family: 'Proxima Nova', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\">\n    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color: #f5f5f5; padding: 20px 0;\">\n        <tr>\n            <td align=\"center\">\n                <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);\">\n                    \n                    <!-- Header Amarelo Mercado Livre -->\n                    <tr>\n                        <td style=\"background: linear-gradient(135deg, #FFE600 0%, #f5d800 100%); padding: 30px 40px;\">\n                            <h1 style=\"margin: 0; color: #333333; font-size: 24px; font-weight: 700;\">\n                                Projeto Amelia\n                            </h1>\n                            <p style=\"margin: 8px 0 0 0; color: #666666; font-size: 14px;\">\n                                Relatório de Dados Coletados\n                            </p>\n                        </td>\n                    </tr>\n                    \n                    <!-- Card Resumo Azul -->\n                    <tr>\n                        <td style=\"padding: 30px 40px 20px 40px;\">\n                            <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background: linear-gradient(135deg, #3483FA 0%, #2968c8 100%); border-radius: 8px;\">\n                                <tr>\n                                    <td style=\"padding: 24px 30px; text-align: center;\">\n                                        <p style=\"margin: 0; color: rgba(255,255,255,0.9); font-size: 13px; text-transform: uppercase; letter-spacing: 1px;\">\n                                            Total de Casos\n                                        </p>\n                                        <p style=\"margin: 8px 0 0 0; color: #ffffff; font-size: 42px; font-weight: 700;\">\n                                            {total}\n                                        </p>\n                                        <p style=\"margin: 6px 0 0 0; color: rgba(255,255,255,0.9); font-size: 12px;\">\n                                            Período: {periodo}\n                                        </p>\n                                    </td>\n                                </tr>\n                            </table>\n                        </td>\n                    </tr>\n                    \n                    <!-- Texto Introdutório -->\n                    <tr>\n                        <td style=\"padding: 10px 40px 20px 40px;\">\n                            <p style=\"margin: 0; color: #666666; font-size: 15px; line-height: 1.6;\">\n                                Segue abaixo o resumo dos dados coletados por dia:\n                            </p>\n                        </td>\n                    </tr>\n                    \n                    <!-- Tabela de Dados -->\n                    <tr>\n                        <td style=\"padding: 0 40px 30px 40px;\">\n                            <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0;\">\n                                <thead>\n                                    <tr>\n                                        <th style=\"background-color: #FFE600; padding: 16px; text-align: left; color: #333333; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;\">\n                                            Data\n                                        </th>\n                                        <th style=\"background-color: #FFE600; padding: 16px; text-align: center; color: #333333; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;\">\n                                            Quantidade de Casos\n                                        </th>\n                                    </tr>\n                                </thead>\n                                <tbody>\n                                    {rows}\n                                </tbody>\n                            </table>\n                        </td>\n                    </tr>\n                    \n                    <!-- Observação -->\n                    <tr>\n                        <td style=\"padding: 0 40px 30px 40px;\">\n                            <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color: #fffbeb; border-left: 4px solid #FFE600; border-radius: 0 6px 6px 0;\">\n                                <tr>\n                                    <td style=\"padding: 16px 20px;\">\n                                        <p style=\"margin: 0; color: #666666; font-size: 13px; line-height: 1.5;\">\n                                            <strong style=\"color: #333333;\">OBS:</strong> As informações acima representam o resultado da extração sem filtro ou tratamento.\n                                        </p>\n                                    </td>\n                                </tr>\n                            </table>\n                        </td>\n                    </tr>\n                    \n                    <!-- Banner Histórico de Arquivos -->\n                    <tr>\n                        <td style=\"padding: 0 40px 30px 40px;\">\n                            <a href=\"https://drive.google.com/drive/u/0/folders/1V-zr5YTwyGz06NJ3Zav1aEenasK5iPu7\" target=\"_blank\" style=\"text-decoration: none; display: block;\">\n                                <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color: #f0f7ff; border: 1px solid #d0e3f7; border-radius: 6px;\">\n                                    <tr>\n                                        <td style=\"padding: 12px 16px;\">\n                                            <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n                                                <tr>\n                                                    <td style=\"vertical-align: middle;\">\n                                                        <p style=\"margin: 0; color: #3483FA; font-size: 12px;\">\n                                                            <span style=\"font-size: 14px;\">&#128193;</span>\n                                                            <span style=\"margin-left: 8px; font-weight: 600;\">Histórico de Arquivos</span>\n                                                            <span style=\"color: #666666; font-weight: 400;\"> — Acesse os arquivos anteriores no Drive</span>\n                                                        </p>\n                                                    </td>\n                                                    <td style=\"text-align: right; vertical-align: middle;\">\n                                                        <span style=\"color: #3483FA; font-size: 11px; font-weight: 600;\">\n                                                            ACESSAR &rarr;\n                                                        </span>\n                                                    </td>\n                                                </tr>\n                                            </table>\n                                        </td>\n                                    </tr>\n                                </table>\n                            </a>\n                        </td>\n                    </tr>\n                    \n                    <!-- Footer -->\n                    <tr>\n                        <td style=\"background-color: #333333; padding: 20px 40px; text-align: center;\">\n                            <p style=\"margin: 0; color: #FFE600; font-size: 14px; font-weight: 600;\">\n                                Legal Analytics\n                            </p>\n                        </td>\n                    </tr>\n                    \n                </table>\n            </td>\n        </tr>\n    </table>\n</body>\n</html>\n\"\"\".format(\n    subject=email_subject,\n    total=total_casos,\n    periodo=periodo_txt,\n    rows=table_rows\n)\n\nreturn [\n    {\n        \"json\": {\n            \"html\": html_content,\n            \"emailSubject\": email_subject\n        }\n    }\n]\n"
+      },
+      "id": "84c01064-fec6-4a87-89c1-f93b46efe3d0",
+      "name": "VerdiCode",
+      "type": "n8n-nodes-base.verdiCode",
+      "position": [
+        976,
+        -96
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sendTo": "john.rlopez@mercadolibre.com.co,paula.cornaglia@mercadolibre.com",
+        "subject": "={{ $json.emailSubject }}",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "5df9533d-5f23-43ac-bdcd-fc4f6cbd3a9d",
+      "name": "Envio de e-maill1",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        -160,
+        112
+      ],
+      "webhookId": "d01f58f1-60f8-425c-915e-959fc04ad3c7",
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "PushNome": {
+      "main": [
+        [
+          {
+            "node": "Lista arquivos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VerdiCode": {
+      "main": [
+        [
+          {
+            "node": "Envio de e-maill1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit. Lista": {
+      "main": [
+        [
+          {
+            "node": "Filtro Amélia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro Amélia": {
+      "main": [
+        [
+          {
+            "node": "Download Amélia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lista arquivos": {
+      "main": [
+        [
+          {
+            "node": "Edit. Lista",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload em drive": {
+      "main": [
+        [
+          {
+            "node": "Lista arquivos | Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Amélia": {
+      "main": [
+        [
+          {
+            "node": "Upload em drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start | Automático": {
+      "main": [
+        [
+          {
+            "node": "PushNome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit. Summary Amélia": {
+      "main": [
+        [
+          {
+            "node": "VerdiCode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edita Summary Amélia": {
+      "main": [
+        [
+          {
+            "node": "Download Summary Amélia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Summary Amélia": {
+      "main": [
+        [
+          {
+            "node": "Edit. Summary Amélia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Summary Amélia": {
+      "main": [
+        [
+          {
+            "node": "Extract Summary Amélia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lista arquivos | Summary": {
+      "main": [
+        [
+          {
+            "node": "Edita Summary Amélia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6f966a2e-7c63-4b05-a24d-d121188558d4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92a7841699b7656650cb4dc0dd4f4f4fdb565d51df3f1aaf3126caa7a316a77c"
+  },
+  "id": "LcWUG3uOZRn32D8s",
+  "tags": []
+}

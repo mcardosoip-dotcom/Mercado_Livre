@@ -1,0 +1,186 @@
+{
+  "name": "Mesa de entrada - MySQL para BigQuery",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "5088504c-e2da-4350-b5b1-8fa3f1a4372c",
+      "name": "Executar workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [-400, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parâmetros centralizados - adicione/remova tabelas aqui\nconst TABELAS = [\n  { query: 'SELECT *, DAYOFWEEK(fecha) AS dia_semana FROM vista_entradas', filename: 'Mesa_entrada_vista_entradas.csv' },\n  { query: 'SELECT * FROM dw_hist_casos_x_estado', filename: 'Mesa_entrada_dw_hist_casos_x_estado.csv' },\n  { query: 'SELECT * FROM entradas', filename: 'Mesa_entrada_tab_entradas.csv' },\n  { query: 'SELECT * FROM vista_cantidad_casos_usuarios', filename: 'Mesa_entrada_vista_cantidad_casos_usuarios.csv' },\n  { query: 'SELECT * FROM vista_usuarios', filename: 'Mesa_entrada_vista_usuarios.csv' },\n  { query: 'SELECT * FROM mesa_entrada.v_metricas_qa', filename: 'Mesa_entrada_v_metricas_qa.csv' },\n  { query: 'SELECT * FROM mesa_entrada.estados', filename: 'Mesa_entrada_estados.csv' },\n  { query: 'SELECT * FROM mesa_entrada.tipo_documentos', filename: 'Mesa_entrada_tipo_documentos.csv' },\n  { query: 'SELECT * FROM mesa_entrada.metricas_big_query', filename: 'Mesa_entrada_metricas_big_query.csv' },\n  { query: 'SELECT * FROM mesa_entrada.origenes', filename: 'Mesa_entrada_origenes.csv' },\n  { query: 'SELECT * FROM mesa_entrada.entradas_estados', filename: 'Mesa_entrada_entradas_estados.csv' }\n];\nreturn TABELAS.map(t => ({ json: t }));"
+      },
+      "id": "param-set-tabelas",
+      "name": "Set - Parâmetros das Tabelas",
+      "type": "n8n-nodes-base.code",
+      "position": [-180, 300],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split-batches-loop",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $json.query }}",
+        "options": {}
+      },
+      "id": "mysql-executar",
+      "name": "MySQL - Executar Query",
+      "type": "n8n-nodes-base.mySql",
+      "position": [220, 300],
+      "typeVersion": 2.5,
+      "credentials": {
+        "mySql": {
+          "id": "qrZSISJD4ztvxSHC",
+          "name": "MySQL account G189-YSuFVitmF2g2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "convert-to-csv",
+      "name": "Converter para CSV",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [440, 300],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Loop Over Items').item.json.filename }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://drive.google.com/drive/u/0/folders/1ra7csO5uUInHeUVWkfMeyV6jqjBU_naS"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "id": "upload-drive",
+      "name": "Upload para Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [660, 300],
+      "typeVersion": 3,
+      "executeOnce": true,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "**Parâmetros centralizados**\n\nTodas as tabelas são definidas no nó **Set - Parâmetros das Tabelas**.\n\nPara adicionar/remover tabelas: edite o array `TABELAS` no Code node.\n\nEstrutura:\n```js\n{ query: 'SELECT * FROM tabela', filename: 'Mesa_entrada_nome.csv' }\n```",
+        "height": 250,
+        "width": 380,
+        "color": 4
+      },
+      "id": "a488bd60-1b13-407b-956b-9bd960e54c29",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [-420, 80],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Executar workflow": {
+      "main": [
+        [
+          {
+            "node": "Set - Parâmetros das Tabelas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set - Parâmetros das Tabelas": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "MySQL - Executar Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "MySQL - Executar Query": {
+      "main": [
+        [
+          {
+            "node": "Converter para CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Converter para CSV": {
+      "main": [
+        [
+          {
+            "node": "Upload para Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload para Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "37e2665b-b992-46bb-81c7-9c468832b6ca",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c7a06263d10f71aab5cac629ceb973e1b07cdae49af7fb37be1419f6f23ff43a"
+  },
+  "id": "vuFE58Nst8tE3xWc",
+  "tags": []
+}

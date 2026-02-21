@@ -1,0 +1,58 @@
+Log de Execução - 2026-02-20 08:26:47
+============================================================
+
+📌 Arquivo: Mesa_entrada_vista_entradas.parquet
+❌ Erro: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '10.82.128.122' (timed out)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+⏱ Tempo até falha: 10.01s
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_dw_hist_casos_x_estado.parquet
+❌ Erro: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '10.82.128.122' (timed out)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+⏱ Tempo até falha: 10.01s
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_tab_entradas.parquet
+❌ Erro: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '10.82.128.122' (timed out)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+⏱ Tempo até falha: 10.01s
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_vista_cantidad_casos_usuarios.parquet
+❌ Erro: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '10.82.128.122' (timed out)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+⏱ Tempo até falha: 10.0s
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_vista_usuarios.parquet
+❌ Erro: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '10.82.128.122' (timed out)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+⏱ Tempo até falha: 10.01s
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_v_metricas_qa.parquet
+❌ Erro: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '10.82.128.122' (timed out)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+⏱ Tempo até falha: 10.01s
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_estados.parquet
+❌ Erro: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '10.82.128.122' (timed out)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+⏱ Tempo até falha: 10.01s
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_tipo_documentos.parquet
+❌ Erro: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '10.82.128.122' (timed out)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+⏱ Tempo até falha: 10.01s
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_metricas_big_query.parquet
+❌ Erro: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '10.82.128.122' (timed out)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+⏱ Tempo até falha: 10.01s
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_origenes.parquet
+❌ Erro: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '10.82.128.122' (timed out)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+⏱ Tempo até falha: 10.02s
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_entradas_estados.parquet
+❌ Erro: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on '10.82.128.122' (timed out)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+⏱ Tempo até falha: 10.0s
+------------------------------------------------------------

@@ -1,0 +1,37 @@
+import base64
+import json
+import os
+from datetime import date
+from google.oauth2 import service_account
+from google.cloud import storage, bigquery
+import pandas as pd
+import numpy as np
+
+area = os.environ.get("area")
+processing_date_string = date.today().strftime('%Y-%m-%d')
+execution_date = os.environ.get("DF_TIME_TO").replace("-", "").replace(":", "").replace(" ", "")
+project = 'meli-bi-data'
+
+storage_client = connections["SBOX_LEGALES"].storage_client
+bigquery_client = connections["SBOX_LEGALES"].bigquery_client
+
+bucket_name = "meli-bi-data-tmp"
+root_folder = f"LEGALES/{area}/QUEBRA_SIGILO_FINCH/"
+destination_execution_file = root_folder + execution_date + "/"
+account_file = destination_execution_file + "NAO_CORRESPONDENTE.txt"
+circular_letter_3454_directory = destination_execution_file + "carta_circular_3454/"
+financial_statement_directory = destination_execution_file + "extrato_financeiro/"
+
+### Get Base
+table_name = "meli-bi-data.SBOX_LEGALES.TBL_QS_NAO_CORRESPONDENTE_FINCH"
+command = """SELECT *
+              FROM `{}` T WHERE T.DATAHORA_IMPORTACAO = (
+    SELECT MAX(DATAHORA_IMPORTACAO) FROM SBOX_LEGALES.STG_QS_PLANILHA_PRESENTA_CAD_VF_FINCH
+);""".format(table_name, table_name)
+query_job = bigquery_client.query(command)
+df = query_job.to_dataframe()
+
+### Save Base
+bucket = storage_client.bucket(bucket_name)
+blob = bucket.blob(account_file)
+blob.upload_from_string(df.to_csv(index=0, mode='w'), 'text/plain')

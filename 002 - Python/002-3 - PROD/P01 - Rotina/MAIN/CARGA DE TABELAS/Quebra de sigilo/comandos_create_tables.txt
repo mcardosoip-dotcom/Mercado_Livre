@@ -1,0 +1,21 @@
+CREATE OR REPLACE TABLE `<ENV>.STG.QUEBRA_DE_SIGILO_CONTROLE` (
+  `data_envio_sisbacen` STRING,
+  `data_recebimento_inst` STRING,
+  `origem` STRING,
+  `tipo_de_oficio` STRING,
+  `no_protocolo` STRING,
+  `no_processo` STRING,
+  `instituicao` STRING,
+  `nome_do_solicitante` STRING,
+  `nome_da_vara_juizo` STRING,
+  `tribunal` STRING,
+  `cpf_cnpj` STRING,
+  `pessoa` STRING,
+  `ccs_numero_do_caso` STRING,
+  `ccs_inicio_do_periodo_solicitado` STRING,
+  `ccs_fim_do_periodo_solicitado` STRING,
+  `ccs_prazo_limite_de_resposta` STRING,
+  `ccs_hashtags` STRING,
+  `ccs_sistema_de_entrega` STRING
+);
+

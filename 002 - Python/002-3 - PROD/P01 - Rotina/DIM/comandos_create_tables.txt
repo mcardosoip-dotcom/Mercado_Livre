@@ -1,0 +1,117 @@
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_1_DIMENSAO_ADVOGADOS` (
+  `advogado_responsavel` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_2_DIMENSAO_DE_PARA_ESCRITORIOS` (
+  `nome_do_escritorio` STRING,
+  `alias` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_3_DIMENSAO_EMPRESAS` (
+  `cliente` STRING,
+  `empresa` STRING,
+  `empresa_modelo_2` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_4_DIMENSAO_ESCRITORIOS` (
+  `escritorio` STRING,
+  `pais` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_5_DIMENSAO_ESFERAS` (
+  `area_do_direito` STRING,
+  `sub_area_do_direito` STRING,
+  `tipo` STRING,
+  `validador` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_6_DIMENSAO_ESTADOS_UF` (
+  `estado` STRING,
+  `regiao` STRING,
+  `onda` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_7_DIMENSAO_FASES` (
+  `modelo` STRING,
+  `fase` STRING,
+  `estado` STRING,
+  `tipo` STRING,
+  `subtipo` STRING,
+  `status_fase` STRING,
+  `chave` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_8_DIMENSAO_GRUPO_ADVOGADOS_DR` (
+  `advogado_responsavel` STRING,
+  `area_responsavel` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_9_DIMENSAO_MES` (
+  `id_mes` STRING,
+  `mes_br` STRING,
+  `mes_arg` STRING,
+  `mes_ing` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_10_DIMENSAO_OBJETOS` (
+  `area_de_negocio` STRING,
+  `objeto` STRING,
+  `pais` STRING,
+  `empresa` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_12_DIMENSAO_PARCEIROS` (
+  `usuario` STRING,
+  `empresa` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_13_DIMENSAO_REGIAO` (
+  `estado` STRING,
+  `regiao` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_14_DIMENSAO_FASES_REVISADA` (
+  `fase` STRING,
+  `estado` STRING,
+  `tipo` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_15_DIMENSAO_WORKFLOW` (
+  `workflow` STRING,
+  `fase_de_workflow` STRING,
+  `considerar` STRING,
+  `grupo` STRING,
+  `status_fase_workflow` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_16_DIMENSAO_MULTA` (
+  `tipo` STRING,
+  `tipo_ajustado` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_17_DIMENSAO_SIGLA_PAIS` (
+  `sigla` STRING,
+  `pais` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_10_DIMENSAO_OBJETOS_2` (
+  `objeto` STRING,
+  `objeto_novo` STRING,
+  `unidade` STRING,
+  `empresa` STRING,
+  `cruzar_com` STRING,
+  `tipo` STRING,
+  `pais` STRING,
+  `empresa_code` STRING,
+  `empresa_responsavel` STRING
+);
+
+CREATE OR REPLACE TABLE `<ENV>.STG.DIM_36_TPN_E_SI` (
+  `ano_ref` STRING,
+  `mes_ref_txt` STRING,
+  `sigla` STRING,
+  `pais_ref` STRING,
+  `tpn` STRING,
+  `si` STRING
+);
+

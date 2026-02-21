@@ -1,0 +1,194 @@
+/**
+ * ARQUIVO: N8N - 002 - Processar.gs
+ * FUNÇÃO: Conecta na tabela STG do BigQuery com Tratamento de Retry (Cota Excedida)
+ */
+
+const PROJECT_ID = "meli-bi-data"; 
+const PLANILHA_ID = "1hrKq2U9y7LuTZqiIpmizk4j72FTyweZcnZShawPDhgY";
+
+// Tabela exata onde o N8N salvou os dados
+const TABELA_RESULTADOS = "`ddme000426-gopr4nla6zo-furyid.STG.tb_resultado_validacao_cruces`"; 
+
+function processarCrucesNoBigQuery() {
+  const ss = SpreadsheetApp.openById(PLANILHA_ID);
+  
+  // 1. Busca dados no BigQuery
+  const resultados = buscarResultadosProntos();
+  
+  // 2. Escreve nas abas correspondentes
+  distribuirResultadosNaPlanilha(ss, resultados);
+}
+
+function buscarResultadosProntos() {
+  const sql = `
+    SELECT 
+      id_deuda,                       -- Index 0
+      monto_transferido,              -- Index 1
+      DEBT_PAID_AMOUNT,               -- Index 2
+      diferenca,                      -- Index 3
+      cbu_informado,                  -- Index 4
+      issue_salesforce,               -- Index 5
+      tipo_conta,                     -- Index 6
+      DEBT_DEBT_TYPE_ID,              -- Index 7
+      
+      -- Flags Booleanas (Index 8 a 14)
+      flag_cruce_1_valor_maior,       -- Index 8
+      flag_cruce_2_id_inexistente,    -- Index 9
+      flag_cruce_3_status_invalido,   -- Index 10
+      flag_cruce_4_valor_menor,       -- Index 11
+      flag_cruce_5_cbu_invalido,      -- Index 12
+      flag_cruce_6_duplicado,         -- Index 13
+      flag_cruce_7_debt_type          -- Index 14
+    FROM 
+      ${TABELA_RESULTADOS}
+    WHERE 
+      status_geral = 'COM_ERRO'
+  `;
+  
+  const jobConfig = {
+    configuration: { query: { query: sql, useLegacySql: false } }
+  };
+
+  console.log(">> [Processar] Tentando inserir Job no BigQuery...");
+  
+  // --- INÍCIO DA LÓGICA DE RETRY ---
+  let job;
+  let tentativas = 0;
+  const maxTentativas = 5;
+  let sucesso = false;
+
+  while (tentativas < maxTentativas && !sucesso) {
+    try {
+      job = BigQuery.Jobs.insert(jobConfig, PROJECT_ID);
+      sucesso = true; // Se passar daqui, deu certo
+    } catch (e) {
+      // Se for erro de COTA (fila cheia), esperamos e tentamos de novo
+      if (e.message.includes("Quota exceeded") || e.message.includes("rateLimitExceeded")) {
+        tentativas++;
+        const tempoEspera = tentativas * 5000; // 5s, 10s, 15s...
+        console.warn(`⚠️ Cota excedida no BigQuery. Tentativa ${tentativas}/${maxTentativas}. Esperando ${tempoEspera/1000}s...`);
+        Utilities.sleep(tempoEspera);
+      } else {
+        // Se for outro erro (ex: SQL inválido), falha imediatamente
+        throw e;
+      }
+    }
+  }
+
+  if (!sucesso) {
+    throw new Error("❌ Falha ao inserir Job no BigQuery após várias tentativas. O projeto está muito congestionado.");
+  }
+  // --- FIM DA LÓGICA DE RETRY ---
+
+  const jobId = job.jobReference.jobId;
+  console.log(`>> Job inserido com ID: ${jobId}. Aguardando conclusão...`);
+
+  let jobStatus = BigQuery.Jobs.get(PROJECT_ID, jobId);
+  while (jobStatus.status.state !== 'DONE') {
+    Utilities.sleep(2000); // Sleep aumentado para evitar spam na API de status
+    jobStatus = BigQuery.Jobs.get(PROJECT_ID, jobId);
+  }
+
+  if (jobStatus.status.errorResult) {
+    throw new Error(`Erro na execução do SQL: ${jobStatus.status.errorResult.message}`);
+  }
+
+  let rows = [];
+  let pageToken = null;
+  do {
+    const results = BigQuery.Jobs.getQueryResults(PROJECT_ID, jobId, { pageToken: pageToken });
+    if (results.rows) rows = rows.concat(results.rows);
+    pageToken = results.pageToken;
+  } while (pageToken);
+  
+  console.log(`>> [Processar] Total de divergências recuperadas: ${rows.length}`);
+  return rows;
+}
+
+function distribuirResultadosNaPlanilha(ss, rows) {
+  let c1=[], c2=[], c3=[], c4=[], c5=[], c6=[], c7=[];
+  const dataFormatada = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "dd/MM/yyyy HH:mm:ss");
+
+  if (rows && rows.length > 0) {
+    rows.forEach(r => {
+      const id = r.f[0].v;
+      if (!id) return; 
+
+      const valSheet = r.f[1].v ? Number(r.f[1].v) : 0; 
+      const valBQ = r.f[2].v ? Number(r.f[2].v) : 0;     
+      const diff = r.f[3].v ? Number(r.f[3].v) : 0;
+      const cbu = r.f[4].v ? r.f[4].v : "N/A";
+      const issue = r.f[5].v ? r.f[5].v : "N/A"; 
+      const tipoSheet = r.f[6].v ? r.f[6].v : "";
+      const tipoId = r.f[7].v ? r.f[7].v : "";
+
+      // Leitura das Flags
+      const isC1 = r.f[8].v === 'true' || r.f[8].v === true;
+      const isC2 = r.f[9].v === 'true' || r.f[9].v === true;
+      const isC3 = r.f[10].v === 'true' || r.f[10].v === true;
+      const isC4 = r.f[11].v === 'true' || r.f[11].v === true;
+      const isC5 = r.f[12].v === 'true' || r.f[12].v === true;
+      const isC6 = r.f[13].v === 'true' || r.f[13].v === true;
+      const isC7 = r.f[14].v === 'true' || r.f[14].v === true;
+
+      const padrao = [id, dataFormatada];
+
+      if (isC1) c1.push([id, dataFormatada, valSheet, valBQ, diff]);
+      else if (isC2) c2.push(padrao);
+      else if (isC3) c3.push(padrao);
+      else if (isC4) c4.push(padrao);
+      else if (isC5) c5.push([id, dataFormatada, cbu]);
+      else if (isC6) c6.push([id, dataFormatada, issue, valSheet]);
+      else if (isC7) c7.push([id, dataFormatada, tipoSheet, tipoId]);
+    });
+  }
+
+  const nomes = [
+    "CRUCE_1_VALOR_MAIOR_QUE_RETIDO",
+    "CRUCE_2_ERRO_ID_DEUDA",
+    "CRUCE_3_ENLIGHTEN_NAO_EXECUTOU",
+    "CRUCE_4_VALOR_MENOR_QUE_RETIDO",
+    "CRUCE_5_TESTE_CBU",
+    "CRUCE_6_DUPLICADOS",
+    "CRUCE_7_DEBT_TYPE_INCORRETO"
+  ];
+  
+  escreverAba(ss, nomes[0], c1, ["DEBT_ID", "Data Execução", "Vl. Planilha", "Vl. BigQuery", "Diferença"]);
+  const headerPadrao = ["DEBT_ID", "Data Execução"];
+  escreverAba(ss, nomes[1], c2, headerPadrao);
+  escreverAba(ss, nomes[2], c3, headerPadrao);
+  escreverAba(ss, nomes[3], c4, headerPadrao);
+  escreverAba(ss, nomes[4], c5, ["DEBT_ID", "Data Execução", "CBU Inválido"]);
+  escreverAba(ss, nomes[5], c6, ["DEBT_ID", "Data Execução", "Issue Salesforce", "Valor Duplicado"]);
+  escreverAba(ss, nomes[6], c7, ["DEBT_ID", "Data Execução", "Tipo na Planilha", "Tipo no Banco (ID)"]);
+  
+  atualizarResumo(ss, c1.length, c2.length, c3.length, c4.length, c5.length, c6.length, c7.length, nomes);
+}
+
+function escreverAba(ss, nomeAba, dados, cabecalho) {
+  let aba = ss.getSheetByName(nomeAba);
+  if (!aba) aba = ss.insertSheet(nomeAba);
+  aba.clear();
+  aba.appendRow(cabecalho);
+  if (dados.length > 0) {
+    aba.getRange(2, 1, dados.length, dados[0].length).setValues(dados);
+  } else {
+    aba.appendRow(["Nenhum caso encontrado", ""]);
+  }
+}
+
+function atualizarResumo(ss, q1, q2, q3, q4, q5, q6, q7, nomes) {
+  let aba = ss.getSheetByName("RESUMO");
+  if (!aba) aba = ss.insertSheet("RESUMO");
+  aba.clear();
+  const hoje = new Date();
+  
+  aba.appendRow(["CRUCE", "Quantidade", "Data Execução"]);
+  aba.appendRow([nomes[0], q1, hoje]);
+  aba.appendRow([nomes[1], q2, hoje]);
+  aba.appendRow([nomes[2], q3, hoje]);
+  aba.appendRow([nomes[3], q4, hoje]);
+  aba.appendRow([nomes[4], q5, hoje]);
+  aba.appendRow([nomes[5], q6, hoje]);
+  aba.appendRow([nomes[6], q7, hoje]);
+}

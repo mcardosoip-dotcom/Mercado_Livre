@@ -1,0 +1,131 @@
+{
+  "name": "GScript_Pag_Cont_Honorarios",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "50b0286e-efbf-4d83-a571-6f4ad1003f3a",
+      "name": "When clicking ‘Execute workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        0,
+        96
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://script.google.com/a/macros/mercadolivre.com/s/AKfycbzhOX1YMgbzK_lmYTNvk-W9Hs6z0pe-impBMUT8qjaQlHfBiVm4Yx29IHdR7yJug5k/exec",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleGenericOAuth2Api",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "maxRedirects": 100
+            }
+          }
+        }
+      },
+      "id": "3da818ca-f66c-49af-b96c-5094b66e19a4",
+      "name": "GScript_Controle_Pagamentos",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        224,
+        0
+      ],
+      "executeOnce": true,
+      "typeVersion": 4.2,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://script.google.com/a/macros/mercadolivre.com/s/AKfycbwfjUhURvXh8kgOXzmtqzE3Qd7RKXjetqJCfWQuPJPp10KQU8Z7mRLI1At1f4uVB3G6/exec",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleGenericOAuth2Api",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "maxRedirects": 100
+            }
+          }
+        }
+      },
+      "id": "d632ec72-7700-4ffb-a346-adc794151576",
+      "name": "GScript_Controle_Contigencias",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        224,
+        192
+      ],
+      "executeOnce": true,
+      "typeVersion": 4.2,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "https://script.google.com/home/projects/1hHPuCBWvXzEo3tinHw2VVv7cQrHgnHzRdujRJZVRcZV2mgpq4QRi3jKj/edit"
+      },
+      "id": "7ebff33a-2468-4138-ae08-56864b7d595e",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -32,
+        336
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "https://script.google.com/home/projects/10mjLJRpu1cuN-QVmIxIJMVuFOA_fBKJygEB3icSdqFbch_77GkjFFSGT/edit"
+      },
+      "id": "c1406fc1-16c7-46a2-a0f7-ff589cb71f92",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -32,
+        -144
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "GScript_Controle_Pagamentos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GScript_Controle_Contigencias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b0205047-7fe0-4c88-8998-04f7777221db",
+  "meta": {
+    "instanceId": "92a7841699b7656650cb4dc0dd4f4f4fdb565d51df3f1aaf3126caa7a316a77c"
+  },
+  "id": "U3XIsEI84Kkw7sTw",
+  "tags": []
+}

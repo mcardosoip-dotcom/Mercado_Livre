@@ -1,0 +1,989 @@
+{
+  "name": "Sortia_Revisão_Manual_Embargos_Machine",
+  "nodes": [
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data&pli=1"
+        },
+        "sqlQuery": "SELECT \n    sf.issue_number,\n    sf.pais,\n    sf.issue_fecha_de_creacion,\n    DATE_DIFF(\n        CURRENT_DATE(),\n        SAFE.PARSE_DATE('%d/%m/%Y', sf.issue_fecha_de_creacion),\n        DAY\n    ) AS dias_parado,\n    st.ANALISIS_RESULT\nFROM `pdme000426-c1s7scatwm0-furyid.STG.SALESFORCE_EMBARGOS_REVISAO_MANUAL` sf\nJOIN `meli-bi-data.WHOWNER.BT_SORTIA_EMBARGOS` st\n    ON CAST(sf.issue_number AS STRING) = CAST(st.issue AS STRING)\nWHERE sf.legales_approval_status <> 'Approved'\n  AND st.ANALISIS_RESULT = 'REVISION_MANUAL'\n",
+        "options": {}
+      },
+      "id": "4d6f4281-59a8-4914-90db-7047a8cd9ca9",
+      "name": "Query 2",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        -96
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data&pli=1"
+        },
+        "sqlQuery": "WITH sf AS (\n  SELECT\n    issue_number AS issue\n  FROM `pdme000426-c1s7scatwm0-furyid.STG.SALESFORCE_EMBARGOS_REVISAO_MANUAL`\n  WHERE legales_approval_status = 'Approved'\n),\nsortia AS (\n  SELECT\n    ISSUE,\n    FECHA_ISSUE\n  FROM `meli-bi-data.WHOWNER.BT_SORTIA_EMBARGOS`\n  WHERE ANALISIS_RESULT <> 'REVISION_MANUAL'\n)\nSELECT\n  sf.issue,\n  sortia.FECHA_ISSUE AS created_date\nFROM sf\nJOIN sortia\n  ON sortia.ISSUE = sf.issue\nORDER BY created_date\n",
+        "options": {}
+      },
+      "id": "aa94169c-f91e-4de6-918a-77ea456c90c1",
+      "name": "Query 3",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        96
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data&pli=1"
+        },
+        "sqlQuery": "WITH sf AS (\n  SELECT\n    issue_number AS issue,\n    issue_fecha_de_creacion\n  FROM `pdme000426-c1s7scatwm0-furyid.STG.SALESFORCE_EMBARGOS_REVISAO_MANUAL`\n  WHERE legales_approval_status <> 'Approved'\n),\nsortia AS (\n  SELECT\n    ISSUE,\n    FECHA_ISSUE\n  FROM `meli-bi-data.WHOWNER.BT_SORTIA_EMBARGOS`\n  WHERE ANALISIS_RESULT <> 'REVISION_MANUAL'\n)\nSELECT\n  sf.issue,\n  sf.issue_fecha_de_creacion\nFROM sf\nJOIN sortia\n  ON sortia.ISSUE = sf.issue\nORDER BY issue_fecha_de_creacion\n",
+        "options": {}
+      },
+      "id": "56a48585-1ef6-4c97-80e5-0d80b6fec898",
+      "name": "Query 4",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        288
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data&pli=1"
+        },
+        "sqlQuery": "SELECT\n    sf.issue_number,\n    sf.pais,\n    sf.issue_fecha_de_creacion AS created_date,\n    sf.legales_approval_status,\n    sf.numero_de_oe\nFROM `pdme000426-c1s7scatwm0-furyid.STG.SALESFORCE_EMBARGOS_REVISAO_MANUAL` sf\nLEFT JOIN `meli-bi-data.WHOWNER.BT_SORTIA_EMBARGOS` st\n    ON CAST(sf.issue_number AS STRING) = CAST(st.issue AS STRING)\nWHERE sf.legales_approval_status <> 'Approved'\n  AND st.issue IS NULL\nORDER BY sf.issue_fecha_de_creacion DESC\n",
+        "options": {}
+      },
+      "id": "0a9a6e15-02c5-458b-b60c-2a33a8c0bd0c",
+      "name": "Query 1",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        -288
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit?gid=1071630761#gid=1071630761"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 863038137,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit#gid=863038137",
+          "cachedResultName": "Query 1"
+        }
+      },
+      "id": "4151c4c4-d6f4-438b-a1c5-ffa38e1eda97",
+      "name": "Aba Q1",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        224,
+        -480
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit?gid=1071630761#gid=1071630761"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 391015713,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit#gid=391015713",
+          "cachedResultName": "Query 2"
+        }
+      },
+      "id": "6f93cff8-f574-4caa-b8a2-ea9efdc6513d",
+      "name": "Aba Q2",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        -480
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit?gid=1071630761#gid=1071630761"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 122111814,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit#gid=122111814",
+          "cachedResultName": "Query 3"
+        }
+      },
+      "id": "057aefb4-ca9f-4ea2-969a-3b7e18c5e26e",
+      "name": "Aba Q3",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        672,
+        -480
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit?gid=1071630761#gid=1071630761"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1205738927,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit#gid=1205738927",
+          "cachedResultName": "Query 4"
+        }
+      },
+      "id": "5672e781-17ea-455d-bbf0-e2a02c99f098",
+      "name": "Aba Q4",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        896,
+        -480
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit?gid=1071630761#gid=1071630761"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 863038137,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit#gid=863038137",
+          "cachedResultName": "Query 1"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "issue_number",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "issue_number",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pais",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "pais",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_date",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "created_date",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "legales_approval_status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "legales_approval_status",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "numero_de_oe",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "numero_de_oe",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "1e96470b-0ea7-497b-8673-4485387bcd99",
+      "name": "Input G1",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        -288
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit?gid=1071630761#gid=1071630761"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 391015713,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit#gid=391015713",
+          "cachedResultName": "Query 2"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "issue_number",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "issue_number",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pais",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "pais",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_date",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "created_date",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "legales_approval_status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "legales_approval_status",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "numero_de_oe",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "numero_de_oe",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "04f4f4e9-bf99-42e5-8241-3a93818fc808",
+      "name": "Input G2",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        -96
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit?gid=1071630761#gid=1071630761"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 122111814,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit#gid=122111814",
+          "cachedResultName": "Query 3"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "issue_number",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "issue_number",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pais",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "pais",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_date",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "created_date",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "legales_approval_status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "legales_approval_status",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "numero_de_oe",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "numero_de_oe",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "37ecc336-54a3-42ce-93bf-99b2324338ac",
+      "name": "Input G3",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        96
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit?gid=1071630761#gid=1071630761"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1205738927,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit#gid=1205738927",
+          "cachedResultName": "Query 4"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "issue_number",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "issue_number",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pais",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "pais",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_date",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "created_date",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "legales_approval_status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "legales_approval_status",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "numero_de_oe",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "numero_de_oe",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "aa7b73b9-54ca-461f-9e4e-c936b7a83981",
+      "name": "Input G4",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        288
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit?gid=1071630761#gid=1071630761"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1071630761,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit#gid=1071630761",
+          "cachedResultName": "Resumo"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "issue_number",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "issue_number",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pais",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "pais",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_date",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "created_date",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "legales_approval_status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "legales_approval_status",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "numero_de_oe",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "numero_de_oe",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "0409d4bf-0415-4f0f-a3d2-008b88c09325",
+      "name": "Resumo",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        672,
+        480
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data&pli=1"
+        },
+        "sqlQuery": "WITH\nquery_1 AS (\n  SELECT COUNT(*) AS qtd\n  FROM `pdme000426-c1s7scatwm0-furyid.STG.SALESFORCE_EMBARGOS_REVISAO_MANUAL` sf\n  LEFT JOIN `meli-bi-data.WHOWNER.BT_SORTIA_EMBARGOS` st\n    ON CAST(sf.issue_number AS STRING) = CAST(st.issue AS STRING)\n  WHERE sf.legales_approval_status <> 'Approved'\n    AND st.issue IS NULL\n),\n\nquery_2 AS (\n  SELECT COUNT(*) AS qtd\n  FROM `pdme000426-c1s7scatwm0-furyid.STG.SALESFORCE_EMBARGOS_REVISAO_MANUAL` sf\n  JOIN `meli-bi-data.WHOWNER.BT_SORTIA_EMBARGOS` st\n    ON CAST(sf.issue_number AS STRING) = CAST(st.issue AS STRING)\n  WHERE sf.legales_approval_status <> 'Approved'\n    AND st.ANALISIS_RESULT = 'REVISION_MANUAL'\n),\n\nquery_3 AS (\n  SELECT COUNT(*) AS qtd\n  FROM (\n    SELECT issue_number AS issue\n    FROM `pdme000426-c1s7scatwm0-furyid.STG.SALESFORCE_EMBARGOS_REVISAO_MANUAL`\n    WHERE legales_approval_status = 'Approved'\n  ) sf\n  JOIN (\n    SELECT ISSUE\n    FROM `meli-bi-data.WHOWNER.BT_SORTIA_EMBARGOS`\n    WHERE ANALISIS_RESULT <> 'REVISION_MANUAL'\n  ) sortia\n    ON sortia.ISSUE = sf.issue\n),\n\nquery_4 AS (\n  SELECT COUNT(*) AS qtd\n  FROM (\n    SELECT issue_number AS issue\n    FROM `pdme000426-c1s7scatwm0-furyid.STG.SALESFORCE_EMBARGOS_REVISAO_MANUAL`\n    WHERE legales_approval_status <> 'Approved'\n  ) sf\n  JOIN (\n    SELECT ISSUE\n    FROM `meli-bi-data.WHOWNER.BT_SORTIA_EMBARGOS`\n    WHERE ANALISIS_RESULT <> 'REVISION_MANUAL'\n  ) sortia\n    ON sortia.ISSUE = sf.issue\n)\n\nSELECT\n  'Query 1' AS query,\n  qtd AS quantidade_linhas,\n  CURRENT_DATETIME() AS data_update\nFROM query_1\n\nUNION ALL\n\nSELECT\n  'Query 2',\n  qtd,\n  CURRENT_DATETIME()\nFROM query_2\n\nUNION ALL\n\nSELECT\n  'Query 3',\n  qtd,\n  CURRENT_DATETIME()\nFROM query_3\n\nUNION ALL\n\nSELECT\n  'Query 4',\n  qtd,\n  CURRENT_DATETIME()\nFROM query_4\n",
+        "options": {}
+      },
+      "id": "1334f863-47bf-4940-a61d-684eceac17f4",
+      "name": "Resumo1",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        480
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "type": "={{ $json.data_update }}",
+        "options": {}
+      },
+      "id": "535e272f-6c3e-4eb6-a95e-2db269065e9b",
+      "name": "Sort",
+      "type": "n8n-nodes-base.sort",
+      "position": [
+        448,
+        480
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "pythonCode": "def criar_corpo_html_alerta_embargos():\n    return \"\"\"<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n</head>\n<body style=\"margin:0; padding:0; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color:#f5f5f5;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#f5f5f5; padding:20px 0;\">\n    <tr>\n      <td align=\"center\">\n        <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1);\">\n\n          <tr>\n            <td style=\"background:linear-gradient(135deg,#FFE600 0%,#FFF159 100%); padding:30px 40px; text-align:center;\">\n              <h1 style=\"margin:0; color:#333333; font-size:24px; font-weight:600;\">\n                ALERTA URGENTE\n              </h1>\n              <p style=\"margin:8px 0 0 0; color:#666666; font-size:14px; font-weight:500;\">\n                Casos de Embargos no Reflejados\n              </p>\n            </td>\n          </tr>\n\n          <tr>\n            <td style=\"padding:40px 40px 30px 40px;\">\n              <p style=\"margin:0 0 20px 0; color:#333333; font-size:16px; line-height:1.6;\">\n                <strong style=\"color:#2D3277;\">Equipo Machine learning,</strong>\n              </p>\n\n              <p style=\"margin:0 0 20px 0; color:#333333; font-size:15px; line-height:1.6;\">\n                Hemos identificado casos de embargos cargados en Salesforce\n                <strong style=\"background-color:#FFE600; padding:2px 6px; border-radius:3px; color:#333333;\">\n                  hace 2 dias o mas\n                </strong>\n                que aun no estan reflejados en la tabla de Sortia.\n              </p>\n\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:25px 0; background-color:#F5F7FA; border-left:4px solid #3483FA; border-radius:4px;\">\n                <tr>\n                  <td style=\"padding:20px;\">\n                    <p style=\"margin:0; color:#2D3277; font-size:15px; line-height:1.6; font-weight:500;\">\n                      Para evitar cualquier impacto en los tiempos de respuesta, les pido que apliquen con urgencia la etiqueta\n                      <strong style=\"color:#3483FA;\">\"revision manual\"</strong>\n                      directamente en la tabla de Sortia para estos casos.\n                    </p>\n                  </td>\n                </tr>\n              </table>\n\n              <p style=\"margin:25px 0; text-align:center;\">\n                <a href=\"https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit?gid=1071630761#gid=1071630761\"\n                   target=\"_blank\"\n                   style=\"display:inline-block; padding:12px 24px; background-color:#3483FA; color:#ffffff; text-decoration:none; font-size:14px; font-weight:600; border-radius:4px;\">\n                  Clique aqui para acessar os casos\n                </a>\n              </p>\n\n              <p style=\"margin:0 0 25px 0; color:#666666; font-size:14px; line-height:1.6; padding:15px; background-color:#FFF9E6; border-radius:4px;\">\n                <em>Recordemos que esta etiqueta es el disparador para que mi equipo operativo pueda tomar la gestion de imediato.</em>\n              </p>\n\n              <p style=\"margin:0 0 10px 0; color:#333333; font-size:16px; font-weight:600;\">\n                Gracias!\n              </p>\n              <p style=\"margin:0; color:#3483FA; font-size:15px; font-weight:500;\">\n                Legal Ops\n              </p>\n            </td>\n          </tr>\n\n          <tr>\n            <td style=\"background-color:#2D3277; padding:20px 40px; text-align:center;\">\n              <p style=\"margin:0; color:#ffffff; font-size:12px; line-height:1.5;\">\n                Revisa el archivo adjunto para ver el detalle completo de los casos\n              </p>\n            </td>\n          </tr>\n\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>\"\"\"\n\n\nreturn [{\"html_body\": criar_corpo_html_alerta_embargos()}]"
+      },
+      "id": "f8ba1a36-ec28-4732-a54b-5f47fbdffbf5",
+      "name": "VerdiCode",
+      "type": "n8n-nodes-base.verdiCode",
+      "position": [
+        224,
+        768
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1,
+                2,
+                3,
+                5,
+                4,
+                6
+              ],
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "id": "029775cb-0faf-4df1-aaee-85c6550a6889",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        0,
+        96
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "https://docs.google.com/spreadsheets/d/1MobpLhCv8j1PBj9iDwuGZXf_NKKrUF5TA8F846bWLIw/edit?gid=193397194#gid=193397194"
+      },
+      "id": "00ba706c-a194-4bce-bd12-31e7049cae5f",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -304,
+        80
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sendTo": "melissa.pace@mercadolivre.com, john.rlopez@mercadolibre.com.co, mauricio.pacheco@mercadolibre.com.co, andres.madrigal@mercadolibre.com.co, felipe.pmisura@mercadolivre.com, rafael.sarmiento@mercadolibre.com.co",
+        "subject": "URGENTE: Casos de Embargos no Reflejados en Sortia (Antigüedad >= 2 días)",
+        "message": "={{ $json.html_body }}",
+        "options": {}
+      },
+      "id": "289b1cc5-3695-46a7-bb83-21cc458fb004",
+      "name": "eMail Oficial",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        448,
+        672
+      ],
+      "webhookId": "600ab20d-b32f-4833-b56c-cc4970434167",
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "marcelo.cardoso@mercadolivre.com",
+        "subject": "URGENTE: Casos de Embargos no Reflejados en Sortia (Antigüedad >= 2 días)",
+        "message": "={{ $json.html_body }}",
+        "options": {}
+      },
+      "id": "b5208e07-ea26-494d-b298-d6eea819fb2b",
+      "name": "eMail Testes",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        448,
+        864
+      ],
+      "webhookId": "600ab20d-b32f-4833-b56c-cc4970434167",
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "Resumo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aba Q1": {
+      "main": [
+        [
+          {
+            "node": "Aba Q2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aba Q2": {
+      "main": [
+        [
+          {
+            "node": "Aba Q3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aba Q3": {
+      "main": [
+        [
+          {
+            "node": "Aba Q4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query 1": {
+      "main": [
+        [
+          {
+            "node": "Input G1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query 2": {
+      "main": [
+        [
+          {
+            "node": "Input G2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query 3": {
+      "main": [
+        [
+          {
+            "node": "Input G3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query 4": {
+      "main": [
+        [
+          {
+            "node": "Input G4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resumo1": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input G1": {
+      "main": [
+        []
+      ]
+    },
+    "Input G2": {
+      "main": [
+        []
+      ]
+    },
+    "Input G3": {
+      "main": [
+        []
+      ]
+    },
+    "Input G4": {
+      "main": [
+        []
+      ]
+    },
+    "VerdiCode": {
+      "main": [
+        [
+          {
+            "node": "eMail Oficial",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "eMail Testes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Query 2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Query 3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Query 4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Query 1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aba Q1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Resumo1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "VerdiCode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5b3d7b42-8e6c-4936-bbe7-611d70e7561f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92a7841699b7656650cb4dc0dd4f4f4fdb565d51df3f1aaf3126caa7a316a77c"
+  },
+  "id": "hFKRahVzjWNSP6SN",
+  "tags": []
+}

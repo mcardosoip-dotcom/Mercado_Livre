@@ -1,0 +1,9 @@
+# Dependências para conexão com BigQuery
+google-cloud-bigquery>=3.0.0
+google-auth>=2.0.0
+pandas>=1.3.0
+
+# Para instalar, execute:
+# pip install -r requirements_bigquery.txt
+
+

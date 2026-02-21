@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca BigQuery - Embargos</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --yellow-ml: #ffe600;
+        --blue-ml: #2d3277;
+        --blue-light: #3d42a0;
+        --white: #ffffff;
+        --shadow-sm: 0 2px 8px rgba(45, 50, 119, 0.08);
+        --shadow-md: 0 4px 16px rgba(45, 50, 119, 0.12);
+        --shadow-lg: 0 8px 32px rgba(45, 50, 119, 0.16);
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf4 100%);
+        color: var(--blue-ml);
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Animated background with rotation effect */
+      body::before {
+        content: "";
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 20% 30%, rgba(255, 230, 0, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 70%, rgba(45, 50, 119, 0.08) 0%, transparent 50%);
+        animation: rotate 30s linear infinite;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      .container {
+        max-width: 900px;
+        width: 100%;
+        animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        opacity: 0;
+      }
+
+      /* Updated header with animations */
+      h1 {
+        text-align: center;
+        margin-bottom: 8px;
+        font-weight: 700;
+        color: var(--blue-ml);
+        font-size: 1.8rem;
+        animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        text-shadow: 2px 2px 4px rgba(45, 50, 119, 0.1);
+        letter-spacing: -0.3px;
+      }
+
+      .subtitle {
+        text-align: center;
+        font-size: 0.9rem;
+        color: #888;
+        margin-bottom: 24px;
+        font-weight: 400;
+        animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
+        opacity: 0;
+      }
+
+      /* Beautiful frame with gradient border */
+      .search-frame {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(224, 227, 240, 0.8);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: var(--shadow-lg);
+        animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+        opacity: 0;
+        position: relative;
+        margin-bottom: 24px;
+      }
+
+      .search-frame::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--blue-ml), var(--yellow-ml), var(--blue-ml));
+        background-size: 200% 100%;
+        animation: gradientFlow 3s ease infinite;
+        border-radius: 20px 20px 0 0;
+      }
+
+      @keyframes gradientFlow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+
+      /* Form styling with better spacing */
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--blue-ml);
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      select, input {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e0e3f0;
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: white;
+        color: var(--blue-ml);
+      }
+
+      select:focus, input:focus {
+        outline: none;
+        border-color: var(--yellow-ml);
+        box-shadow: 0 0 0 3px rgba(255, 230, 0, 0.2);
+      }
+
+      /* Beautiful button with animations */
+      .btn-search {
+        width: 100%;
+        padding: 16px 24px;
+        border: none;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--blue-ml);
+        background: var(--yellow-ml);
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-top: 8px;
+      }
+
+      .btn-search::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.4);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+      }
+
+      .btn-search:hover::before {
+        width: 400px;
+        height: 400px;
+      }
+
+      .btn-search:hover:not(:disabled) {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 12px 40px rgba(45, 50, 119, 0.25);
+        background: var(--blue-ml);
+        color: var(--yellow-ml);
+      }
+
+      .btn-search:active {
+        transform: translateY(-1px) scale(0.98);
+      }
+
+      .btn-search:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      .btn-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .btn-icon {
+        font-size: 20px;
+        display: inline-block;
+      }
+
+      /* Status messages with animations */
+      .message {
+        margin-top: 20px;
+        padding: 16px 18px;
+        border-radius: 12px;
+        border: 2px solid transparent;
+        font-size: 14px;
+        line-height: 1.5;
+        display: none;
+        animation: statusFadeIn 0.5s ease forwards;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .message.success {
+        background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);
+        border-color: #4caf50;
+        color: #1b5e20;
+        box-shadow: 0 4px 16px rgba(76, 175, 80, 0.2);
+      }
+
+      .message.error {
+        background: linear-gradient(135deg, #ffebee 0%, #fdf5f5 100%);
+        border-color: #f44336;
+        color: #b71c1c;
+        box-shadow: 0 4px 16px rgba(244, 67, 54, 0.2);
+      }
+
+      @keyframes statusFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Loading state with spinner */
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        box-shadow: var(--shadow-lg);
+        animation: scaleIn 0.4s ease;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 230, 0, 0.3);
+        border-top-color: var(--yellow-ml);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 16px;
+      }
+
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      .loading-text {
+        color: var(--blue-ml);
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      /* Results card with animations */
+      .results-frame {
+        display: none !important;
+      }
+
+      /* Modal styles */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(45, 50, 119, 0.7);
+        backdrop-filter: blur(8px);
+        z-index: 1000;
+        animation: fadeIn 0.3s ease forwards;
+        overflow-y: auto;
+        padding: 20px;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 20px;
+        max-width: 1200px;
+        margin: 40px auto;
+        box-shadow: 0 20px 60px rgba(45, 50, 119, 0.3);
+        animation: modalSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        position: relative;
+        overflow: hidden;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-50px) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .modal-header {
+        background: linear-gradient(135deg, var(--blue-ml) 0%, var(--blue-light) 100%);
+        color: white;
+        padding: 24px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 4px solid var(--yellow-ml);
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .modal-close {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        font-weight: 300;
+        line-height: 1;
+      }
+
+      .modal-close:hover {
+        background: white;
+        color: var(--blue-ml);
+        transform: rotate(90deg) scale(1.1);
+      }
+
+      .modal-body {
+        padding: 30px;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+      }
+
+      .modal-results-count {
+        background: var(--yellow-ml);
+        color: var(--blue-ml);
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 700;
+        box-shadow: var(--shadow-sm);
+        animation: pulse 2s ease-in-out infinite;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+
+      .modal-table-container {
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 2px solid #e0e3f0;
+        background: white;
+      }
+
+      .modal-table-container table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+
+      .modal-table-container thead {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .modal-table-container th {
+        padding: 14px 16px;
+        text-align: left;
+        font-weight: 700;
+        color: var(--blue-ml);
+        border-bottom: 2px solid #e0e3f0;
+        white-space: nowrap;
+      }
+
+      .modal-table-container td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #4a5568;
+      }
+
+      .modal-table-container tbody tr {
+        transition: all 0.2s ease;
+      }
+
+      .modal-table-container tbody tr:hover {
+        background: rgba(255, 230, 0, 0.1);
+        transform: scale(1.005);
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes scaleIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+          box-shadow: var(--shadow-sm);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: var(--shadow-md);
+        }
+      }
+
+      /* Responsive design */
+      @media (max-width: 640px) {
+        body {
+          padding: 12px;
+        }
+
+        h1 {
+          font-size: 1.4rem;
+        }
+
+        .search-frame, .results-frame {
+          padding: 20px;
+        }
+
+        .btn-search {
+          padding: 14px 20px;
+        }
+
+        .results-header {
+          flex-direction: column;
+          gap: 12px;
+          align-items: flex-start;
+        }
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+      <h1>🔍 Busca de informações - Embargos</h1>
+      <p class="subtitle">By Legal Analytics</p>
+      
+      <div class="search-frame">
+        <form onsubmit="performSearch(event)">
+          <div class="form-group">
+            <label for="field">Campo para busca</label>
+            <select id="field" required>
+              <option value="">Selecione um campo...</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="value">Valor <small style="color: #888;">(busca por conteúdo)</small></label>
+            <input type="text" id="value" placeholder="Digite o valor para buscar..." required>
+          </div>
+          
+          <button type="submit" class="btn-search" id="btnSearch">
+            <span class="btn-content">
+              <span class="btn-icon">🔍</span>
+              <span>Buscar no BigQuery</span>
+            </span>
+          </button>
+        </form>
+        
+        <div class="message" id="message"></div>
+      </div>
+      
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p class="loading-text">Buscando dados no BigQuery...</p>
+      </div>
+    </div>
+    
+    <!-- Modal popup for results -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <span>📊</span>
+            <span>Resultados da Busca</span>
+          </h2>
+          <button class="modal-close" onclick="closeModal()" title="Fechar">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-results-count" id="modalResultsCount">0 registros</div>
+          <div class="modal-table-container">
+            <table>
+              <thead id="modalTableHead"></thead>
+              <tbody id="modalTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      google.script.run
+        .withSuccessHandler(populateFields)
+        .withFailureHandler(showError)
+        .getSearchFields();
+      
+      function populateFields(fields) {
+        const select = document.getElementById('field');
+        fields.forEach(field => {
+          const option = document.createElement('option');
+          option.value = field;
+          option.textContent = field;
+          if (field === 'DEBT_USER_ID') option.selected = true;
+          select.appendChild(option);
+        });
+      }
+      
+      function performSearch(event) {
+        event.preventDefault();
+        
+        const field = document.getElementById('field').value;
+        const value = document.getElementById('value').value.trim();
+        
+        if (!field || !value) {
+          showMessage('❌ Por favor, preencha todos os campos.', 'error');
+          return;
+        }
+        
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('message').style.display = 'none';
+        document.getElementById('btnSearch').disabled = true;
+        
+        const btnContent = document.querySelector('.btn-content span:last-child');
+        btnContent.textContent = 'Buscando...';
+        
+        google.script.run
+          .withSuccessHandler(displayResults)
+          .withFailureHandler(showError)
+          .searchBigQuery(field, value);
+      }
+      
+      function displayResults(result) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('btnSearch').disabled = false;
+        
+        const btnContent = document.querySelector('.btn-content span:last-child');
+        btnContent.textContent = 'Buscar no BigQuery';
+        
+        if (!result.success) {
+          showMessage('❌ ' + result.message, 'error');
+          return;
+        }
+        
+        if (result.count === 0) {
+          showMessage('❌ Nenhum resultado encontrado para esta busca.', 'error');
+          return;
+        }
+        
+        // Populate modal with results
+        document.getElementById('modalResultsCount').textContent = `${result.count} ${result.count === 1 ? 'registro' : 'registros'}`;
+        
+        const thead = document.getElementById('modalTableHead');
+        thead.innerHTML = '';
+        const headerRow = document.createElement('tr');
+        result.headers.forEach(header => {
+          const th = document.createElement('th');
+          th.textContent = header;
+          headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        
+        const tbody = document.getElementById('modalTableBody');
+        tbody.innerHTML = '';
+        result.rows.forEach(row => {
+          const tr = document.createElement('tr');
+          row.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell || '-';
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+        
+        // Show modal
+        document.getElementById('modalOverlay').style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Prevent background scroll
+        
+        showMessage('✅ ' + result.message, 'success');
+      }
+      
+      function closeModal(event) {
+        if (event && event.target !== event.currentTarget) return;
+        document.getElementById('modalOverlay').style.display = 'none';
+        document.body.style.overflow = ''; // Restore scroll
+      }
+      
+      // Close modal on ESC key
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+          closeModal();
+        }
+      });
+      
+      function showError(error) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('btnSearch').disabled = false;
+        
+        const btnContent = document.querySelector('.btn-content span:last-child');
+        btnContent.textContent = 'Buscar no BigQuery';
+        
+        showMessage('❌ Erro ao buscar dados: ' + error.message, 'error');
+      }
+      
+      function showMessage(text, type) {
+        const message = document.getElementById('message');
+        message.textContent = text;
+        message.className = 'message ' + type;
+        message.style.display = 'block';
+      }
+    </script>
+</body>
+</html>

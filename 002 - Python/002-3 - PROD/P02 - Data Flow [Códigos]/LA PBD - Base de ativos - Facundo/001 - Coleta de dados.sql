@@ -1,0 +1,17 @@
+CREATE OR REPLACE TABLE `<ENV>.STG.BASE_PROCESSOS_ELAW_ATIVOS` AS
+SELECT 
+  ID AS Processo_id, 
+  PAIS AS Pais, 
+  STATUS AS Status_pro, 
+  AREA_DIREITO AS Area_do_direito, 
+  SUB_AREA_DIREITO AS Sub_area_do_direito, 
+  CUST_ID_AUTOR AS Cust_id_autor, 
+  SAFE_CAST(DATA_REGISTRADO AS DATE) AS Data_registrado, 
+  SAFE_CAST(DATA_ENCERRAMENTO AS DATE) AS Data_de_encerramento,
+  CURRENT_DATE() AS Data_update
+FROM 
+  `<ENV>.TBL.LK_ENTRADAS_E_DESFECHOS`
+WHERE 
+  REGEXP_CONTAINS(ID, r'^[0-9]+$')
+  AND STATUS = 'Ativo'
+  

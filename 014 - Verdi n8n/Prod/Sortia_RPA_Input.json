@@ -1,0 +1,684 @@
+{
+  "name": "Sortia_RPA_Input",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "url",
+            "value": "https://drive.google.com/drive/folders/1pkdoMkXljhS0yEEi-CV8t4Ct_HJdnn_p"
+          }
+        },
+        "options": {}
+      },
+      "id": "1d0fce33-3750-4064-937a-a198d1d7b307",
+      "name": "Com Saldo",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        224,
+        32
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "url",
+            "value": "https://drive.google.com/drive/folders/1oJzt3p1xczU_6TCgf_Ss6zSD_9DIFwo9"
+          }
+        },
+        "options": {}
+      },
+      "id": "f6767fe9-942b-4031-b075-82697eaaa37c",
+      "name": "Sem Saldo",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        224,
+        224
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "url",
+            "value": "https://drive.google.com/drive/folders/1KO8G-sk5SFWPrdtbvyM5PeKem_up9IMh"
+          }
+        },
+        "options": {}
+      },
+      "id": "8a7fdf81-5d13-4efd-a81c-90afff87f6fb",
+      "name": "Sem Saldo 2",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        224,
+        416
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "id": "246cf980-18bf-44da-8e45-5a6333992c3c",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        672,
+        288
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "id": "0cb6efa2-a248-4eb5-aec0-8fdb8c39a13b",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        0,
+        240
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "url",
+            "value": "https://drive.google.com/drive/folders/1TqCj23HVEvL39HMjqEGWEv889_dLm8S_"
+          }
+        },
+        "options": {}
+      },
+      "id": "6bb5fea1-ab3f-4d44-8993-40a27177dd96",
+      "name": "Lista arquivos",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        224,
+        -160
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "b5abcb27-2db1-43a5-85f1-1f797b7081b1",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              },
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "=Matrizes"
+            },
+            {
+              "id": "326fbf61-1d59-4e49-b928-b550ad9d585f",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              },
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "Com_Saldo.lnk"
+            },
+            {
+              "id": "ea460da8-ee76-4c17-99ba-6d5bf90c8820",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              },
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "Sem_Saldo.lnk"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f4330f97-1e30-4145-9c7f-6112893ba736",
+      "name": "Filtro",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        448,
+        -160
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "operation": "deleteFile",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "35151fd7-8d9f-4333-b950-58617365b78e",
+      "name": "Delete",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        672,
+        -160
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "684c622c-131d-4cdb-ae8c-28a9243fbb83",
+              "name": "Modelo",
+              "type": "string",
+              "value": "=Com_Saldo"
+            },
+            {
+              "id": "53947aed-74b6-47e4-ae2b-58fb335a84f7",
+              "name": "name",
+              "type": "string",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1a7817df-ae88-4033-a402-e02504515384",
+      "name": "Edit Com Saldo",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        448,
+        32
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "684c622c-131d-4cdb-ae8c-28a9243fbb83",
+              "name": "Modelo",
+              "type": "string",
+              "value": "=Sem_Saldo"
+            },
+            {
+              "id": "53947aed-74b6-47e4-ae2b-58fb335a84f7",
+              "name": "name",
+              "type": "string",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fc7b2ea6-60dc-4acd-851c-2567db5a350e",
+      "name": "Edit Sem Saldo",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        448,
+        224
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "684c622c-131d-4cdb-ae8c-28a9243fbb83",
+              "name": "Modelo",
+              "type": "string",
+              "value": "=Sem_Saldo_2"
+            },
+            {
+              "id": "53947aed-74b6-47e4-ae2b-58fb335a84f7",
+              "name": "name",
+              "type": "string",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ef78ae25-d905-469c-82a8-450229d47aaf",
+      "name": "Edit Sem Saldo 2",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        448,
+        416
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e735f35f-a11b-4a64-9518-b2afd7160b28",
+              "name": "Modelo",
+              "type": "string",
+              "value": "={{ $json.Modelo }}"
+            },
+            {
+              "id": "8f8275db-2a87-417b-a985-1488ae4fe5d2",
+              "name": "Nome",
+              "type": "string",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "id": "4f83ab14-1a7f-463f-bdb1-5a1d4a22f5ae",
+              "name": "Status",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aa661e5c-842d-4f56-b17f-741037a89883",
+      "name": "Edit Merge",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        896,
+        320
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {
+          "sheetName": "Database"
+        }
+      },
+      "id": "d42b958d-d1a0-45ec-b56e-9ef4e24227f9",
+      "name": "Conversão",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        1344,
+        320
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "90c7b0b4-e17a-46cb-a378-af193282928c",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              },
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "Arquivo morto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2fde9729-020f-4213-ae4c-84f3d8c256ff",
+      "name": "Filter",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        1120,
+        320
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "url",
+            "value": "https://drive.google.com/drive/folders/1or_byHSfd8-26ghf_g7Opp4hRxLuN59r"
+          }
+        },
+        "options": {}
+      },
+      "id": "47800e45-667e-437f-bfc9-9c90d3cac3e6",
+      "name": "Único",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        224,
+        608
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "684c622c-131d-4cdb-ae8c-28a9243fbb83",
+              "name": "Modelo",
+              "type": "string",
+              "value": "=Sem_Saldo_2"
+            },
+            {
+              "id": "53947aed-74b6-47e4-ae2b-58fb335a84f7",
+              "name": "name",
+              "type": "string",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "18c255be-64b9-419f-8201-e2dfe1ea68ff",
+      "name": "Edit único",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        448,
+        608
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "name": "RPA_2_Salesforce_a_revisar.xlsx",
+        "driveId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://drive.google.com/drive/folders/1TqCj23HVEvL39HMjqEGWEv889_dLm8S_"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "id": "9726c1a8-7f92-4d49-883e-480d829fa556",
+      "name": "Upload",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        1568,
+        320
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Edit Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Conversão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro": {
+      "main": [
+        [
+          {
+            "node": "Delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Único": {
+      "main": [
+        [
+          {
+            "node": "Edit único",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Com Saldo": {
+      "main": [
+        [
+          {
+            "node": "Edit Com Saldo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sem Saldo": {
+      "main": [
+        [
+          {
+            "node": "Edit Sem Saldo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversão": {
+      "main": [
+        [
+          {
+            "node": "Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Merge": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit único": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Sem Saldo 2": {
+      "main": [
+        [
+          {
+            "node": "Edit Sem Saldo 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Com Saldo": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Sem Saldo": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Lista arquivos": {
+      "main": [
+        [
+          {
+            "node": "Filtro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Sem Saldo 2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Com Saldo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sem Saldo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sem Saldo 2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Lista arquivos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Único",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e4e0e5be-b34f-4407-a117-b3470d22c564",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c6d1ca3d4b39869c6bdeb6204ec50a97e82888513b690cf5da718a210895f410"
+  },
+  "id": "duc9FVs0sTMUXSKR",
+  "tags": []
+}

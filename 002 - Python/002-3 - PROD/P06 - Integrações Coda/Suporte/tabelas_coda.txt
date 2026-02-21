@@ -1,0 +1,100 @@
+Nome da tabela: Detalhes - Dashboard Operações | ID: grid-pMLfkOMvub
+Nome da tabela: MACRO - Chamados eLAW | ID: grid-VR0wU5WHwk
+Nome da tabela: Mapeamento de rotinas | ID: grid-rUbuSkp3wP
+Nome da tabela: Detalhes - RECLAMA VIRTUAL, CIP y SIC FACILITA | ID: grid-Ew6yCZdw5z
+Nome da tabela: Detalhes - QuickCheck Requests | ID: grid-LoCe3bgeN7
+Nome da tabela: Gantt - QuickCheck Requests | ID: table-Dd2GwgUwb_
+Nome da tabela: TEMAS - RPA e Automações | ID: grid-Pox4KqfGZE
+Nome da tabela: Detalhes - Dashboard Budget | ID: grid-mgiJDDQFfl
+Nome da tabela: Agenda - Marcelo Cardoso | ID: grid-sync-1003-Event
+Nome da tabela: Cores de marca | ID: grid-QcOnMhEawT
+Nome da tabela: Dashboards | ID: grid-Dh49NmHUpu
+Nome da tabela: Reports | ID: grid-m3JFB6Okcw
+Nome da tabela: Bases de dados | ID: grid-Dx71HljnT7
+Nome da tabela: Detalhes - Dashboard de iniciativas (GR + DR) | ID: grid-NIBUd3SWFE
+Nome da tabela: Softwares e assinaturas | ID: grid-zqVWzrp4yw
+Nome da tabela: Instituições | ID: grid-hKs90VZimg
+Nome da tabela: TEMAS - Novo recurso Analytics | ID: grid-R0-u5Pc0Ju
+Nome da tabela: Gantt - Novo recurso Analytics | ID: table-hMj9tktiZG
+Nome da tabela: Detalhes - Dashboard CLM | ID: grid-UIB634IsxZ
+Nome da tabela: MACRO - TWD, novo analista e internalização | ID: grid-tudHO3Ityx
+Nome da tabela: Gantt - TWD, novo analista e internalização | ID: table-814L8GTqkQ
+Nome da tabela: Alt_Area_2 | ID: grid-eEsTP-1Pd4
+Nome da tabela: Troca_Class_1 | ID: grid-_r4KY7llyb
+Nome da tabela: TEMAS - Metas 2025 Analytics | ID: grid-k3BAPtmJdx
+Nome da tabela: Entregas por Quarter | ID: table-nGOSSWFkB3
+Nome da tabela: Complexidade | ID: table-FH-CnG5u2J
+Nome da tabela: Gantt - Metas 2025 Analytics | ID: table-qmebDHITMQ
+Nome da tabela: Encerra_Tarefa_1 | ID: grid-Edh0kfmUBy
+Nome da tabela: Troca_Status_1 | ID: grid-Mj_8fgT_jV
+Nome da tabela: Status | ID: table-9PmGYSEpHK
+Nome da tabela: Calendário de marcações | ID: grid-LtvyRsP-nA
+Nome da tabela: Dimensão de dias útes | ID: grid-PLycqNxAp5
+Nome da tabela: Controle de presencialidade | ID: grid-GO8oKIVU3A
+Nome da tabela: Dia Semana em Meli | ID: table-FkxoUhokL6
+Nome da tabela: Presencialidade 2025 | ID: table-qvkqZhywHe
+Nome da tabela: Extrações Salesforce | ID: grid-29_f1X5_RR
+Nome da tabela: Controle de convites | ID: grid-g_yPFK66UB
+Nome da tabela: Análise de perfil | ID: grid-EVz272WwR3
+Nome da tabela: Detalhes | Tracking Gerencial | ID: grid-WcpjbSfc1t
+Nome da tabela: Dim RPA | ID: grid-ikD0QdfHZB
+Nome da tabela: Mapeamento de acessos - Gerais | ID: grid-nv28NPukiM
+Nome da tabela: Quem está no grupo? | ID: grid-9ZaAzBbqJ8
+Nome da tabela: Acessos necessários - Murillo | ID: grid-Yi32IWUS80
+Nome da tabela: Novas infs. BigQuery - Detalhes | ID: grid-NGjjrVbIqb
+Nome da tabela: Histórico de versões | ID: grid-fbEPSHNnvb
+Nome da tabela: Detalhes - Legal Assistance | ID: grid-6OyRMjxCPO
+Nome da tabela: Detalhamento - Quebra de Sigilo [Erros] | ID: grid-MK1zWu1Wi1
+Nome da tabela: Detalhamento - Tunning query operações | ID: grid-4e0cwt9EST
+Nome da tabela: Cadastro de acesso | ID: table-H1YyVkIPZd
+Nome da tabela: Cadastro de solicitações | ID: table-1QzlbxPrJ9
+Nome da tabela: Disparo de e-mails Padrões | ID: grid-65BWqAnIS6
+Nome da tabela: Cadastrar E-mail Padrão | ID: table-da1UNVx45l
+Nome da tabela: Dimensão Grupo/ E-mail | ID: grid-3qD9b_yXla
+Nome da tabela: R1 - Detalhamento | ID: grid-VhNe861PC1
+Nome da tabela: R2 - Detalhamento | ID: grid-5hvtOFfJCV
+Nome da tabela: Histórico de E-mails disparados - Padrões | ID: grid-bUFBNX5EXW
+Nome da tabela: Gantt - Dashboard Operações | ID: table-Wywv2knXEz
+Nome da tabela: Informações de processos | ID: grid-iWNtUbKZHA
+Nome da tabela: Histórico de E-mails disparados - RPA | ID: grid-TiLmHlNmpf
+Nome da tabela: Weekly Analytics - Temas mapeados | ID: grid-0VB149O-oN
+Nome da tabela: TodoList - Temas mapeados | ID: grid-s2ABsgo8K3
+Nome da tabela: TodoList - Cadastro de temas | ID: table-E8qh7Sk4mc
+Nome da tabela: Weekly Analytics - Cadastro de temas | ID: table-c7T_RXsbIg
+Nome da tabela: Detalhes - Dashboard Amélia | ID: grid-MJaUfe4VMJ
+Nome da tabela: QuickCheck Requests - Cadastro de temas | ID: table-DVSEqgAQQ6
+Nome da tabela: Reports criados | ID: grid-smrcMTfhHy
+Nome da tabela: Tabela 1 | ID: grid-Qkzk_cFdXK
+Nome da tabela: Tabela 2 | ID: grid-VHV7DHAOK_
+Nome da tabela: Informações Amélia | ID: grid-QBDed1c-F8
+Nome da tabela: Final | ID: grid-jEsZqKUAEE
+Nome da tabela: Detalhamento - Quebra de Sigilo | Espelhamento de Job | ID: grid-BEgWxw-GQa
+Nome da tabela: Detalhamento - Tunning (Gantt) | ID: table-BE-D0u2qvf
+Nome da tabela: [Murillo] - Quebra de Sigilo | Tunning | ID: table-NNMLxY6f9F
+Nome da tabela: [Murillo] - Dashboard Operações | ID: table-OW1ByUhXrc
+Nome da tabela: [Murillo] - QuickCheck Requests | ID: table-AbnM4nPA2C
+Nome da tabela: [Marcelo] - Dashboard CLM | ID: table-WhEg4AjrBl
+Nome da tabela: [Marcelo] - Dashboard Budget | ID: table-OOUdJaX62q
+Nome da tabela: [Marcelo] - RECLAMA VIRTUAL, CIP y SIC FACILITA | ID: table-tDOY7yZGo6
+Nome da tabela: [Marcelo] - Dashboard Amélia | ID: table-2NVoEnFRfR
+Nome da tabela: Table | ID: grid-29Cu9e9eUr
+Nome da tabela: TodoList - Marcelo | ID: table-LAESCptR3i
+Nome da tabela: TodoList - Murillo | ID: table-wRsAQhPlKu
+Nome da tabela: [Marcelo] - QuickCheck Requests | ID: table-sCoBMORlQo
+Nome da tabela: Data Academy 2025 | ID: grid-v_KVNQY2UT
+Nome da tabela: Detalhes - Data Academy 2025 | ID: grid-CfTaR2xB4m
+Nome da tabela: Gantt - Data Academy 2025 | ID: table-xEOqtvcffp
+Nome da tabela: SQL Básico - Detalhes | ID: grid-W4IDCjGhfr
+Nome da tabela: Gantt | Básico - Detalhes | ID: table-J3MaY8bcR3
+Nome da tabela: SQL Avançado - Detalhes | ID: grid-sPG_x-KJXl
+Nome da tabela: Gantt | SQL Avançado - Detalhes | ID: table-8xscB8Ti7t
+Nome da tabela: Estatística básica - Detalhes | ID: grid-z-reCbmXo3
+Nome da tabela: Gantt | Estatística básica - Detalhes | ID: table-me0DGxeMK8
+Nome da tabela: Looker (Conexões e gráficos) - Detalhes | ID: grid-ziEqUB44yH
+Nome da tabela: Gantt |  Looker (Conexões e gráficos) - Detalhes | ID: table-mFspNtLB0U
+Nome da tabela: DataSuite (Avançado) - Detalhes | ID: grid-mIMudKvRZE
+Nome da tabela: Gantt | DataSuite (Avançado) - Detalhes | ID: table-vfs_bl6VBp
+Nome da tabela: Divulgação no Wokplace- Detalhes | ID: grid-ZyuM2vjNRX
+Nome da tabela: Gantt | Divulgação no Wokplace- Detalhes | ID: table-JRrAl2DftT
+Nome da tabela: Questionário de nivelamento - Detalhes | ID: grid-KeLfz9oOqC
+Nome da tabela: Gantt | Questionário de nivelamento - Detalhes | ID: table-oWRHCUZe8v

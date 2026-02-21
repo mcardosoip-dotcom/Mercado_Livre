@@ -1,0 +1,142 @@
+// /**
+//  * ARQUIVO: 002_Notificacao.gs
+//  * DESCRIÇÃO: Gera anexo Excel e envia por e-mail.
+//  */
+
+// function exportarRelatoriosCrucePorEmail() {
+//   const SPREADSHEET_ID_ORIGEM = "1hrKq2U9y7LuTZqiIpmizk4j72FTyweZcnZShawPDhgY";
+//   const RECEPTOR_EMAIL = "murillo.franca@mercadolivre.com,melissa.pace@mercadolivre.com,ext_angesilv@mercadolivre.com,ext_danillos@mercadolivre.com,felipe.pmisura@mercadolivre.com,valeria.raverta@mercadolibre.com"; 
+//   const ASSUNTO_EMAIL = "Reporte Diário: Cruces de Validação de Retenções";
+//   const NOME_ARQUIVO_ANEXO = "Relatorio_Cruces_Validacao.xlsx";
+
+//   const SHEET_NAMES_TO_EXPORT = [
+//     "RESUMO",
+//     "CRUCE_1_VALOR_MAIOR_QUE_RETIDO",
+//     "CRUCE_2_ERRO_ID_DEUDA",
+//     "CRUCE_3_ENLIGHTEN_NAO_EXECUTOU",
+//     "CRUCE_5_TESTE_CBU",
+//     "CRUCE_6_DUPLICADOS",
+//     "CRUCE_7_DEBT_TYPE_INCORRETO"
+//   ];
+  
+//   const LABEL_MAP = {
+//     "CRUCE_1_VALOR_MAIOR_QUE_RETIDO": "1. Valor transferido > Retido",
+//     "CRUCE_2_ERRO_ID_DEUDA": "2. Erro no ID da Deuda",
+//     "CRUCE_3_ENLIGHTEN_NAO_EXECUTOU": "3. Enlighten não executou",
+//     "CRUCE_5_TESTE_CBU": "5. CBU Inválido",
+//     "CRUCE_6_DUPLICADOS": "6. Casos Duplicados",
+//     "CRUCE_7_DEBT_TYPE_INCORRETO": "7. Debt Type Incorreto"
+//   };
+
+//   let tempSpreadsheetId = null;
+//   let summaryCounts = {}; 
+
+//   try {
+//     const spreadsheetOrigem = SpreadsheetApp.openById(SPREADSHEET_ID_ORIGEM);
+//     const tempSheetName = "Relatorio Cruces TEMP " + new Date().getTime();
+//     const tempSpreadsheet = SpreadsheetApp.create(tempSheetName);
+//     tempSpreadsheetId = tempSpreadsheet.getId();
+//     const defaultSheet = tempSpreadsheet.getSheets()[0];
+
+//     Logger.log('>> Criando planilha temporária...');
+    
+//     // 1. Copiar abas
+//     SHEET_NAMES_TO_EXPORT.forEach((nomeHoja) => {
+//       const hojaOrigem = spreadsheetOrigem.getSheetByName(nomeHoja);
+//       if (hojaOrigem) {
+//         const dados = hojaOrigem.getDataRange().getValues();
+        
+//         // Contagem para o corpo do email
+//         if (nomeHoja !== "RESUMO") {
+//           let qtd = 0;
+//           if (dados.length > 1) {
+//             const primeiraCelula = String(dados[1][0]).trim();
+//             if (primeiraCelula !== "Nenhum caso encontrado") {
+//               qtd = dados.length - 1; 
+//             }
+//           }
+//           summaryCounts[nomeHoja] = qtd;
+//         }
+
+//         const hojaDestino = tempSpreadsheet.insertSheet(nomeHoja);
+//         if (dados.length > 0) {
+//           hojaDestino.getRange(1, 1, dados.length, dados[0].length).setValues(dados);
+//         }
+//       }
+//     });
+
+//     if (tempSpreadsheet.getSheets().length > 1) { 
+//         tempSpreadsheet.deleteSheet(defaultSheet);
+//     }
+
+//     // 2. Limpar "Cruce 4" da aba RESUMO da planilha temporária (Regra de negócio)
+//     const abaResumoTemp = tempSpreadsheet.getSheetByName("RESUMO");
+//     if (abaResumoTemp) {
+//       const dadosResumo = abaResumoTemp.getDataRange().getValues();
+//       for (let i = dadosResumo.length - 1; i >= 0; i--) {
+//         const valorCelulaA = String(dadosResumo[i][0]);
+//         if (valorCelulaA.includes("CRUCE_4_VALOR_MENOR_QUE_RETIDO")) {
+//           abaResumoTemp.deleteRow(i + 1);
+//         }
+//       }
+//     }
+    
+//     SpreadsheetApp.flush(); 
+    
+//     // 3. Montar HTML do Email
+//     let linhasTabelaHtml = "";
+//     const ordemExibicao = [
+//       "CRUCE_1_VALOR_MAIOR_QUE_RETIDO", "CRUCE_2_ERRO_ID_DEUDA", "CRUCE_3_ENLIGHTEN_NAO_EXECUTOU",
+//       "CRUCE_5_TESTE_CBU", "CRUCE_6_DUPLICADOS", "CRUCE_7_DEBT_TYPE_INCORRETO"
+//     ];
+
+//     ordemExibicao.forEach(key => {
+//       const label = LABEL_MAP[key];
+//       const qtd = summaryCounts[key] || 0;
+//       const estiloQtd = qtd > 0 ? "color: #D32F2F; font-weight: bold;" : "color: #333;";
+
+//       linhasTabelaHtml += `
+//         <tr>
+//           <td style="padding: 8px; border-bottom: 1px solid #eee;">${label}</td>
+//           <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right; ${estiloQtd}">${qtd}</td>
+//         </tr>`;
+//     });
+
+//     const emailHtml = `
+//       <div style="font-family: Arial, sans-serif; color: #333;">
+//         <h2 style="color: #2D3277;">📊 Relatório de Cruces</h2>
+//         <p>Resumo dos casos identificados:</p>
+//         <table style="width: 100%; max-width: 600px; border-collapse: collapse;">
+//           <tr style="background-color: #f5f5f5;">
+//             <th style="text-align: left; padding: 10px;">Cruce</th>
+//             <th style="text-align: right; padding: 10px;">Qtd</th>
+//           </tr>
+//           ${linhasTabelaHtml}
+//         </table>
+//         <p style="margin-top: 20px;">O detalhe completo segue no arquivo anexo.</p>
+//       </div>
+//     `;
+
+//     // 4. Exportar e Enviar
+//     const url = "https://docs.google.com/spreadsheets/d/" + tempSpreadsheetId + "/export?format=xlsx";
+//     const params = { method: "get", headers: { "Authorization": "Bearer " + ScriptApp.getOAuthToken() } };
+//     const fileBlob = UrlFetchApp.fetch(url, params).getBlob().setName(NOME_ARQUIVO_ANEXO);
+
+//     MailApp.sendEmail({
+//       to: RECEPTOR_EMAIL,
+//       subject: ASSUNTO_EMAIL,
+//       htmlBody: emailHtml,
+//       attachments: [fileBlob]
+//     });
+    
+//     Logger.log(">> Email enviado com sucesso.");
+    
+//   } catch (e) {
+//     Logger.log("❌ Erro no envio de email: " + e.toString());
+//     throw e;
+//   } finally {
+//     if (tempSpreadsheetId) {
+//       try { DriveApp.getFileById(tempSpreadsheetId).setTrashed(true); } catch(e){}
+//     }
+//   }
+// }

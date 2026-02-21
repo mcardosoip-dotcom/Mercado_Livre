@@ -1,0 +1,44 @@
+from google.cloud import bigquery
+
+# Inicializa cliente do BigQuery
+client = bigquery.Client()
+
+# Lista de tabelas que você quer clonar com novo sufixo
+tabelas_origem = [
+    'TBL_QS_TITULARES_FINCH',
+    'TBL_QS_EXTRATO_MOVIMENTACAO_FINCH',
+    # Adicione mais tabelas conforme necessário
+]
+
+# Nome do dataset de origem
+dataset_origem = 'meli-bi-data.SBOX_LEGALES'
+
+# Dataset e ambiente de destino
+dataset_destino = '<ENV>.STG'  # Ex: 'meu-projeto.meu_dataset'
+
+# Novo sufixo que você quer adicionar nas tabelas
+sufixo_velho = '_FINCH'
+sufixo_novo = '_TUNING'
+
+for tabela in tabelas_origem:
+    query = f"""
+        SELECT column_name, data_type
+        FROM `{dataset_origem}.INFORMATION_SCHEMA.COLUMNS`
+        WHERE table_name = '{tabela}'
+        ORDER BY ordinal_position
+    """
+
+    results = client.query(query).result()
+    colunas = [(row.column_name, row.data_type.upper()) for row in results]
+
+    # Define nome da nova tabela com sufixo
+    tabela_destino = tabela.replace(sufixo_velho, sufixo_novo)
+
+    # Monta o código do CREATE TABLE
+    create_stmt = f"CREATE OR REPLACE TABLE `{dataset_destino}.{tabela_destino}` (\n"
+    for nome, tipo in colunas:
+        create_stmt += f"  `{nome}` {tipo},\n"
+    create_stmt = create_stmt.rstrip(',\n') + "\n);\n"
+
+    # Exibe o resultado (ou poderia salvar em arquivo)
+    print(create_stmt)

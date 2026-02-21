@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação - Tabelas AMELIA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+        }
+        
+        .flow-diagram {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 5px solid #667eea;
+        }
+        
+        .table-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .table-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+        
+        .table-card.legado {
+            border-left: 5px solid #ff6b6b;
+        }
+        
+        .table-card.novo {
+            border-left: 5px solid #4ecdc4;
+        }
+        
+        .table-card.final {
+            border-left: 5px solid #95e1d3;
+        }
+        
+        .table-card.producao {
+            border-left: 5px solid #f38181;
+        }
+        
+        .table-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .table-info {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .info-value {
+            color: #555;
+        }
+        
+        .arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .columns-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .columns-list ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .columns-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .columns-list li:hover {
+            background: #e9ecef;
+            padding-left: 5px;
+            transition: all 0.2s;
+        }
+        
+        .columns-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .new-column {
+            background: #fff3cd;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: #856404;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .badge.legado {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .badge.novo {
+            background: #4ecdc4;
+            color: white;
+        }
+        
+        .badge.final {
+            background: #95e1d3;
+            color: #333;
+        }
+        
+        .badge.producao {
+            background: #f38181;
+            color: white;
+        }
+        
+        .flow-steps {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .flow-step {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            width: 80%;
+            text-align: center;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .notes {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 5px;
+        }
+        
+        .notes h4 {
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+        
+        .notes ul {
+            margin-left: 20px;
+        }
+        
+        .notes li {
+            margin: 8px 0;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Documentação - Tabelas AMELIA</h1>
+            <p>Fluxo completo de dados e estrutura das tabelas</p>
+        </div>
+        
+        <div class="content">
+            <!-- Seção: Visão Geral do Fluxo -->
+            <div class="section">
+                <h2>🔄 Visão Geral do Fluxo</h2>
+                <div class="flow-diagram">
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            📦 Bucket (Parquet)<br>
+                            <small>Origem dos dados brutos</small>
+                        </div>
+                        <div class="arrow">⬇️</div>
+                        <div class="flow-step">
+                            📥 STG - Tabelas de Stage<br>
+                            <small>Dados legados e novos separados</small>
+                        </div>
+                        <div class="arrow">⬇️</div>
+                        <div class="flow-step">
+                            🔗 STG_FINAL - União<br>
+                            <small>Combinação de dados legados e novos</small>
+                        </div>
+                        <div class="arrow">⬇️</div>
+                        <div class="flow-step">
+                            ✅ TBL - Tabela Final de Produção<br>
+                            <small>Dados prontos para consumo</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Tabelas STG (Stage) -->
+            <div class="section">
+                <h2>📥 Tabelas STG (Stage) - Origem dos Dados</h2>
+                
+                <!-- Tabela Legado -->
+                <div class="table-card legado">
+                    <div class="table-name">
+                        STG.STG_INPUT_DATABASE_ELAW_AMELIA_legado
+                        <span class="badge legado">LEGADO</span>
+                    </div>
+                    <div class="table-info">
+                        <div class="info-label">Arquivo:</div>
+                        <div class="info-value">001 - eLAW - Carga de tabelas STG.sql (linha 70)</div>
+                        
+                        <div class="info-label">Origem:</div>
+                        <div class="info-value">Parquet do bucket legado</div>
+                        
+                        <div class="info-label">Caminho:</div>
+                        <div class="info-value"><code>gs://&lt;Bucket&gt;/Projeto banco de dados/eLAW_Databases_legado/Database_eLAW_Amelia_legado.parquet</code></div>
+                        
+                        <div class="info-label">Filtro:</div>
+                        <div class="info-value">Dados com <code>data_registrado &lt; '2025-01-01'</code></div>
+                        
+                        <div class="info-label">Propósito:</div>
+                        <div class="info-value">Dados históricos (anteriores a 2025-01-01)</div>
+                        
+                        <div class="info-label">Total de Colunas:</div>
+                        <div class="info-value"><strong>27 colunas</strong> (mesmas colunas da tabela novo, sem data_registrado_convertida)</div>
+                        
+                        <div class="info-label">Lista de Colunas:</div>
+                        <div class="info-value">
+                            <div class="columns-list">
+                                <ul>
+                                    <li>pais</li>
+                                    <li>processo_procedimento_judicial</li>
+                                    <li>processo_objeto_objeto</li>
+                                    <li>data_audiencia_inicial</li>
+                                    <li>processo_audiencia_ficticia</li>
+                                    <li>processo_invoca_hipervulnerabilidad</li>
+                                    <li>advogado_da_parte_contraria</li>
+                                    <li>processo_o_usuario_reclama_por_dois_ou_mais_produtos_diferentes</li>
+                                    <li>processo_o_documento_de_identidade_da_reclamacao_corresponde_ao_da_compra</li>
+                                    <li>processo_e_high_risk_confirmado_pelo_pf</li>
+                                    <li>processo_cust_id_autor</li>
+                                    <li>processo_id_da_operacao_mp</li>
+                                    <li>processo_id_do_anuncio</li>
+                                    <li>parte_contraria_nome</li>
+                                    <li>parte_contraria_cpf_cnpj</li>
+                                    <li>numero_do_processo</li>
+                                    <li>processo_id</li>
+                                    <li>area_do_direito</li>
+                                    <li>sub_area_do_direito</li>
+                                    <li>status</li>
+                                    <li>valor_da_causa</li>
+                                    <li>data_registrado</li>
+                                    <li>processo_o_objeto_da_reclamacao_e_pdd_on_ou_pnr_on</li>
+                                    <li>processo_fase_estado_fase</li>
+                                    <li>processo_fase_estado_estado</li>
+                                    <li><span class="new-column">processo_probabilidade_de_ganhar_ou_perder_probabilidade</span> ⭐ NOVA</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela Novo -->
+                <div class="table-card novo">
+                    <div class="table-name">
+                        STG.STG_INPUT_DATABASE_ELAW_AMELIA
+                        <span class="badge novo">NOVO</span>
+                    </div>
+                    <div class="table-info">
+                        <div class="info-label">Arquivo:</div>
+                        <div class="info-value">001 - Diversas - Carga de tabelas STG.sql (linha 98)</div>
+                        
+                        <div class="info-label">Origem:</div>
+                        <div class="info-value">Parquet do bucket atual</div>
+                        
+                        <div class="info-label">Caminho:</div>
+                        <div class="info-value"><code>gs://&lt;Bucket&gt;/Projeto banco de dados/eLAW_Databases/Database_eLAW_Amelia.parquet</code></div>
+                        
+                        <div class="info-label">Filtro:</div>
+                        <div class="info-value">Dados com <code>data_registrado &gt;= '2025-01-01'</code></div>
+                        
+                        <div class="info-label">Propósito:</div>
+                        <div class="info-value">Dados novos (a partir de 2025-01-01)</div>
+                        
+                        <div class="info-label">Total de Colunas:</div>
+                        <div class="info-value"><strong>27 colunas</strong> (mesmas colunas da tabela legado, sem data_registrado_convertida)</div>
+                        
+                        <div class="info-label">Lista de Colunas:</div>
+                        <div class="info-value">
+                            <div class="columns-list">
+                                <ul>
+                                    <li>pais</li>
+                                    <li>processo_procedimento_judicial</li>
+                                    <li>processo_objeto_objeto</li>
+                                    <li>data_audiencia_inicial</li>
+                                    <li>processo_audiencia_ficticia</li>
+                                    <li>processo_invoca_hipervulnerabilidad</li>
+                                    <li>advogado_da_parte_contraria</li>
+                                    <li>processo_o_usuario_reclama_por_dois_ou_mais_produtos_diferentes</li>
+                                    <li>processo_o_documento_de_identidade_da_reclamacao_corresponde_ao_da_compra</li>
+                                    <li>processo_e_high_risk_confirmado_pelo_pf</li>
+                                    <li>processo_cust_id_autor</li>
+                                    <li>processo_id_da_operacao_mp</li>
+                                    <li>processo_id_do_anuncio</li>
+                                    <li>parte_contraria_nome</li>
+                                    <li>parte_contraria_cpf_cnpj</li>
+                                    <li>numero_do_processo</li>
+                                    <li>processo_id</li>
+                                    <li>area_do_direito</li>
+                                    <li>sub_area_do_direito</li>
+                                    <li>status</li>
+                                    <li>valor_da_causa</li>
+                                    <li>data_registrado</li>
+                                    <li>processo_o_objeto_da_reclamacao_e_pdd_on_ou_pnr_on</li>
+                                    <li>processo_fase_estado_fase</li>
+                                    <li>processo_fase_estado_estado</li>
+                                    <li><span class="new-column">processo_probabilidade_de_ganhar_ou_perder_probabilidade</span> ⭐ NOVA</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Tabela STG Final -->
+            <div class="section">
+                <h2>🔗 Tabela STG Final - União de Dados</h2>
+                
+                <div class="table-card final">
+                    <div class="table-name">
+                        STG.STG_INPUT_DATABASE_ELAW_AMELIA_FINAL
+                        <span class="badge final">FINAL</span>
+                    </div>
+                    <div class="table-info">
+                        <div class="info-label">Arquivo:</div>
+                        <div class="info-value">002 - eLAW - Join Inédito e legado.sql (linha 1637)</div>
+                        
+                        <div class="info-label">Processo:</div>
+                        <div class="info-value">
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Une dados legados (data_registrado &lt; '2025-01-01') e novos (data_registrado &gt;= '2025-01-01')</li>
+                                <li>Converte todas as colunas para STRING</li>
+                                <li>Cria coluna derivada <code>data_registrado_convertida</code> para consistência</li>
+                                <li>Utiliza UNION ALL para combinar os dados</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="info-label">Total de Colunas:</div>
+                        <div class="info-value"><strong>28 colunas</strong></div>
+                        
+                        <div class="info-label">Lista de Colunas:</div>
+                        <div class="info-value">
+                            <div class="columns-list">
+                                <ul>
+                                    <li><span class="new-column">processo_probabilidade_de_ganhar_ou_perder_probabilidade</span> ⭐ NOVA</li>
+                                    <li>data_registrado_convertida</li>
+                                    <li>pais</li>
+                                    <li>processo_procedimento_judicial</li>
+                                    <li>processo_objeto_objeto</li>
+                                    <li>data_audiencia_inicial</li>
+                                    <li>processo_audiencia_ficticia</li>
+                                    <li>processo_invoca_hipervulnerabilidad</li>
+                                    <li>advogado_da_parte_contraria</li>
+                                    <li>processo_o_usuario_reclama_por_dois_ou_mais_produtos_diferentes</li>
+                                    <li>processo_o_documento_de_identidade_da_reclamacao_corresponde_ao_da_compra</li>
+                                    <li>processo_e_high_risk_confirmado_pelo_pf</li>
+                                    <li>processo_cust_id_autor</li>
+                                    <li>processo_id_da_operacao_mp</li>
+                                    <li>processo_id_do_anuncio</li>
+                                    <li>parte_contraria_nome</li>
+                                    <li>parte_contraria_cpf_cnpj</li>
+                                    <li>numero_do_processo</li>
+                                    <li>processo_id</li>
+                                    <li>area_do_direito</li>
+                                    <li>sub_area_do_direito</li>
+                                    <li>status</li>
+                                    <li>valor_da_causa</li>
+                                    <li>data_registrado</li>
+                                    <li>processo_o_objeto_da_reclamacao_e_pdd_on_ou_pnr_on</li>
+                                    <li>processo_fase_estado_fase</li>
+                                    <li>processo_fase_estado_estado</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Tabela Final de Produção -->
+            <div class="section">
+                <h2>✅ Tabela Final de Produção</h2>
+                
+                <div class="table-card producao">
+                    <div class="table-name">
+                        TBL.LK_PBD_LA_ELAW_REPORT_AMELIA
+                        <span class="badge producao">PRODUÇÃO</span>
+                    </div>
+                    <div class="table-info">
+                        <div class="info-label">Arquivo:</div>
+                        <div class="info-value">003 - eLAW - Carga de Tabelas Final.sql (linha 1357)</div>
+                        
+                        <div class="info-label">Processo:</div>
+                        <div class="info-value">
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>TRUNCATE TABLE antes de inserir novos dados</li>
+                                <li>INSERT INTO com todas as colunas</li>
+                                <li>Carrega dados de <code>STG_INPUT_DATABASE_ELAW_AMELIA_FINAL</code></li>
+                                <li>Adiciona campos de auditoria automaticamente</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="info-label">Campos de Auditoria:</div>
+                        <div class="info-value">
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li><code>AUD_INS_DTTM</code> - Data/hora de inserção (CURRENT_DATETIME())</li>
+                                <li><code>AUD_UPD_DTTM</code> - Data/hora de atualização (CURRENT_DATETIME())</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="info-label">Total de Colunas:</div>
+                        <div class="info-value"><strong>30 colunas</strong> (28 do STG_FINAL + 2 de auditoria)</div>
+                        
+                        <div class="info-label">Lista de Colunas:</div>
+                        <div class="info-value">
+                            <div class="columns-list">
+                                <ul>
+                                    <li>pais</li>
+                                    <li>processo_procedimento_judicial</li>
+                                    <li>processo_objeto_objeto</li>
+                                    <li>data_audiencia_inicial</li>
+                                    <li>processo_audiencia_ficticia</li>
+                                    <li>processo_invoca_hipervulnerabilidad</li>
+                                    <li>advogado_da_parte_contraria</li>
+                                    <li>processo_o_usuario_reclama_por_dois_ou_mais_produtos_diferentes</li>
+                                    <li>processo_o_documento_de_identidade_da_reclamacao_corresponde_ao_da_compra</li>
+                                    <li>processo_e_high_risk_confirmado_pelo_pf</li>
+                                    <li>processo_cust_id_autor</li>
+                                    <li>processo_id_da_operacao_mp</li>
+                                    <li>processo_id_do_anuncio</li>
+                                    <li>parte_contraria_nome</li>
+                                    <li>parte_contraria_cpf_cnpj</li>
+                                    <li>numero_do_processo</li>
+                                    <li>processo_id</li>
+                                    <li>area_do_direito</li>
+                                    <li>sub_area_do_direito</li>
+                                    <li>status</li>
+                                    <li>valor_da_causa</li>
+                                    <li>data_registrado</li>
+                                    <li>processo_o_objeto_da_reclamacao_e_pdd_on_ou_pnr_on</li>
+                                    <li>processo_fase_estado_fase</li>
+                                    <li>processo_fase_estado_estado</li>
+                                    <li><span class="new-column">processo_probabilidade_de_ganhar_ou_perder_probabilidade</span> ⭐ NOVA</li>
+                                    <li>AUD_INS_DTTM</li>
+                                    <li>AUD_UPD_DTTM</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Observações Importantes -->
+            <div class="section">
+                <h2>📝 Observações Importantes</h2>
+                
+                <div class="notes">
+                    <h4>1. Divisão Temporal dos Dados</h4>
+                    <ul>
+                        <li>Os dados são separados por <code>data_registrado</code> com a data de corte <strong>2025-01-01</strong></li>
+                        <li>Dados anteriores a esta data vêm da tabela <code>_legado</code></li>
+                        <li>Dados a partir desta data vêm da tabela sem sufixo <code>_legado</code></li>
+                    </ul>
+                </div>
+
+                <div class="notes">
+                    <h4>2. Conversão de Tipos</h4>
+                    <ul>
+                        <li>Todas as colunas são convertidas para <code>STRING</code> durante o processo</li>
+                        <li>Isso garante consistência entre dados legados e novos</li>
+                        <li>A coluna <code>data_registrado_convertida</code> é criada para facilitar filtros e ordenações</li>
+                    </ul>
+                </div>
+
+                <div class="notes">
+                    <h4>3. Nova Coluna Adicionada</h4>
+                    <ul>
+                        <li><strong>processo_probabilidade_de_ganhar_ou_perder_probabilidade</strong> foi adicionada recentemente</li>
+                        <li>Esta coluna está presente em todas as etapas do fluxo:</li>
+                        <ul style="margin-left: 30px; margin-top: 10px;">
+                            <li>✅ STG_INPUT_DATABASE_ELAW_AMELIA_FINAL</li>
+                            <li>✅ LK_PBD_LA_ELAW_REPORT_AMELIA</li>
+                        </ul>
+                    </ul>
+                </div>
+
+                <div class="notes">
+                    <h4>4. Processo de Carga</h4>
+                    <ul>
+                        <li>A tabela final utiliza <code>TRUNCATE</code> antes de cada carga, garantindo dados atualizados</li>
+                        <li>Os campos de auditoria são preenchidos automaticamente com a data/hora atual</li>
+                        <li>O processo é executado em sequência: STG → STG_FINAL → TBL</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Seção: Diagrama de Fluxo Detalhado -->
+            <div class="section">
+                <h2>🗺️ Diagrama de Fluxo Detalhado</h2>
+                <div class="flow-diagram">
+                    <pre style="font-family: 'Courier New', monospace; line-height: 1.8; color: #333;">
+┌─────────────────────────────────────────────────────────────┐
+│  BUCKET (Google Cloud Storage)                               │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ Database_eLAW_Amelia_legado.parquet                   │  │
+│  │ (dados < 2025-01-01)                                   │  │
+│  └───────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ Database_eLAW_Amelia.parquet                           │  │
+│  │ (dados >= 2025-01-01)                                  │  │
+│  └───────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                        ⬇️ LOAD DATA
+┌─────────────────────────────────────────────────────────────┐
+│  STG (Stage Layer)                                           │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ STG_INPUT_DATABASE_ELAW_AMELIA_legado                 │  │
+│  │ Filtro: data_registrado < '2025-01-01'                │  │
+│  └───────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ STG_INPUT_DATABASE_ELAW_AMELIA                         │  │
+│  │ Filtro: data_registrado >= '2025-01-01'                │  │
+│  └───────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                        ⬇️ UNION ALL
+┌─────────────────────────────────────────────────────────────┐
+│  STG (Stage Layer - Final)                                  │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ STG_INPUT_DATABASE_ELAW_AMELIA_FINAL                  │  │
+│  │ • Une dados legados + novos                           │  │
+│  │ • Converte tudo para STRING                           │  │
+│  │ • Inclui nova coluna:                                 │  │
+│  │   processo_probabilidade_de_ganhar_ou_perder_...      │  │
+│  └───────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                        ⬇️ INSERT INTO
+┌─────────────────────────────────────────────────────────────┐
+│  TBL (Production Layer)                                     │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ LK_PBD_LA_ELAW_REPORT_AMELIA                          │  │
+│  │ • TRUNCATE + INSERT                                   │  │
+│  │ • Adiciona AUD_INS_DTTM e AUD_UPD_DTTM               │  │
+│  │ • Tabela final para consumo                           │  │
+│  └───────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

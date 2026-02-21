@@ -1,0 +1,993 @@
+{
+  "name": "Push_Coda_Commerce",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1Oz9U17YSW8r74mT_jX1JdeWtA7aHx9r5fWID6JKCZMs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Oz9U17YSW8r74mT_jX1JdeWtA7aHx9r5fWID6JKCZMs/edit?usp=drivesdk",
+          "cachedResultName": "Database Histórica - Commerce "
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 2054478962,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Oz9U17YSW8r74mT_jX1JdeWtA7aHx9r5fWID6JKCZMs/edit#gid=2054478962",
+          "cachedResultName": "2025 Pt1"
+        },
+        "options": {}
+      },
+      "id": "2aa9945b-ab85-4df3-9605-b8e9092d7f7e",
+      "name": "Push 2025 Pt1",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        432,
+        -64
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "04570a21-bda3-4144-a78c-366f86427017",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        1552,
+        -80
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "id": "ff1dd343-f7eb-4781-9fd1-cfc6c7e78e3c",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        656,
+        -256
+      ],
+      "webhookId": "69e3d031-4465-40b3-8d7e-76c84584580c",
+      "typeVersion": 1.1,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1BnKT25oRcYOg3UNechKi5v2WfciHzoJcDoGaGVZ5JnI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BnKT25oRcYOg3UNechKi5v2WfciHzoJcDoGaGVZ5JnI/edit?usp=drivesdk",
+          "cachedResultName": "Commerce 2025 full"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 695733864,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BnKT25oRcYOg3UNechKi5v2WfciHzoJcDoGaGVZ5JnI/edit#gid=695733864",
+          "cachedResultName": "Database"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "Responsavel",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Responsavel",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Solicitante",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Solicitante",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data_de_solicitacao",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Data_de_solicitacao",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hora_de_solicitacao",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Hora_de_solicitacao",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ariba_CLM",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Ariba_CLM",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome_contraparte",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Nome_contraparte",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Objeto",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Objeto",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Descricao",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Descricao",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Valor_global",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Valor_global",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Expectativa_GMV",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Expectativa_GMV",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cost_Avoidance",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Cost_Avoidance",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cost_Saving",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Cost_Saving",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data_Entrega",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Data_Entrega",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hora_Entrega",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Hora_Entrega",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Area",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Area",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status_Macro",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Status_Macro",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status_Micro",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Status_Micro",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "249464d1-1c6d-4c31-9e3f-e7cc2c43e04e",
+      "name": "Commerce 2025 full",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1776,
+        -64
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAllRows",
+        "docId": "6_rrQy4CBF",
+        "tableId": "grid-PPup7LEULc",
+        "returnAll": true,
+        "options": {}
+      },
+      "id": "8f01d57c-0a24-43bb-93db-65b08c946b8b",
+      "name": "Push CODA 2025 Set->",
+      "type": "n8n-nodes-base.coda",
+      "position": [
+        880,
+        -256
+      ],
+      "typeVersion": 1.1,
+      "credentials": {
+        "codaApi": {
+          "id": "apuMWmhQJX8wZ0aD",
+          "name": "Coda Personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "09268615-e34b-4ea8-a7b2-e76d78811aa8",
+              "name": "Responsavel",
+              "type": "string",
+              "value": "={{ $json.Responsavel }}"
+            },
+            {
+              "id": "ae9b2750-2c44-42aa-96e0-7c307ae6fbd1",
+              "name": "Solicitante",
+              "type": "string",
+              "value": "={{ $json.Solicitante }}"
+            },
+            {
+              "id": "b1dd15eb-b1d7-478f-8370-20d5e52c7286",
+              "name": "Data_de_solicitacao",
+              "type": "string",
+              "value": "={{ $json.Data_de_solicitacao }}"
+            },
+            {
+              "id": "c31ca07f-9459-4dde-832d-869b02261ef5",
+              "name": "Hora_de_solicitacao",
+              "type": "string",
+              "value": "={{ $json.Hora_de_solicitacao }}"
+            },
+            {
+              "id": "81b99a87-8769-40db-a43a-9d055ace63b0",
+              "name": "Ariba_CLM",
+              "type": "string",
+              "value": "={{ $json.Ariba_CLM }}"
+            },
+            {
+              "id": "12a248a1-4ead-4e96-a3a7-6eb4e3afa72c",
+              "name": "Nome_contraparte",
+              "type": "string",
+              "value": "={{ $json.Nome_contraparte }}"
+            },
+            {
+              "id": "0f59f6e2-a20f-4aa3-bf4a-f9d29e96f8cb",
+              "name": "Objeto",
+              "type": "string",
+              "value": "={{ $json.Objeto }}"
+            },
+            {
+              "id": "aa780ff2-955d-45bd-b79b-c163536976eb",
+              "name": "Descricao",
+              "type": "string",
+              "value": "={{ $json.Descricao }}"
+            },
+            {
+              "id": "d0cd2f37-d50d-4e16-bd10-129c0c720071",
+              "name": "Valor_global",
+              "type": "string",
+              "value": "={{ $json.Valor_global }}"
+            },
+            {
+              "id": "ee8f9416-06f4-459b-8eb6-a64550fbca59",
+              "name": "Expectativa_GMV",
+              "type": "string",
+              "value": "={{ $json.Expectativa_GMV }}"
+            },
+            {
+              "id": "f4ce68f8-3ae9-4355-b425-e0daff6dd5a6",
+              "name": "Cost_Saving",
+              "type": "string",
+              "value": "={{ $json.Cost_Saving }}"
+            },
+            {
+              "id": "74c8e9d1-e804-4d42-aa2e-2b6e45068b00",
+              "name": "Data_Entrega",
+              "type": "string",
+              "value": "={{ $json.Data_Entrega }}"
+            },
+            {
+              "id": "8cb9d022-8ff3-45cb-8b29-74457549ff03",
+              "name": "Area",
+              "type": "string",
+              "value": "={{ $json.Area }}"
+            },
+            {
+              "id": "68f9459d-b54c-4ebd-8caf-3d92a0017bd7",
+              "name": "Status_Macro",
+              "type": "string",
+              "value": "={{ $json.Status_Macro }}"
+            },
+            {
+              "id": "865e4107-1493-467f-b8bf-1d7106533b37",
+              "name": "Status_Micro",
+              "type": "string",
+              "value": "={{ $json.Status_Micro }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ad8123c1-ff45-4d01-a472-ce87f9e8ebcb",
+      "name": "Format 2",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        656,
+        -64
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "09268615-e34b-4ea8-a7b2-e76d78811aa8",
+              "name": "Responsavel",
+              "type": "string",
+              "value": "={{ $json.Responsavel }}"
+            },
+            {
+              "id": "ae9b2750-2c44-42aa-96e0-7c307ae6fbd1",
+              "name": "Solicitante",
+              "type": "string",
+              "value": "={{ $json.Solicitante }}"
+            },
+            {
+              "id": "b1dd15eb-b1d7-478f-8370-20d5e52c7286",
+              "name": "Data_de_solicitacao",
+              "type": "string",
+              "value": "={{ $json.Data_de_solicitacao }}"
+            },
+            {
+              "id": "c31ca07f-9459-4dde-832d-869b02261ef5",
+              "name": "Hora_de_solicitacao",
+              "type": "string",
+              "value": "={{ $json.Hora_de_solicitacao }}"
+            },
+            {
+              "id": "81b99a87-8769-40db-a43a-9d055ace63b0",
+              "name": "Ariba_CLM",
+              "type": "string",
+              "value": "={{ $json.Ariba_CLM }}"
+            },
+            {
+              "id": "12a248a1-4ead-4e96-a3a7-6eb4e3afa72c",
+              "name": "Nome_contraparte",
+              "type": "string",
+              "value": "={{ $json.Nome_contraparte }}"
+            },
+            {
+              "id": "0f59f6e2-a20f-4aa3-bf4a-f9d29e96f8cb",
+              "name": "Objeto",
+              "type": "string",
+              "value": "={{ $json.Objeto }}"
+            },
+            {
+              "id": "aa780ff2-955d-45bd-b79b-c163536976eb",
+              "name": "Descricao",
+              "type": "string",
+              "value": "={{ $json.Descricao }}"
+            },
+            {
+              "id": "d0cd2f37-d50d-4e16-bd10-129c0c720071",
+              "name": "Valor_global",
+              "type": "string",
+              "value": "={{ $json.Valor_global }}"
+            },
+            {
+              "id": "ee8f9416-06f4-459b-8eb6-a64550fbca59",
+              "name": "Expectativa_GMV",
+              "type": "string",
+              "value": "={{ $json.Expectativa_GMV }}"
+            },
+            {
+              "id": "f4ce68f8-3ae9-4355-b425-e0daff6dd5a6",
+              "name": "Cost_Saving",
+              "type": "string",
+              "value": "={{ $json.Cost_Saving }}"
+            },
+            {
+              "id": "74c8e9d1-e804-4d42-aa2e-2b6e45068b00",
+              "name": "Data_Entrega",
+              "type": "string",
+              "value": "={{ $json.Data_Entrega }}"
+            },
+            {
+              "id": "8cb9d022-8ff3-45cb-8b29-74457549ff03",
+              "name": "Area",
+              "type": "string",
+              "value": "={{ $json.Area }}"
+            },
+            {
+              "id": "68f9459d-b54c-4ebd-8caf-3d92a0017bd7",
+              "name": "Status_Macro",
+              "type": "string",
+              "value": "={{ $json.Status_Macro }}"
+            },
+            {
+              "id": "865e4107-1493-467f-b8bf-1d7106533b37",
+              "name": "Status_Micro",
+              "type": "string",
+              "value": "={{ $json.Status_Micro }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "016cdb21-b41c-4691-95da-1a25902dfe21",
+      "name": "Format 3",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        656,
+        128
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "b5b259c5-5987-4a50-8a3d-442a6528cec1",
+      "name": "Start | Webhook",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        208,
+        464
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                0
+              ],
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "81c304e1-fbcb-408e-993b-3f2fa6f878f6",
+      "name": "Start | Automático",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        208,
+        -112
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1BnKT25oRcYOg3UNechKi5v2WfciHzoJcDoGaGVZ5JnI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BnKT25oRcYOg3UNechKi5v2WfciHzoJcDoGaGVZ5JnI/edit?usp=drivesdk",
+          "cachedResultName": "Commerce 2025 full"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 695733864,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BnKT25oRcYOg3UNechKi5v2WfciHzoJcDoGaGVZ5JnI/edit#gid=695733864",
+          "cachedResultName": "Database"
+        }
+      },
+      "id": "3ba064a7-23e7-4fdd-af86-632b674ea9b5",
+      "name": "Clean | Commerce 2025 full",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        432,
+        -256
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1lRaJ8wwBCLLjVogBw9uxGTplA54hqL-s19czU3xpXOY",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lRaJ8wwBCLLjVogBw9uxGTplA54hqL-s19czU3xpXOY/edit?usp=drivesdk",
+          "cachedResultName": "Controle de contratos - 2025 a frente"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1397656054,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lRaJ8wwBCLLjVogBw9uxGTplA54hqL-s19czU3xpXOY/edit#gid=1397656054",
+          "cachedResultName": "2025 Pt2"
+        },
+        "options": {}
+      },
+      "id": "c2cf4b8c-b85c-488c-b9fc-a7c7d8744170",
+      "name": "Push 2025 Pt2",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        432,
+        128
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "659e41ce-986f-43e7-ab7a-e763ca118fa1",
+              "name": "Responsavel",
+              "type": "string",
+              "value": "={{ $json.Responsavel }}"
+            },
+            {
+              "id": "eafd1b9b-9464-4abf-90f8-1807c1d8534d",
+              "name": "Solicitante",
+              "type": "string",
+              "value": "={{ $json.Solicitante }}"
+            },
+            {
+              "id": "0bc1c18e-52ea-4a4f-9588-de84f8e59e32",
+              "name": "Data_de_solicitacao",
+              "type": "string",
+              "value": "={{ $json.Data_de_solicitacao }}"
+            },
+            {
+              "id": "00803673-00c5-44ee-b0b0-04e9e5f6afa0",
+              "name": "Hora_de_solicitacao",
+              "type": "string",
+              "value": "={{ $json.Hora_de_solicitacao }}"
+            },
+            {
+              "id": "1f807691-3de1-4b2e-ae2e-a54e15996784",
+              "name": "Ariba_CLM",
+              "type": "string",
+              "value": "={{ $json.Ariba_CLM }}"
+            },
+            {
+              "id": "5ce57f13-3c07-4675-b29c-ffaf88a5ba04",
+              "name": "Nome_contraparte",
+              "type": "string",
+              "value": "={{ $json.Nome_contraparte }}"
+            },
+            {
+              "id": "0600ff63-a932-46bc-844d-621fdc39c65b",
+              "name": "Objeto",
+              "type": "string",
+              "value": "={{ $json.Objeto }}"
+            },
+            {
+              "id": "8f3710be-9e70-499f-bb3e-b5c6a519f1bf",
+              "name": "Descricao",
+              "type": "string",
+              "value": "={{ $json.Descricao }}"
+            },
+            {
+              "id": "a7f16f93-e7de-42a2-bee1-285b8a9dac73",
+              "name": "Valor_global",
+              "type": "string",
+              "value": "={{ $json.Valor_global }}"
+            },
+            {
+              "id": "a365fb22-983a-4c1e-add6-9f2261351a06",
+              "name": "Expectativa_GMV",
+              "type": "string",
+              "value": "={{ $json.Expectativa_GMV }}"
+            },
+            {
+              "id": "9ccb1192-3d3d-4075-a5f2-16a6149bb061",
+              "name": "Cost_Avoidance",
+              "type": "string",
+              "value": "={{ $json.Cost_Avoidance }}"
+            },
+            {
+              "id": "05b6dbef-feee-4074-b843-a15b9f9bc3f4",
+              "name": "Cost_Saving",
+              "type": "string",
+              "value": "={{ $json.Cost_Saving }}"
+            },
+            {
+              "id": "30f859ae-d709-4d1d-a547-b8813b980d89",
+              "name": "Data_Entrega",
+              "type": "string",
+              "value": "={{ $json.Data_Entrega }}"
+            },
+            {
+              "id": "3f567482-1655-4ab9-9987-1039fdab89c1",
+              "name": "Hora_Entrega",
+              "type": "string",
+              "value": "={{ $json.Hora_Entrega }}"
+            },
+            {
+              "id": "41f86425-5409-4d62-a39b-9439a09266b0",
+              "name": "Area",
+              "type": "string",
+              "value": "={{ $json.Area }}"
+            },
+            {
+              "id": "ac2bb123-222e-47d0-8cbf-a3eff0c7c39c",
+              "name": "Status_Macro",
+              "type": "string",
+              "value": "={{ $json.Status_Macro }}"
+            },
+            {
+              "id": "1594a09d-5c27-473b-9482-265b8f53df0e",
+              "name": "Status_Micro",
+              "type": "string",
+              "value": "={{ $json.Status_Micro }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3df0fd6a-c331-42b4-bff9-a5cbde25a681",
+      "name": "Edit. CODA 2025 Set->",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1104,
+        -256
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "04a22c19-9dc3-4912-a478-6d6f77a846e6",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.Data_de_solicitacao }}",
+              "rightValue": ""
+            },
+            {
+              "id": "6742afc6-7da2-4dea-a7d3-8439f30c851d",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.Data_Entrega }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ced44c1e-3438-456b-9e0c-6696ac093b1e",
+      "name": "Tratamento Vazios",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        1328,
+        -256
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {},
+      "id": "01c3bc10-962c-4bf2-be00-53261b41cd76",
+      "name": "VerdiCode",
+      "type": "n8n-nodes-base.verdiCode",
+      "position": [
+        432,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://script.google.com/a/macros/mercadolivre.com/s/AKfycbycHRPk9TeDJPU1OLnarIBjFZlICnlKEubauABMqxFqNoOGnKl_bPZbyU6fweZBlJ8/exec",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleGenericOAuth2Api",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "maxRedirects": 100
+            }
+          }
+        }
+      },
+      "id": "3a87d555-6eb4-47ea-976b-3c147feae173",
+      "name": "GScript_Commerce_ajuste_formato",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2000,
+        -64
+      ],
+      "executeOnce": true,
+      "typeVersion": 4.2,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Push CODA 2025 Set->",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Commerce 2025 full",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format 2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Format 3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Push 2025 Pt1": {
+      "main": [
+        [
+          {
+            "node": "Format 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Push 2025 Pt2": {
+      "main": [
+        [
+          {
+            "node": "Format 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start | Webhook": {
+      "main": [
+        [
+          {
+            "node": "Push 2025 Pt2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Push 2025 Pt1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clean | Commerce 2025 full",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tratamento Vazios": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Commerce 2025 full": {
+      "main": [
+        [
+          {
+            "node": "GScript_Commerce_ajuste_formato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start | Automático": {
+      "main": [
+        [
+          {
+            "node": "Push 2025 Pt2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Push 2025 Pt1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clean | Commerce 2025 full",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "VerdiCode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Push CODA 2025 Set->": {
+      "main": [
+        [
+          {
+            "node": "Edit. CODA 2025 Set->",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit. CODA 2025 Set->": {
+      "main": [
+        [
+          {
+            "node": "Tratamento Vazios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean | Commerce 2025 full": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "791d910e-dcba-4cce-ba02-7ccb6b75a6e0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92a7841699b7656650cb4dc0dd4f4f4fdb565d51df3f1aaf3126caa7a316a77c"
+  },
+  "id": "5NfazCEGJRtkVW9q",
+  "tags": []
+}

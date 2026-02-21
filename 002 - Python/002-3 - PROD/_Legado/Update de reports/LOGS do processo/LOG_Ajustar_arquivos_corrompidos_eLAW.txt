@@ -1,0 +1,76 @@
+[2025-06-05 08:31:22] [1 de 15] Iniciando processamento do arquivo: Temp_Database_8_Report_eLAW_Contencioso_Brasil_Parcial.xlsx
+[2025-06-05 08:31:23] Tentativa 1: Abrindo Temp_Database_8_Report_eLAW_Contencioso_Brasil_Parcial.xlsx
+[2025-06-05 08:34:38] Arquivo reparado com sucesso: Temp_Database_8_Report_eLAW_Contencioso_Brasil_Parcial.xlsx
+[2025-06-05 08:34:38] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:34:38] --------------------------------------------------------------------------------
+[2025-06-05 08:34:38] [2 de 15] Iniciando processamento do arquivo: Temp_Database_4_Report_eLAW_Contencioso_Brasil_Parcial_Outgoing.xlsx
+[2025-06-05 08:34:39] Tentativa 1: Abrindo Temp_Database_4_Report_eLAW_Contencioso_Brasil_Parcial_Outgoing.xlsx
+[2025-06-05 08:37:17] Arquivo reparado com sucesso: Temp_Database_4_Report_eLAW_Contencioso_Brasil_Parcial_Outgoing.xlsx
+[2025-06-05 08:37:17] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:38:17] --------------------------------------------------------------------------------
+[2025-06-05 08:38:17] [3 de 15] Iniciando processamento do arquivo: Temp_Database_16_Report_eLAW_Base_Ativa.xlsx
+[2025-06-05 08:38:18] Tentativa 1: Abrindo Temp_Database_16_Report_eLAW_Base_Ativa.xlsx
+[2025-06-05 08:39:18] Arquivo reparado com sucesso: Temp_Database_16_Report_eLAW_Base_Ativa.xlsx
+[2025-06-05 08:39:18] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:39:19] --------------------------------------------------------------------------------
+[2025-06-05 08:39:19] [4 de 15] Iniciando processamento do arquivo: Temp_Database_10_Report_eLAW_Contencioso_Hispanos_Completa.xlsx
+[2025-06-05 08:39:19] Tentativa 1: Abrindo Temp_Database_10_Report_eLAW_Contencioso_Hispanos_Completa.xlsx
+[2025-06-05 08:40:35] Arquivo reparado com sucesso: Temp_Database_10_Report_eLAW_Contencioso_Hispanos_Completa.xlsx
+[2025-06-05 08:40:35] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:40:36] --------------------------------------------------------------------------------
+[2025-06-05 08:40:36] [5 de 15] Iniciando processamento do arquivo: Temp_Database_20_Report_eLAW_Pagamentos_e_garantia.xlsx
+[2025-06-05 08:40:36] Tentativa 1: Abrindo Temp_Database_20_Report_eLAW_Pagamentos_e_garantia.xlsx
+[2025-06-05 08:41:00] Arquivo reparado com sucesso: Temp_Database_20_Report_eLAW_Pagamentos_e_garantia.xlsx
+[2025-06-05 08:41:00] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:42:00] --------------------------------------------------------------------------------
+[2025-06-05 08:42:00] [6 de 15] Iniciando processamento do arquivo: Temp_Database_2_Report_eLAW_Amelia.xlsx
+[2025-06-05 08:42:00] Tentativa 1: Abrindo Temp_Database_2_Report_eLAW_Amelia.xlsx
+[2025-06-05 08:42:07] Arquivo reparado com sucesso: Temp_Database_2_Report_eLAW_Amelia.xlsx
+[2025-06-05 08:42:07] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:43:07] --------------------------------------------------------------------------------
+[2025-06-05 08:43:07] [7 de 15] Iniciando processamento do arquivo: Temp_Database_23_Report_eLAW_Extracao_multas.xlsx
+[2025-06-05 08:43:08] Tentativa 1: Abrindo Temp_Database_23_Report_eLAW_Extracao_multas.xlsx
+[2025-06-05 08:43:09] Arquivo reparado com sucesso: Temp_Database_23_Report_eLAW_Extracao_multas.xlsx
+[2025-06-05 08:43:09] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:43:12] --------------------------------------------------------------------------------
+[2025-06-05 08:43:12] [8 de 15] Iniciando processamento do arquivo: Temp_Database_26_Report_eLAW_Obrigacoes_de_Fazer.xlsx
+[2025-06-05 08:43:12] Tentativa 1: Abrindo Temp_Database_26_Report_eLAW_Obrigacoes_de_Fazer.xlsx
+[2025-06-05 08:43:14] Arquivo reparado com sucesso: Temp_Database_26_Report_eLAW_Obrigacoes_de_Fazer.xlsx
+[2025-06-05 08:43:15] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:43:17] --------------------------------------------------------------------------------
+[2025-06-05 08:43:17] [9 de 15] Iniciando processamento do arquivo: Temp_Database_22_Report_eLAW_Tarefas_Agendadas_Aguardando_Informações.xlsx
+[2025-06-05 08:43:18] Tentativa 1: Abrindo Temp_Database_22_Report_eLAW_Tarefas_Agendadas_Aguardando_Informações.xlsx
+[2025-06-05 08:43:21] Arquivo reparado com sucesso: Temp_Database_22_Report_eLAW_Tarefas_Agendadas_Aguardando_Informações.xlsx
+[2025-06-05 08:43:21] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:44:21] --------------------------------------------------------------------------------
+[2025-06-05 08:44:21] [10 de 15] Iniciando processamento do arquivo: Temp_Database_17_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_CAP.xlsx
+[2025-06-05 08:44:22] Tentativa 1: Abrindo Temp_Database_17_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_CAP.xlsx
+[2025-06-05 08:45:11] Arquivo reparado com sucesso: Temp_Database_17_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_CAP.xlsx
+[2025-06-05 08:45:11] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:46:12] --------------------------------------------------------------------------------
+[2025-06-05 08:46:12] [11 de 15] Iniciando processamento do arquivo: Temp_Database_19_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_OPS.xlsx
+[2025-06-05 08:46:12] Tentativa 1: Abrindo Temp_Database_19_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_OPS.xlsx
+[2025-06-05 08:47:39] Arquivo reparado com sucesso: Temp_Database_19_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_OPS.xlsx
+[2025-06-05 08:47:39] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:48:40] --------------------------------------------------------------------------------
+[2025-06-05 08:48:40] [12 de 15] Iniciando processamento do arquivo: Temp_Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes.xlsx
+[2025-06-05 08:48:40] Tentativa 1: Abrindo Temp_Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes.xlsx
+[2025-06-05 08:48:43] Arquivo reparado com sucesso: Temp_Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes.xlsx
+[2025-06-05 08:48:43] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:48:45] --------------------------------------------------------------------------------
+[2025-06-05 08:48:45] [13 de 15] Iniciando processamento do arquivo: Temp_Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados.xlsx
+[2025-06-05 08:48:46] Tentativa 1: Abrindo Temp_Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados.xlsx
+[2025-06-05 08:50:09] Arquivo reparado com sucesso: Temp_Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados.xlsx
+[2025-06-05 08:50:09] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:51:10] --------------------------------------------------------------------------------
+[2025-06-05 08:51:10] [14 de 15] Iniciando processamento do arquivo: Temp_Database_3_Report_eLAW_Acompanhamento_de_tarefas_CORP_CX.xlsx
+[2025-06-05 08:51:10] Tentativa 1: Abrindo Temp_Database_3_Report_eLAW_Acompanhamento_de_tarefas_CORP_CX.xlsx
+[2025-06-05 08:52:04] Arquivo reparado com sucesso: Temp_Database_3_Report_eLAW_Acompanhamento_de_tarefas_CORP_CX.xlsx
+[2025-06-05 08:52:04] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:53:05] --------------------------------------------------------------------------------
+[2025-06-05 08:53:05] [15 de 15] Iniciando processamento do arquivo: Temp_Database_18_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_DR.xlsx
+[2025-06-05 08:53:05] Tentativa 1: Abrindo Temp_Database_18_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_DR.xlsx
+[2025-06-05 08:53:07] Arquivo reparado com sucesso: Temp_Database_18_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_DR.xlsx
+[2025-06-05 08:53:07] Instância do Excel encerrada com sucesso.
+[2025-06-05 08:54:08] --------------------------------------------------------------------------------
+[2025-06-05 08:54:08] Processamento concluído.

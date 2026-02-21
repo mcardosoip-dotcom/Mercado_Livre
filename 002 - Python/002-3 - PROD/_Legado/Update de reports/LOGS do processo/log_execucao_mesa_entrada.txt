@@ -1,0 +1,33 @@
+Log de Execução - 2025-06-05 07:32:37
+============================================================
+
+📌 Arquivo: Mesa_entrada_vista_entradas.csv
+⏱ Tempo: 24.02s
+📦 Linhas: 371200
+📑 Colunas (13): fecha, numero_semana_ingreso, fecha_clasificado, tiempo_espera_en_segundos, rol, estado_nombre, tipo_estado, origen, tematica, tematica_clasificacion, anulado, id, dia_semana
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_dw_hist_casos_x_estado.csv
+⏱ Tempo: 0.5s
+📦 Linhas: 7562
+📑 Colunas (4): fecha, tipo, ORDEN, total
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_vista_cantidad_casos_usuarios.csv
+⏱ Tempo: 8.07s
+📦 Linhas: 18721
+📑 Colunas (5): fecha, numero_semana, rol, nombre_usuario, cantidad_casos
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_vista_usuarios.csv
+⏱ Tempo: 47.74s
+📦 Linhas: 1020713
+📑 Colunas (11): id_caso, id_estado_caso, nombre, rol, fecha_inicial, fecha_final, tiempo_estado_en_segundos, tiempo_estado_en_min, tiempo_estado_en_hora, tiempo_estado_en_dias, numero_semana_inicio
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_v_metricas_qa.csv
+⏱ Tempo: 0.64s
+📦 Linhas: 937
+📑 Colunas (2): estado_qa, fecha_qa
+------------------------------------------------------------
+📌 Arquivo: Mesa_entrada_metricas_big_query.csv
+⏱ Tempo: 4.03s
+📦 Linhas: 108592
+📑 Colunas (10): fecha, numero_semana, estado_consulta, estado_consultas, incompleta, tipo, total, ciudad, pais, destinatario
+------------------------------------------------------------

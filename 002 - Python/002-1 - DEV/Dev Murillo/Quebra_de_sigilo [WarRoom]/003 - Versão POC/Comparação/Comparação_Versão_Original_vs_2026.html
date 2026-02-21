@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Comparativa: Versão Original vs Versão 2026 - Pipeline Quebra de Sigilo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #555;
+            margin-top: 20px;
+        }
+        .summary-box {
+            background: #e8f4f8;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .positive {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .improvement {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .comparison-table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .comparison-table tr:hover {
+            background: #e8f4f8;
+        }
+        .version-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .version-original {
+            background: #dc3545;
+            color: white;
+        }
+        .version-2026 {
+            background: #28a745;
+            color: white;
+        }
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .metric {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin: 5px;
+            font-weight: bold;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .highlight {
+            background: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Análise Comparativa: Pipeline Quebra de Sigilo</h1>
+        <h2>Versão Original vs Versão 2026</h2>
+
+        <div class="summary-box">
+            <h3>📊 Resumo Executivo</h3>
+            <p><strong>Objetivo:</strong> Comparação detalhada entre a versão original do pipeline de quebra de sigilo e sua recriação na versão 2026, identificando melhorias, pontos positivos e oportunidades de otimização.</p>
+            <p><strong>Data da Análise:</strong> 2026</p>
+            <p><strong>Escopo:</strong> Análise completa de arquitetura, estrutura de dados, lógica de negócio e qualidade do código.</p>
+        </div>
+
+        <h2>📈 Métricas Gerais</h2>
+        <div>
+            <span class="metric">Versão Original: 16 arquivos</span>
+            <span class="metric">Versão 2026: 36 arquivos</span>
+            <span class="metric">Aumento: +125% modularização</span>
+        </div>
+
+        <h2>🏗️ Arquitetura e Estrutura</h2>
+
+        <h3>Versão Original - Estrutura</h3>
+        <div class="code-block">
+            <strong>Fluxo Linear:</strong>
+            000 - Criação de tabelas
+            001 - Tabelas auxiliares (739 linhas - monolítico)
+            002 - Tabelas auxiliares 2
+            003 - inserir tabelas finais
+            004-015 - Processamento de saídas (Carta Circular 3454 e Extratos)
+        </div>
+
+        <h3>Versão 2026 - Estrutura</h3>
+        <div class="code-block">
+            <strong>Fluxo Modular:</strong>
+            000 - Criação de tabelas Finch
+            001 - PREPARAR BASE PRESENTA (separado)
+            002 - COLETAR INF - REG (nova fonte de dados)
+            003 - COLETAR INF - REG by range (otimização)
+            004-021 - Processamento granular por tipo de dado
+            022-035 - Processamento de saídas (mantido compatível)
+        </div>
+
+        <div class="positive">
+            <h3>✅ Pontos Positivos da Versão 2026</h3>
+            <ul>
+                <li><strong>Modularização Aprimorada:</strong> Separação clara de responsabilidades com arquivos dedicados para cada etapa do processo</li>
+                <li><strong>Melhor Rastreabilidade:</strong> Nomenclatura mais descritiva facilita identificação do propósito de cada script</li>
+                <li><strong>Manutenibilidade:</strong> Código mais fácil de manter e debugar devido à granularidade</li>
+                <li><strong>Reutilização:</strong> Componentes podem ser reutilizados independentemente</li>
+            </ul>
+        </div>
+
+        <h2>🔧 Mudanças Técnicas Principais</h2>
+
+        <h3>1. Fonte de Dados Regulatórios</h3>
+        <table class="comparison-table">
+            <tr>
+                <th>Aspecto</th>
+                <th>Versão Original</th>
+                <th>Versão 2026</th>
+            </tr>
+            <tr>
+                <td><strong>Fonte Principal</strong></td>
+                <td>Múltiplos JOINs:<br>
+                    - LK_KYC_VAULT_USER<br>
+                    - LK_CUS_CUSTOMERS_DATA<br>
+                    - BT_MP_ACCOUNT_VIRTUAL_KEY</td>
+                <td><span class="highlight">LK_REG_REGULATED_BASE_MLB</span><br>
+                    Tabela consolidada regulatória</td>
+            </tr>
+            <tr>
+                <td><strong>Vantagens</strong></td>
+                <td>Flexibilidade de joins</td>
+                <td>✅ Performance otimizada<br>
+                    ✅ Dados pré-consolidados<br>
+                    ✅ Menos complexidade de joins<br>
+                    ✅ Manutenção simplificada</td>
+            </tr>
+            <tr>
+                <td><strong>Telefone</strong></td>
+                <td>Lógica complexa com múltiplos campos KYC</td>
+                <td>✅ UNNEST de PHONES_LIST<br>
+                    ✅ QUALIFY para telefone mais recente<br>
+                    ✅ Lógica mais robusta</td>
+            </tr>
+        </table>
+
+        <div class="positive">
+            <h4>Impacto da Mudança:</h4>
+            <ul>
+                <li><strong>Performance:</strong> Redução significativa de complexidade de queries</li>
+                <li><strong>Confiabilidade:</strong> Dados regulatórios centralizados e validados</li>
+                <li><strong>Manutenção:</strong> Menos dependências de múltiplas tabelas</li>
+            </ul>
+        </div>
+
+        <h3>2. Processamento de Movimentações</h3>
+        <table class="comparison-table">
+            <tr>
+                <th>Aspecto</th>
+                <th>Versão Original</th>
+                <th>Versão 2026</th>
+            </tr>
+            <tr>
+                <td><strong>Data Inicial</strong></td>
+                <td>MOVIMENTACAO_MIN (calculado com MAX entre DATA_ABERTURA e RANGE_MIN)</td>
+                <td>✅ DATA_ABERTURA diretamente (AVK_CREATED_DATETIME)<br>
+                    Mais preciso e direto</td>
+            </tr>
+            <tr>
+                <td><strong>Filtro de Cancelamentos</strong></td>
+                <td>Lógica presente mas menos explícita</td>
+                <td>✅ Arquivo dedicado (010)<br>
+                    ✅ Lógica mais clara de exclusão<br>
+                    ✅ Tratamento de cancelamentos parciais</td>
+            </tr>
+            <tr>
+                <td><strong>Estrutura</strong></td>
+                <td>Lógica concentrada em arquivo único</td>
+                <td>✅ Separação clara:<br>
+                    - 006: Movimentações base<br>
+                    - 010: Filtro de cancelamentos</td>
+            </tr>
+        </table>
+
+        <h3>3. Processamento PIX</h3>
+        <table class="comparison-table">
+            <tr>
+                <th>Aspecto</th>
+                <th>Versão Original</th>
+                <th>Versão 2026</th>
+            </tr>
+            <tr>
+                <td><strong>Fonte de Dados</strong></td>
+                <td>BT_MP_PAY_PAYIN (tabela legada)</td>
+                <td>✅ <span class="highlight">BT_MP_PIX_ALL</span><br>
+                    Tabela consolidada de PIX</td>
+            </tr>
+            <tr>
+                <td><strong>Estrutura</strong></td>
+                <td>Query única</td>
+                <td>✅ Bloco 1 (013): Base com PARTITION/CLUSTER<br>
+                    ✅ Bloco 2 (014): Enriquecimento com dados regulatórios<br>
+                    ✅ CTEs bem estruturadas</td>
+            </tr>
+            <tr>
+                <td><strong>Dados PAYER/RECEIVER</strong></td>
+                <td>Apenas PAYER</td>
+                <td>✅ UNION ALL de PAYER e RECEIVER<br>
+                    ✅ Campo ORIGEM_REGISTRO para rastreabilidade</td>
+            </tr>
+            <tr>
+                <td><strong>Enriquecimento</strong></td>
+                <td>Join direto com Dim_Instituicoes</td>
+                <td>✅ Join com STG_NQS2_INFO_TIT_CAD_VF_FINCH_STEP2<br>
+                    ✅ Correção de contas vazias com AVK_ACCOUNT_ID<br>
+                    ✅ Correção de nomes vazios com LEGAL_NAME</td>
+            </tr>
+            <tr>
+                <td><strong>Performance</strong></td>
+                <td>Query padrão</td>
+                <td>✅ PARTITION BY PAY_MOVE_DATE<br>
+                    ✅ CLUSTER BY ID_PAGAMENTO<br>
+                    ✅ Otimização para grandes volumes</td>
+            </tr>
+        </table>
+
+        <div class="positive">
+            <h4>Melhorias no PIX:</h4>
+            <ul>
+                <li><strong>Completude:</strong> Captura tanto PAYER quanto RECEIVER</li>
+                <li><strong>Qualidade:</strong> Enriquecimento automático com dados regulatórios</li>
+                <li><strong>Performance:</strong> Particionamento e clusterização otimizados</li>
+                <li><strong>Rastreabilidade:</strong> Campo ORIGEM_REGISTRO permite identificar origem do dado</li>
+            </ul>
+        </div>
+
+        <h3>4. Coleta de Informações Regulatórias</h3>
+        <table class="comparison-table">
+            <tr>
+                <th>Aspecto</th>
+                <th>Versão Original</th>
+                <th>Versão 2026</th>
+            </tr>
+            <tr>
+                <td><strong>Abordagem</strong></td>
+                <td>Join direto na query principal</td>
+                <td>✅ Arquivo dedicado (002)<br>
+                    ✅ Arquivo por range (003) para otimização</td>
+            </tr>
+            <tr>
+                <td><strong>Filtro de Data</strong></td>
+                <td>Baseado em RANGE_MIN/RANGE_MAX do investigado</td>
+                <td>✅ Filtro por AVK_CREATED_DATETIME<br>
+                    ✅ Busca contas criadas no período<br>
+                    ✅ Mais preciso para casos regulatórios</td>
+            </tr>
+            <tr>
+                <td><strong>Estrutura</strong></td>
+                <td>Lógica inline</td>
+                <td>✅ CTE com UNNEST de PHONES_LIST<br>
+                    ✅ QUALIFY para telefone mais recente<br>
+                    ✅ Separação clara de responsabilidades</td>
+            </tr>
+        </table>
+
+        <h3>5. Tratamento de Titulares</h3>
+        <table class="comparison-table">
+            <tr>
+                <th>Aspecto</th>
+                <th>Versão Original</th>
+                <th>Versão 2026</th>
+            </tr>
+            <tr>
+                <td><strong>Lógica de Nome</strong></td>
+                <td>Múltiplos CASE com fallback</td>
+                <td>✅ Priorização clara:<br>
+                    1. LEGAL_NAME<br>
+                    2. PREFERRED_FULL_NAME<br>
+                    3. FIRST_NAME + LAST_NAME</td>
+            </tr>
+            <tr>
+                <td><strong>CEP</strong></td>
+                <td>Múltiplos campos KYC testados</td>
+                <td>✅ FIS_ADRESS_LINE (prioritário)<br>
+                    ✅ ADDRESS_ZIP_CODE (fallback)<br>
+                    ✅ Validação de comprimento (8 caracteres)</td>
+            </tr>
+            <tr>
+                <td><strong>KYC Level</strong></td>
+                <td>Join separado em arquivo próprio</td>
+                <td>✅ Integrado na query principal<br>
+                    ✅ RIGHT() para extrair último dígito<br>
+                    ✅ CAST para STRING para compatibilidade</td>
+            </tr>
+            <tr>
+                <td><strong>CONTA_SPB</strong></td>
+                <td>Join com BT_MP_ACCOUNT_VIRTUAL_KEY</td>
+                <td>✅ Campo direto da LK_REG_REGULATED_BASE_MLB<br>
+                    ✅ avk_account_id mapeado diretamente</td>
+            </tr>
+        </table>
+
+        <h2>📋 Comparação de Arquivos</h2>
+
+        <h3>Mapeamento de Funcionalidades</h3>
+        <table class="comparison-table">
+            <tr>
+                <th>Versão Original</th>
+                <th>Versão 2026</th>
+                <th>Melhorias</th>
+            </tr>
+            <tr>
+                <td>000 - Criação de tabelas</td>
+                <td>000 - Criação de tabelas Finch</td>
+                <td>✅ Mesma estrutura (compatibilidade mantida)</td>
+            </tr>
+            <tr>
+                <td>001 - Tabelas auxiliares (739 linhas)</td>
+                <td>001 - PREPARAR BASE PRESENTA<br>
+                     002 - COLETAR INF - REG<br>
+                     003 - COLETAR INF - REG by range<br>
+                     004 - TRAZER APENAS INVESTIGADO COM CUST<br>
+                     005 - TRAZER NAO CORRESPONDENTE<br>
+                     007 - TRAZER NOME E CEP UNICO<br>
+                     008 - CRIAR TABELA COM INFORMAÇÕES DO TITULAR<br>
+                     009 - CRIAR TABELA COM INFORMAÇÕES DO TITULAR 2</td>
+                <td>✅ <strong>Modularização extrema</strong><br>
+                    ✅ Separação de responsabilidades<br>
+                    ✅ Facilita manutenção e debug</td>
+            </tr>
+            <tr>
+                <td>002 - Tabelas auxiliares 2</td>
+                <td>022 - Tabelas auxiliares 2</td>
+                <td>✅ Mesma lógica (compatibilidade)</td>
+            </tr>
+            <tr>
+                <td>N/A</td>
+                <td>006 - Movimentações<br>
+                     010 - MOVIMENTAÇÕES QUE NÃO TEM UM CANCELAMENTO ATRELADO</td>
+                <td>✅ <strong>Nova separação</strong><br>
+                    ✅ Lógica de cancelamento explícita</td>
+            </tr>
+            <tr>
+                <td>N/A</td>
+                <td>011 - PAYOUT<br>
+                     012 - STG_QS_AUX_PAYOUT_REL_CAD_VF_FINCH</td>
+                <td>✅ Separação clara de Payout</td>
+            </tr>
+            <tr>
+                <td>N/A</td>
+                <td>013 - BLOCO PIX 1<br>
+                     014 - BLOCO PIX 2<br>
+                     015 - STG_QS_AUX_PAYIN_REL_CAD_VF_FINCH</td>
+                <td>✅ <strong>Reestruturação completa do PIX</strong><br>
+                    ✅ Nova fonte de dados<br>
+                    ✅ Otimizações de performance</td>
+            </tr>
+            <tr>
+                <td>N/A</td>
+                <td>016 - PAYMENTS<br>
+                     017 - STG_QS_AUX_PAYMENTS_SEMID_CAD_VF_FINCH<br>
+                     018 - INFORMAÇÕES DO RELACIONADO COM A TABELA DE PAGAMENTO<br>
+                     019 - INFORMAÇOES DOS RELACIONADOS COM ID DE PAGAMENTO</td>
+                <td>✅ Separação granular de Payments</td>
+            </tr>
+            <tr>
+                <td>N/A</td>
+                <td>020 - WITHDRAWL<br>
+                     021 - INFORMAÇOES DOS RELACIONADOS COM RETIROS</td>
+                <td>✅ Separação clara de Withdrawals</td>
+            </tr>
+            <tr>
+                <td>003 - inserir tabelas finais</td>
+                <td>023 - inserir tabelas finais</td>
+                <td>✅ Mesma lógica (compatibilidade mantida)</td>
+            </tr>
+            <tr>
+                <td>004-015 - Saídas</td>
+                <td>024-035 - Saídas</td>
+                <td>✅ Mesma estrutura (compatibilidade total)</td>
+            </tr>
+        </table>
+
+        <h2>🎯 Pontos Positivos da Versão 2026</h2>
+
+        <div class="positive">
+            <h3>1. Arquitetura e Organização</h3>
+            <ul>
+                <li><strong>Modularização Extrema:</strong> De 16 para 36 arquivos, cada um com responsabilidade única e clara</li>
+                <li><strong>Nomenclatura Descritiva:</strong> Nomes de arquivos explicam claramente sua função</li>
+                <li><strong>Separação de Concerns:</strong> Lógica de negócio separada por tipo de operação (PIX, Payout, Payments, etc.)</li>
+                <li><strong>Facilita Debug:</strong> Problemas podem ser isolados e corrigidos em arquivos específicos</li>
+            </ul>
+        </div>
+
+        <div class="positive">
+            <h3>2. Performance e Otimização</h3>
+            <ul>
+                <li><strong>Fonte de Dados Otimizada:</strong> Uso de LK_REG_REGULATED_BASE_MLB reduz complexidade de joins</li>
+                <li><strong>Particionamento PIX:</strong> PARTITION BY PAY_MOVE_DATE e CLUSTER BY ID_PAGAMENTO</li>
+                <li><strong>Queries Mais Eficientes:</strong> Menos joins complexos, mais uso de tabelas pré-consolidadas</li>
+                <li><strong>Filtros Otimizados:</strong> Uso de AVK_CREATED_DATETIME para filtros temporais mais precisos</li>
+            </ul>
+        </div>
+
+        <div class="positive">
+            <h3>3. Qualidade de Dados</h3>
+            <ul>
+                <li><strong>Enriquecimento Automático:</strong> PIX enriquecido com dados regulatórios quando disponíveis</li>
+                <li><strong>Tratamento de Nulos:</strong> Lógica clara de fallback para campos vazios</li>
+                <li><strong>Validação de CEP:</strong> Validação explícita de comprimento (8 caracteres)</li>
+                <li><strong>Telefone Mais Recente:</strong> QUALIFY garante uso do telefone mais atualizado</li>
+                <li><strong>Dados PAYER/RECEIVER:</strong> Captura completa de ambos os lados da transação PIX</li>
+            </ul>
+        </div>
+
+        <div class="positive">
+            <h3>4. Manutenibilidade</h3>
+            <ul>
+                <li><strong>Código Mais Legível:</strong> Arquivos menores e focados são mais fáceis de entender</li>
+                <li><strong>Documentação Implícita:</strong> Nomes de arquivos servem como documentação</li>
+                <li><strong>Testabilidade:</strong> Componentes isolados são mais fáceis de testar</li>
+                <li><strong>Reutilização:</strong> Componentes podem ser reutilizados em outros contextos</li>
+            </ul>
+        </div>
+
+        <div class="positive">
+            <h3>5. Funcionalidades Novas</h3>
+            <ul>
+                <li><strong>Filtro de Cancelamentos Explícito:</strong> Arquivo dedicado (010) para tratamento de cancelamentos</li>
+                <li><strong>Coleta por Range:</strong> Arquivo (003) para otimização de queries por período</li>
+                <li><strong>Enriquecimento Regulatório:</strong> Correção automática de dados PIX com base em dados regulatórios</li>
+                <li><strong>Rastreabilidade:</strong> Campo ORIGEM_REGISTRO em PIX permite identificar origem do dado</li>
+            </ul>
+        </div>
+
+        <h2>💡 Sugestões de Melhoria</h2>
+
+        <div class="improvement">
+            <h3>1. Documentação</h3>
+            <ul>
+                <li><strong>Comentários em Código:</strong> Adicionar comentários explicativos em queries complexas</li>
+                <li><strong>Documentação de Dependências:</strong> Criar diagrama de dependências entre arquivos</li>
+                <li><strong>Glossário de Tabelas:</strong> Documentar propósito de cada tabela STG criada</li>
+                <li><strong>Exemplos de Uso:</strong> Documentar casos de uso específicos</li>
+            </ul>
+        </div>
+
+        <div class="improvement">
+            <h3>2. Validação e Qualidade</h3>
+            <ul>
+                <li><strong>Validações de Integridade:</strong> Adicionar checks de qualidade de dados entre etapas</li>
+                <li><strong>Logging:</strong> Implementar logging de execução para rastreamento</li>
+                <li><strong>Métricas de Performance:</strong> Adicionar medição de tempo de execução por etapa</li>
+                <li><strong>Validação de Dados de Entrada:</strong> Validar estrutura e conteúdo de TBL_QS_AUX_INVESTIGADO_FINCH</li>
+            </ul>
+        </div>
+
+        <div class="improvement">
+            <h3>3. Otimizações Técnicas</h3>
+            <ul>
+                <li><strong>Índices:</strong> Avaliar necessidade de índices em tabelas intermediárias</li>
+                <li><strong>Cache de Resultados:</strong> Considerar cache para queries frequentes</li>
+                <li><strong>Processamento Incremental:</strong> Avaliar possibilidade de processamento incremental</li>
+                <li><strong>Paralelização:</strong> Avaliar paralelização de etapas independentes</li>
+            </ul>
+        </div>
+
+        <div class="improvement">
+            <h3>4. Tratamento de Erros</h3>
+            <ul>
+                <li><strong>Try-Catch:</strong> Implementar tratamento de erros em queries críticas</li>
+                <li><strong>Validação de Resultados:</strong> Verificar se queries retornam dados esperados</li>
+                <li><strong>Notificações:</strong> Implementar sistema de notificações para falhas</li>
+                <li><strong>Rollback:</strong> Considerar estratégias de rollback em caso de falha</li>
+            </ul>
+        </div>
+
+        <div class="improvement">
+            <h3>5. Compatibilidade e Versionamento</h3>
+            <ul>
+                <li><strong>Versionamento de Esquemas:</strong> Implementar controle de versão de esquemas de tabelas</li>
+                <li><strong>Migração Gradual:</strong> Manter compatibilidade durante transição</li>
+                <li><strong>Testes de Regressão:</strong> Implementar testes que garantam compatibilidade</li>
+                <li><strong>Documentação de Breaking Changes:</strong> Documentar mudanças que quebram compatibilidade</li>
+            </ul>
+        </div>
+
+        <h2>📊 Resumo de Impacto</h2>
+
+        <table class="comparison-table">
+            <tr>
+                <th>Métrica</th>
+                <th>Versão Original</th>
+                <th>Versão 2026</th>
+                <th>Impacto</th>
+            </tr>
+            <tr>
+                <td><strong>Número de Arquivos</strong></td>
+                <td>16</td>
+                <td>36</td>
+                <td>✅ +125% modularização</td>
+            </tr>
+            <tr>
+                <td><strong>Complexidade de Joins</strong></td>
+                <td>Alta (múltiplos joins)</td>
+                <td>Baixa (tabela consolidada)</td>
+                <td>✅ Redução significativa</td>
+            </tr>
+            <tr>
+                <td><strong>Manutenibilidade</strong></td>
+                <td>Média</td>
+                <td>Alta</td>
+                <td>✅ Melhoria substancial</td>
+            </tr>
+            <tr>
+                <td><strong>Performance PIX</strong></td>
+                <td>Padrão</td>
+                <td>Otimizada (PARTITION/CLUSTER)</td>
+                <td>✅ Melhoria esperada</td>
+            </tr>
+            <tr>
+                <td><strong>Completude de Dados PIX</strong></td>
+                <td>PAYER apenas</td>
+                <td>PAYER + RECEIVER</td>
+                <td>✅ 100% mais completo</td>
+            </tr>
+            <tr>
+                <td><strong>Qualidade de Dados</strong></td>
+                <td>Boa</td>
+                <td>Excelente (enriquecimento)</td>
+                <td>✅ Melhoria significativa</td>
+            </tr>
+        </table>
+
+        <h2>✅ Conclusão</h2>
+
+        <div class="summary-box">
+            <p>A <strong>Versão 2026</strong> representa uma evolução significativa do pipeline de quebra de sigilo, com melhorias substanciais em:</p>
+            <ul>
+                <li>✅ <strong>Arquitetura:</strong> Modularização extrema facilita manutenção e evolução</li>
+                <li>✅ <strong>Performance:</strong> Uso de tabelas otimizadas e particionamento</li>
+                <li>✅ <strong>Qualidade:</strong> Enriquecimento automático e validações aprimoradas</li>
+                <li>✅ <strong>Completude:</strong> Captura mais completa de dados (PIX PAYER/RECEIVER)</li>
+                <li>✅ <strong>Manutenibilidade:</strong> Código mais legível e organizado</li>
+            </ul>
+            <p><strong>Recomendação:</strong> A versão 2026 deve ser adotada como padrão, mantendo a versão original apenas para referência histórica. As sugestões de melhoria apresentadas podem ser implementadas incrementalmente para otimizar ainda mais o pipeline.</p>
+        </div>
+
+        <hr style="margin: 40px 0; border: none; border-top: 2px solid #ddd;">
+        <p style="text-align: center; color: #777; font-size: 0.9em;">
+            Documento gerado em 2026 | Análise Comparativa Pipeline Quebra de Sigilo
+        </p>
+    </div>
+</body>
+</html>

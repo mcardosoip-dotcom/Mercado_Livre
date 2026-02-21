@@ -1,0 +1,183 @@
+================================================================================
+Log de renomeação iniciado em 2025-06-05 08:54:09
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:09] Arquivo renomeado: Temp_Database_8_Report_eLAW_Contencioso_Brasil_Parcial.xlsx -> Database_8_Report_eLAW_Contencioso_Brasil_Parcial.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:09] Arquivo renomeado: Temp_Database_4_Report_eLAW_Contencioso_Brasil_Parcial_Outgoing.xlsx -> Database_4_Report_eLAW_Contencioso_Brasil_Parcial_Outgoing.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:09] Arquivo renomeado: Temp_Database_16_Report_eLAW_Base_Ativa.xlsx -> Database_16_Report_eLAW_Base_Ativa.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_10_Report_eLAW_Contencioso_Hispanos_Completa.xlsx -> Database_10_Report_eLAW_Contencioso_Hispanos_Completa.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_20_Report_eLAW_Pagamentos_e_garantia.xlsx -> Database_20_Report_eLAW_Pagamentos_e_garantia.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_2_Report_eLAW_Amelia.xlsx -> Database_2_Report_eLAW_Amelia.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_23_Report_eLAW_Extracao_multas.xlsx -> Database_23_Report_eLAW_Extracao_multas.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_26_Report_eLAW_Obrigacoes_de_Fazer.xlsx -> Database_26_Report_eLAW_Obrigacoes_de_Fazer.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_22_Report_eLAW_Tarefas_Agendadas_Aguardando_Informações.xlsx -> Database_22_Report_eLAW_Tarefas_Agendadas_Aguardando_Informações.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_17_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_CAP.xlsx -> Database_17_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_CAP.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_19_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_OPS.xlsx -> Database_19_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_OPS.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes.xlsx -> Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados.xlsx -> Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_3_Report_eLAW_Acompanhamento_de_tarefas_CORP_CX.xlsx -> Database_3_Report_eLAW_Acompanhamento_de_tarefas_CORP_CX.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:10] Arquivo renomeado: Temp_Database_18_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_DR.xlsx -> Database_18_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_DR.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:11] Arquivo copiado para destino: Database_8_Report_eLAW_Contencioso_Brasil_Parcial.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:12] Arquivo copiado para destino: Database_4_Report_eLAW_Contencioso_Brasil_Parcial_Outgoing.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:13] Arquivo copiado para destino: Database_16_Report_eLAW_Base_Ativa.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:13] Arquivo copiado para destino: Database_10_Report_eLAW_Contencioso_Hispanos_Completa.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:14] Arquivo copiado para destino: Database_20_Report_eLAW_Pagamentos_e_garantia.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:14] Arquivo copiado para destino: Database_2_Report_eLAW_Amelia.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:14] Arquivo copiado para destino: Database_23_Report_eLAW_Extracao_multas.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:14] Arquivo copiado para destino: Database_26_Report_eLAW_Obrigacoes_de_Fazer.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:14] Arquivo copiado para destino: Database_22_Report_eLAW_Tarefas_Agendadas_Aguardando_Informações.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:15] Arquivo copiado para destino: Database_17_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_CAP.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:15] Arquivo copiado para destino: Database_19_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_OPS.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:15] Arquivo copiado para destino: Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:16] Arquivo copiado para destino: Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo copiado para destino: Database_3_Report_eLAW_Acompanhamento_de_tarefas_CORP_CX.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo copiado para destino: Database_18_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_DR.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_8_Report_eLAW_Contencioso_Brasil_Parcial.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_4_Report_eLAW_Contencioso_Brasil_Parcial_Outgoing.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_16_Report_eLAW_Base_Ativa.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_10_Report_eLAW_Contencioso_Hispanos_Completa.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_20_Report_eLAW_Pagamentos_e_garantia.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_2_Report_eLAW_Amelia.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_23_Report_eLAW_Extracao_multas.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_26_Report_eLAW_Obrigacoes_de_Fazer.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_22_Report_eLAW_Tarefas_Agendadas_Aguardando_Informações.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_17_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_CAP.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_19_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_OPS.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_25_Report_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_3_Report_eLAW_Acompanhamento_de_tarefas_CORP_CX.xlsx
+================================================================================
+
+================================================================================
+[2025-06-05 08:54:17] Arquivo movido para histórico: Database_18_Report_eLAW_Tarefas_Agendadas_-_Subsidios_Hispanos_DR.xlsx
+================================================================================

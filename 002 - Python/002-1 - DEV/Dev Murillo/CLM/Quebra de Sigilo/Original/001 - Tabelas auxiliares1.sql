@@ -1,0 +1,953 @@
+-- PREPARAR BASE PRESENTA
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_PLANILHA_PRESENTA_CAD_VF AS (
+    SELECT
+        CASE
+            WHEN CCS_Hashtags LIKE '%#extratoMovimentacaoCartaCircular3454%' THEN 'Sim'
+            ELSE 'Nao'
+        END AS CIRCULAR_3454,
+        CASE
+            WHEN CCS_Hashtags LIKE '%#extratoAplicacoesFinanceiras%'
+            OR CCS_Hashtags LIKE '%#extratoMercantil%' THEN 'Sim'
+            ELSE 'Nao'
+        END AS EXTRATO,
+        CAST(MIN(APOIO_RANGE_MIN) AS DATE) AS RANGE_MIN,
+        CAST(MAX(APOIO_RANGE_MAX) AS DATE) AS RANGE_MAX,
+        APOIO_CPF_CNPJ AS DOC_NUMBER,
+        CASO AS IDENTIFICACAO,
+        '1' AS FLAG_INVESTIGADO,
+        SISTEMA,
+        CURRENT_DATETIME AS DATAHORA_IMPORTACAO
+    FROM
+        SBOX_LEGALES.TBL_QS_AUX_INVESTIGADO
+    WHERE
+        APOIO_CPF_CNPJ IS NOT NULL
+    GROUP BY
+        1,
+        2,
+        5,
+        6,
+        7,
+        8
+);
+
+-- TRAZER INFORMACAO TITULAR
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_INFO_TIT_CAD_VF AS (
+    SELECT
+        DISTINCT INV.CIRCULAR_3454,
+        INV.EXTRATO,
+        INV.RANGE_MIN,
+        INV.RANGE_MAX,
+        INV.DOC_NUMBER,
+        INV.IDENTIFICACAO,
+        INV.FLAG_INVESTIGADO,
+        INV.SISTEMA,
+        CASE
+            WHEN VAU.CUS_CUST_ID IS NOT NULL THEN VAU.CUS_CUST_ID
+            ELSE LK.CUS_CUST_ID
+        END AS CUS_CUST_ID,
+        CAST(
+            CASE
+                WHEN LK.CUS_CUST_ID IS NOT NULL THEN LK.CUS_RU_SINCE_DT
+                ELSE VAU.AUD_INS_DT
+            END AS DATE
+        ) AS DATA_ABERTURA,
+        UPPER(
+            CASE
+                WHEN VAU.CUS_CUST_ID IS NOT NULL
+                AND (
+                    VAU.KYC_NAME_LEGAL IS NOT NULL
+                    AND TRIM(VAU.KYC_NAME_LEGAL) <> ''
+                ) THEN VAU.KYC_NAME_LEGAL
+                WHEN VAU.CUS_CUST_ID IS NOT NULL
+                AND (
+                    VAU.KYC_NAME_LEGAL IS NULL
+                    OR TRIM(VAU.KYC_NAME_LEGAL) = ''
+                ) THEN VAU.KYC_NAME_PREFERRED_FULL
+                ELSE LK.CUS_FIRST_NAME || ' ' || LK.CUS_LAST_NAME
+            END
+        ) AS NOME_INVESTIGADO,
+        CASE
+            WHEN LENGTH(TRIM(VAU.KYC_FIS_IDNT_ADDR_ZIP_CODE)) = 8 THEN VAU.KYC_FIS_IDNT_ADDR_ZIP_CODE
+            WHEN LENGTH(TRIM(VAU.KYC_PER_ADDRESS_ZIP_CODE)) = 8 THEN VAU.KYC_PER_ADDRESS_ZIP_CODE
+            WHEN LENGTH(TRIM(VAU.KYC_CONT_ADDRESS_ZIP_CODE)) = 8 THEN VAU.KYC_CONT_ADDRESS_ZIP_CODE
+            WHEN LENGTH(TRIM(VAU.KYC_COMP_ADDRESS_ZIP_CODE)) = 8 THEN VAU.KYC_COMP_ADDRESS_ZIP_CODE
+            WHEN LENGTH(TRIM(LK.CUS_ZIP_CODE)) = 8 THEN LK.CUS_ZIP_CODE
+            WHEN VAU.CUS_CUST_ID IS NULL
+            AND LK.CUS_CUST_ID IS NULL THEN NULL
+            ELSE '000'
+        END CEP,
+        CASE
+            WHEN LENGTH(VAU.KYC_CONT_PHONE_NUMBER) > 20
+            OR VAU.KYC_CONT_PHONE_NUMBER IS NULL
+            OR TRIM(VAU.KYC_CONT_PHONE_NUMBER) = '' THEN '0'
+            WHEN VAU.CUS_CUST_ID IS NULL
+            AND LK.CUS_CUST_ID IS NULL THEN NULL
+            ELSE CONCAT(
+                VAU.KYC_PER_PHONE_COUNTRY_CODE,
+                VAU.KYC_PER_PHONE_AREA_CODE,
+                VAU.KYC_PER_PHONE_NUMBER
+            )
+        END AS TELEFONE_PESSOA,
+        CASE
+            WHEN KYC_PER_INCOME IS NOT NULL THEN KYC_PER_INCOME
+            ELSE ''
+        END AS VALOR_RENDA,
+        VAU.KYC_LEVEL,
+        INV.DATAHORA_IMPORTACAO
+    FROM
+        SBOX_LEGALES.STG_QS_PLANILHA_PRESENTA_CAD_VF INV
+        LEFT JOIN WHOWNER.LK_KYC_VAULT_USER VAU ON INV.DOC_NUMBER = VAU.KYC_IDENTIFICATION_NUMBER
+        AND VAU.SIT_SITE_ID = 'MLB'
+        LEFT JOIN WHOWNER.LK_CUS_CUSTOMERS_DATA LK ON INV.DOC_NUMBER = LK.CUS_CUST_DOC_NUMBER
+        AND LK.SIT_SITE_ID_CUS = 'MLB'
+        AND VAU.CUS_CUST_ID IS NULL
+    WHERE
+        (
+            INV.CIRCULAR_3454 = 'Sim'
+            OR INV.EXTRATO = 'Sim'
+        )
+);
+
+-- TRAZER KYC
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_INFO_TIT_KYC_CAD_VF AS (
+    SELECT
+        DISTINCT INV.CIRCULAR_3454,
+        INV.EXTRATO,
+        INV.RANGE_MIN,
+        INV.RANGE_MAX,
+        INV.DOC_NUMBER,
+        INV.IDENTIFICACAO,
+        INV.FLAG_INVESTIGADO,
+        INV.SISTEMA,
+        INV.CUS_CUST_ID,
+        INV.DATA_ABERTURA,
+        INV.NOME_INVESTIGADO,
+        INV.CEP,
+        INV.TELEFONE_PESSOA,
+        INV.VALOR_RENDA,
+        INV.DATAHORA_IMPORTACAO,
+        COALESCE(INV.KYC_LEVEL, RIGHT(KYC.kyc_completed_level, 1)) AS KYC_LEVEL
+    FROM
+        SBOX_LEGALES.STG_QS_INFO_TIT_CAD_VF INV
+        LEFT JOIN WHOWNER.BT_MP_KYC_LEVEL KYC ON KYC.cus_cust_id = INV.CUS_CUST_ID
+        AND KYC.kyc_expiration_date is null
+        AND KYC.SIT_SITE_ID = 'MLB'
+);
+
+-- TRAZER APENAS INVESTIGADO COM CUST
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_CORRESPONDENTE_CAD_VF AS (
+    SELECT
+        *
+    FROM
+        SBOX_LEGALES.STG_QS_INFO_TIT_KYC_CAD_VF
+    WHERE
+        CUS_CUST_ID IS NOT NULL
+);
+
+-- TRAZER NAO CORRESPONDENTE
+-- TABELA PARA CARTA 3454
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_NAO_CORRESPONDENTE_CAD_VF AS (
+    SELECT
+        *
+    FROM
+        SBOX_LEGALES.STG_QS_INFO_TIT_KYC_CAD_VF
+    WHERE
+        CUS_CUST_ID IS NULL
+);
+
+-- TRAZER A CONTA SPB. NAO PODEMOS USAR A BASE BT_MP_DICT_KEY_MANAGEMENT, POIS NÃO CONSEGUIMOS IDENTIFICAR COM CERTEZA QUAL É A CONTA EX CUST 311003486
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_SPB_CAD_VF AS (
+    SELECT
+        INV.CIRCULAR_3454,
+        INV.EXTRATO,
+        INV.RANGE_MIN,
+        INV.RANGE_MAX,
+        INV.DOC_NUMBER,
+        INV.IDENTIFICACAO,
+        INV.FLAG_INVESTIGADO,
+        INV.SISTEMA,
+        INV.CUS_CUST_ID,
+        CASE
+            WHEN ACC.CUS_CUST_ID IS NOT NULL THEN CAST(ACC.AVK_CREATED_DATETIME AS DATE)
+            ELSE INV.DATA_ABERTURA
+        END AS DATA_ABERTURA,
+        INV.NOME_INVESTIGADO,
+        INV.CEP,
+        INV.TELEFONE_PESSOA,
+        INV.VALOR_RENDA,
+        INV.KYC_LEVEL,
+        INV.DATAHORA_IMPORTACAO,
+        ACC.AVK_ID AS CONTA_SPB
+    FROM
+        SBOX_LEGALES.STG_QS_CORRESPONDENTE_CAD_VF INV
+        LEFT JOIN WHOWNER.BT_MP_ACCOUNT_VIRTUAL_KEY ACC ON INV.CUS_CUST_ID = ACC.CUS_CUST_ID
+        AND ACC.AVK_STATUS = 'active'
+);
+
+-- TRAZER MAIOR KYC 
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_MAX_KYC_CAD_VF AS (
+    SELECT
+        DOC_NUMBER,
+        MAX(KYC_LEVEL) AS MAX_KYC_LEVEL
+    FROM
+        SBOX_LEGALES.STG_QS_SPB_CAD_VF
+    WHERE
+        NOME_INVESTIGADO IS NOT NULL
+        AND TRIM(NOME_INVESTIGADO) <> ''
+        AND CEP <> '000'
+    GROUP BY
+        1
+);
+
+-- VERIFICAR QUANTOS CUSTS ID TEM COM O MAIOR KYC
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_QTD_CUST_MAX_KYC_CAD_VF AS (
+    SELECT
+        SPB.DOC_NUMBER,
+        COUNT(SPB.CUS_CUST_ID) AS QTD_CUST
+    FROM
+        SBOX_LEGALES.STG_QS_SPB_CAD_VF SPB
+        LEFT JOIN SBOX_LEGALES.STG_QS_MAX_KYC_CAD_VF MA ON SPB.DOC_NUMBER = MA.DOC_NUMBER
+        AND SPB.KYC_LEVEL = MA.MAX_KYC_LEVEL
+    WHERE
+        MA.DOC_NUMBER IS NOT NULL
+    GROUP BY
+        1
+);
+
+-- TRAZER MAIOR CUST
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_MAX_CUST_CAD_VF AS (
+    SELECT
+        INV.DOC_NUMBER,
+        MAX(CUS_CUST_ID) AS CUS_CUST_ID
+    FROM
+        SBOX_LEGALES.STG_QS_SPB_CAD_VF INV
+        LEFT JOIN SBOX_LEGALES.STG_QS_QTD_CUST_MAX_KYC_CAD_VF KYC ON INV.DOC_NUMBER = KYC.DOC_NUMBER
+        AND KYC.QTD_CUST = 1
+    WHERE
+        KYC.DOC_NUMBER IS NULL
+    GROUP BY
+        1
+);
+
+-- TRAZER NOME E CEP UNICO
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_NOME_UNI_INV_CAD_VF AS (
+    SELECT
+        DISTINCT SPB.DOC_NUMBER AS DOC_INVESTIGADO,
+        CAST(
+            UPPER(
+                CASE
+                    WHEN MC.DOC_NUMBER IS NOT NULL THEN SPB.NOME_INVESTIGADO
+                    WHEN MC.DOC_NUMBER IS NULL
+                    AND QK.QTD_CUST = 1 THEN SPB.NOME_INVESTIGADO
+                END
+            ) AS STRING
+        ) AS NOME_INVESTIGADO,
+        CASE
+            WHEN MC.DOC_NUMBER IS NOT NULL THEN SPB.CEP
+            WHEN MC.DOC_NUMBER IS NULL
+            AND QK.QTD_CUST = 1 THEN SPB.CEP
+        END AS CEP
+    FROM
+        SBOX_LEGALES.STG_QS_SPB_CAD_VF SPB
+        LEFT JOIN SBOX_LEGALES.STG_QS_MAX_KYC_CAD_VF MK ON SPB.DOC_NUMBER = MK.DOC_NUMBER
+        AND SPB.KYC_LEVEL = MK.MAX_KYC_LEVEL
+        LEFT JOIN SBOX_LEGALES.STG_QS_QTD_CUST_MAX_KYC_CAD_VF QK ON SPB.DOC_NUMBER = QK.DOC_NUMBER
+        AND SPB.KYC_LEVEL = MK.MAX_KYC_LEVEL
+        LEFT JOIN SBOX_LEGALES.STG_QS_MAX_CUST_CAD_VF MC ON SPB.DOC_NUMBER = MC.DOC_NUMBER
+        AND SPB.CUS_CUST_ID = MC.CUS_CUST_ID
+    WHERE
+        (
+            CASE
+                WHEN MC.DOC_NUMBER IS NOT NULL THEN SPB.CUS_CUST_ID
+                WHEN MC.DOC_NUMBER IS NULL
+                AND QK.QTD_CUST = 1 THEN SPB.CUS_CUST_ID
+            END
+        ) IS NOT NULL
+);
+
+-- CRIAR TABELA COM INFORMAÇÕES DO TITULAR PARA A CARTA
+-- TABELA PARA CARTA 3454
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_TITULAR_CAD_VF AS (
+    SELECT
+        DISTINCT INV.CIRCULAR_3454,
+        INV.EXTRATO,
+        INV.RANGE_MIN,
+        INV.RANGE_MAX,
+        INV.DOC_NUMBER,
+        INV.IDENTIFICACAO,
+        INV.FLAG_INVESTIGADO,
+        INV.SISTEMA,
+        INV.CUS_CUST_ID,
+        INV.CONTA_SPB,
+        INV.DATA_ABERTURA,
+        COALESCE(UN.NOME_INVESTIGADO, INV.NOME_INVESTIGADO) AS NOME_INVESTIGADO,
+        CASE
+            WHEN INV.CEP = '000' THEN UN.CEP
+            ELSE INV.CEP
+        END AS CEP,
+        INV.TELEFONE_PESSOA,
+        INV.VALOR_RENDA,
+        CASE
+            WHEN INV.DATA_ABERTURA > INV.RANGE_MIN THEN INV.DATA_ABERTURA
+            ELSE INV.RANGE_MIN
+        END AS MOVIMENTACAO_MIN,
+        INV.DATAHORA_IMPORTACAO
+    FROM
+        SBOX_LEGALES.STG_QS_SPB_CAD_VF INV
+        LEFT JOIN SBOX_LEGALES.STG_QS_NOME_UNI_INV_CAD_VF UN ON INV.DOC_NUMBER = UN.DOC_INVESTIGADO
+);
+
+-- CRIAR TABELA COM TODAS AS MOVIMENTAÇÕES POR INVESTIGADO E DATA
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_AUX_MOVIMENTACAO_CAD_VF AS (
+    SELECT
+        DISTINCT TIT.CUS_CUST_ID,
+        CAST(MOV.MOV_MOVE_ID AS STRING) AS CODIGO_CHAVE_EXTRATO,
+        MOV.MOV_CREATED_DT AS DATA_LANCAMENTO,
+        CAST(
+            CASE
+                WHEN MOV.MOV_DETAIL = 'account_fund'
+                AND MOV.MOV_TYPE_ID = 'fund' THEN 'Recebimento de dinheiro entre contas Mercado Pago'
+                WHEN MOV.MOV_DETAIL = 'cbk_recovery'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Estornos'
+                WHEN MOV.MOV_DETAIL = 'cdb_investment'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Aplicação'
+                WHEN MOV.MOV_DETAIL = 'cdb_rescue'
+                AND MOV.MOV_TYPE_ID = 'income' THEN 'Resgate de Aplicação'
+                WHEN MOV.MOV_DETAIL = 'credit'
+                AND MOV.MOV_TYPE_ID = 'income' THEN 'Empréstimo/Financiamento'
+                WHEN MOV.MOV_DETAIL = 'crypto_operation'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Aplicação'
+                WHEN MOV.MOV_DETAIL = 'crypto_operation'
+                AND MOV.MOV_TYPE_ID = 'income' THEN 'Resgate de Aplicação'
+                WHEN MOV.MOV_DETAIL = 'debt_payment'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Pagamento Fornecedores'
+                WHEN MOV.MOV_DETAIL = 'internal_transfer'
+                AND MOV.MOV_TYPE_ID = 'income' THEN 'Transferência entre contas'
+                WHEN MOV.MOV_DETAIL = 'investment_fund_suscribe'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Aplicação'
+                WHEN MOV.MOV_DETAIL = 'mcoin_burn'
+                AND MOV.MOV_TYPE_ID = 'income' THEN 'Resgate de Aplicação'
+                WHEN MOV.MOV_DETAIL = 'merchant_credit'
+                AND MOV.MOV_TYPE_ID = 'income' THEN 'Empréstimo/Financiamento'
+                WHEN MOV.MOV_DETAIL = 'money_transfer'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Envio de dinheiro entre contas Mercado Pago'
+                WHEN MOV.MOV_DETAIL = 'money_transfer'
+                AND MOV.MOV_TYPE_ID = 'income' THEN 'Recebimento de dinheiro entre contas Mercado Pago'
+                WHEN MOV.MOV_DETAIL = 'payment'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Pagamento de dinheiro entre contas Mercado Pago'
+                WHEN MOV.MOV_DETAIL = 'payment'
+                AND MOV.MOV_TYPE_ID = 'income' THEN 'Recebimento de dinheiro entre contas Mercado Pago'
+                WHEN MOV.MOV_DETAIL = 'payment_addition'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Pagamento de dinheiro entre contas Mercado Pago'
+                WHEN MOV.MOV_DETAIL = 'payouts'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Transferência entre contas'
+                WHEN MOV.MOV_DETAIL = 'payouts_cash'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Saque eletrônico'
+                WHEN MOV.MOV_DETAIL = 'payouts_transfer'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Envio de dinheiro entre contas'
+                WHEN MOV.MOV_DETAIL = 'prepaid_iof'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'IOF'
+                WHEN MOV.MOV_DETAIL = 'special_fund'
+                AND MOV.MOV_TYPE_ID = 'income' THEN 'Transferência entre contas'
+                WHEN MOV.MOV_DETAIL = 'withdraw'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN 'Envio de TED/DOC interbancaria'
+                ELSE 'Identificar'
+            END AS STRING
+        ) AS DESCRICAO_LANCAMENTO,
+        CAST(
+            CASE
+                WHEN MOV.MOV_DETAIL = 'account_fund'
+                AND MOV.MOV_TYPE_ID = 'fund' THEN '217'
+                WHEN MOV.MOV_DETAIL = 'cbk_recovery'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '103'
+                WHEN MOV.MOV_DETAIL = 'cdb_investment'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '106'
+                WHEN MOV.MOV_DETAIL = 'cdb_rescue'
+                AND MOV.MOV_TYPE_ID = 'income' THEN '206'
+                WHEN MOV.MOV_DETAIL = 'credit'
+                AND MOV.MOV_TYPE_ID = 'income' THEN '207'
+                WHEN MOV.MOV_DETAIL = 'crypto_operation'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '106'
+                WHEN MOV.MOV_DETAIL = 'crypto_operation'
+                AND MOV.MOV_TYPE_ID = 'income' THEN '206'
+                WHEN MOV.MOV_DETAIL = 'debt_payment'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '112'
+                WHEN MOV.MOV_DETAIL = 'internal_transfer'
+                AND MOV.MOV_TYPE_ID = 'income' THEN '213'
+                WHEN MOV.MOV_DETAIL = 'investment_fund_suscribe'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '106'
+                WHEN MOV.MOV_DETAIL = 'mcoin_burn'
+                AND MOV.MOV_TYPE_ID = 'income' THEN '206'
+                WHEN MOV.MOV_DETAIL = 'merchant_credit'
+                AND MOV.MOV_TYPE_ID = 'income' THEN '207'
+                WHEN MOV.MOV_DETAIL = 'money_transfer'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '117'
+                WHEN MOV.MOV_DETAIL = 'money_transfer'
+                AND MOV.MOV_TYPE_ID = 'income' THEN '213'
+                WHEN MOV.MOV_DETAIL = 'payment'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '117'
+                WHEN MOV.MOV_DETAIL = 'payment'
+                AND MOV.MOV_TYPE_ID = 'income' THEN '218'
+                WHEN MOV.MOV_DETAIL = 'payment_addition'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '117'
+                WHEN MOV.MOV_DETAIL = 'payouts'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '117'
+                WHEN MOV.MOV_DETAIL = 'payouts_cash'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '114'
+                WHEN MOV.MOV_DETAIL = 'payouts_transfer'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '120'
+                WHEN MOV.MOV_DETAIL = 'prepaid_iof'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '110'
+                WHEN MOV.MOV_DETAIL = 'special_fund'
+                AND MOV.MOV_TYPE_ID = 'income' THEN '213'
+                WHEN MOV.MOV_DETAIL = 'withdraw'
+                AND MOV.MOV_TYPE_ID = 'expense' THEN '120'
+                ELSE 'Identificar'
+            END AS STRING
+        ) AS TIPO_LANCAMENTO,
+        CAST((ABS(MOV.MOV_AMOUNT) * 100) AS STRING) AS VALOR_LANCAMENTO,
+        CAST(
+            CASE
+                WHEN MOV.MOV_TYPE_ID = 'expense' THEN 'D'
+                WHEN MOV.MOV_TYPE_ID = 'income'
+                or MOV.MOV_TYPE_ID = 'fund' THEN 'C'
+            END AS STRING
+        ) AS NATUREZA_LANCAMENTO,
+        CAST(
+            CASE
+                WHEN MOV.MOV_TYPE_ID = 'expense' THEN 'D'
+                WHEN MOV.MOV_TYPE_ID = 'income'
+                or MOV.MOV_TYPE_ID = 'fund' THEN 'C'
+            END AS STRING
+        ) AS NATUREZA_SALDO,
+        CASE
+            WHEN MOV.CUS_CUST_ID = MOV.CUS_CUST_ID_SEL THEN MOV.CUS_CUST_ID_BUY
+            WHEN MOV.CUS_CUST_ID = MOV.CUS_CUST_ID_BUY THEN MOV.CUS_CUST_ID_SEL
+            ELSE NULL
+        END AS ID_RELACIONADO,
+        CASE
+            WHEN MOV.MOV_DETAIL LIKE '%payouts%' THEN MOV.MOV_REFERENCE_ID
+            WHEN MOV.WIT_WITHDRAW_ID IS NOT NULL THEN MOV.WIT_WITHDRAW_ID
+            WHEN MOV.PAY_PAYMENT_ID IS NOT NULL THEN MOV.PAY_PAYMENT_ID
+            ELSE MOV.MOV_REFERENCE_ID
+        END AS ID_PAGAMENTO,
+        CASE
+            WHEN MOV.MOV_DETAIL LIKE '%payouts%' THEN 'Payout'
+            WHEN MOV.WIT_WITHDRAW_ID IS NOT NULL THEN 'Withdrawal'
+            WHEN MOV.PAY_PAYMENT_METHOD_ID = 'pix' THEN 'Pix'
+            WHEN MOV.PAY_PAYMENT_ID IS NOT NULL THEN 'Payments'
+            ELSE 'Identificar'
+        END AS TBL_RELACIONADO,
+        MOV.MOV_DETAIL,
+        MOV.MOV_TYPE_ID,
+        MOV.MOV_LABEL
+    FROM
+        SBOX_LEGALES.STG_QS_TITULAR_CAD_VF TIT
+        LEFT JOIN WHOWNER.BT_MP_ACC_MOVEMENTS MOV ON TIT.CUS_CUST_ID = MOV.CUS_CUST_ID
+        AND -- (CASE WHEN MOV_CREATED_DT >= '2022-01-01' AND MOV_LAST_MODIFIED_DT IS NOT NULL THEN MOV_LAST_MODIFIED_DT
+        -- WHEN MOV_CREATED_DT < '2022-01-01' AND MOV_RELEASED_DT IS NOT NULL THEN MOV_RELEASED_DT
+        -- WHEN MOV_CREATED_DT < '2022-01-01' AND MOV_CREATED_DT IS NOT NULL THEN MOV_CREATED_DT
+        -- ELSE '1900-01-01'
+        -- END) 
+        MOV_CREATED_DT BETWEEN TIT.MOVIMENTACAO_MIN
+        AND TIT.RANGE_MAX
+        AND MOV.MOV_CURRENCY_ID = 'BRL'
+        AND MOV.SIT_SITE_ID = 'MLB'
+        AND MOV_FINANCIAL_ENTITY_ID <> 'coupon'
+        AND MOV.MOV_LABEL NOT LIKE ('%hidden%')
+        AND (
+            (
+                MOV.MOV_DETAIL = 'account_fund'
+                AND MOV.MOV_TYPE_ID = 'fund'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'cbk_recovery'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'cdb_investment'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'cdb_rescue'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'credit'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'crypto_operation'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'crypto_operation'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'debt_payment'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'internal_transfer'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'investment_fund_suscribe'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'mcoin_burn'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'merchant_credit'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'money_transfer'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'money_transfer'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payment'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payment'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payment_addition'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payouts'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payouts_cash'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payouts_transfer'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'prepaid_iof'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'special_fund'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'withdraw'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+        )
+    WHERE
+        -- (CASE WHEN MOV.MOV_CREATED_DT >= '2022-01-01' AND MOV_LAST_MODIFIED_DT IS NOT NULL THEN MOV_LAST_MODIFIED_DT
+        -- WHEN MOV_CREATED_DT < '2022-01-01' AND MOV_RELEASED_DT IS NOT NULL THEN MOV_RELEASED_DT
+        -- WHEN MOV_CREATED_DT < '2022-01-01' AND MOV_CREATED_DT IS NOT NULL THEN MOV_CREATED_DT
+        -- ELSE '1900-01-01'
+        -- END) 
+        MOV_CREATED_DT BETWEEN TIT.MOVIMENTACAO_MIN
+        AND TIT.RANGE_MAX
+        AND MOV.SIT_SITE_ID = 'MLB'
+        AND MOV_FINANCIAL_ENTITY_ID <> 'coupon'
+        AND MOV.MOV_CURRENCY_ID = 'BRL'
+        AND MOV.MOV_LABEL NOT LIKE ('%hidden%')
+        AND (
+            (
+                MOV.MOV_DETAIL = 'account_fund'
+                AND MOV.MOV_TYPE_ID = 'fund'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'cbk_recovery'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'cdb_investment'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'cdb_rescue'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'credit'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'crypto_operation'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'crypto_operation'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'debt_payment'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'internal_transfer'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'investment_fund_suscribe'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'mcoin_burn'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'merchant_credit'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'money_transfer'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'money_transfer'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payment'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payment'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payment_addition'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payouts'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payouts_cash'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'payouts_transfer'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'prepaid_iof'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'special_fund'
+                AND MOV.MOV_TYPE_ID = 'income'
+            )
+            OR (
+                MOV.MOV_DETAIL = 'withdraw'
+                AND MOV.MOV_TYPE_ID = 'expense'
+            )
+        )
+);
+
+-- CRIAR TABELA COM MOVIMENTAÇÕES QUE NÃO TEM UM CANCELAMENTO ATRELADO
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_AUX_MOVIMENTACAO2_CAD_VF AS (
+    SELECT
+        *
+    FROM
+        (
+            SELECT
+                CASE
+                    WHEN B.ID_PAGAMENTO IS NOT NULL
+                    AND C.QTD > 1 THEN 'sim'
+                    ELSE 'não'
+                END AS EXCLUIR,
+                A.*
+            FROM
+                SBOX_LEGALES.STG_QS_AUX_MOVIMENTACAO_CAD_VF A
+                LEFT JOIN (
+                    SELECT
+                        DISTINCT ID_PAGAMENTO
+                    FROM
+                        SBOX_LEGALES.STG_QS_AUX_MOVIMENTACAO_CAD_VF
+                    WHERE
+                        (
+                            MOV_LABEL LIKE ('%cancellation%')
+                            OR MOV_LABEL LIKE ('%cancelled %')
+                        )
+                        AND MOV_LABEL NOT LIKE ('%partial%')
+                        AND DATA_LANCAMENTO <> '1900-01-01'
+                ) B ON A.ID_PAGAMENTO = B.ID_PAGAMENTO
+                LEFT JOIN (
+                    SELECT
+                        DISTINCT ID_PAGAMENTO,
+                        COUNT(ID_PAGAMENTO) AS QTD
+                    FROM
+                        SBOX_LEGALES.STG_QS_AUX_MOVIMENTACAO_CAD_VF
+                    GROUP BY
+                        1
+                ) C ON A.ID_PAGAMENTO = C.ID_PAGAMENTO
+        )
+    WHERE
+        EXCLUIR = 'não'
+);
+
+-- PAYOUT
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_AUX_PAYOUT_CAD_VF AS (
+    SELECT
+        ID_PAGAMENTO,
+        CODIGO_CHAVE_EXTRATO
+    FROM
+        SBOX_LEGALES.STG_QS_AUX_MOVIMENTACAO2_CAD_VF MOV
+    WHERE
+        TBL_RELACIONADO = 'Payout'
+);
+
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_AUX_PAYOUT_REL_CAD_VF AS (
+    SELECT
+        DISTINCT MOV.ID_PAGAMENTO,
+        CODIGO_CHAVE_EXTRATO,
+        UPPER(TRIM(WIT.PYT_PRVDR_DATA_DEST_BANK_NAME)) AS NOME_BANCO_REL,
+        INSTITUT.NUMERO_CODIGO AS NUMERO_BANCO_REL,
+        REGEXP_REPLACE(
+            WIT.PYT_PRVDR_DATA_DEST_BRANCH,
+            '[^a-zA-Z0-9]',
+            ''
+        ) AS NUMERO_AGENCIA_REL,
+        REGEXP_REPLACE(
+            WIT.PYT_PRVDR_DATA_DEST_NUMBER,
+            '[^a-zA-Z0-9]',
+            ''
+        ) AS NUMERO_CONTA_REL,
+        '4' AS TIPO_CONTA_REL,
+        CASE
+            WHEN WIT.PYT_PRVDR_DATA_DEST_IDENT_TYPE = 'CPF' THEN '1'
+            WHEN WIT.PYT_PRVDR_DATA_DEST_IDENT_TYPE = 'CNPJ' THEN '2'
+            ELSE NULL
+        END AS TIPO_PESSOA_REL,
+        CAST(WIT.PYT_PRVDR_DATA_DEST_IDENT_NUMBER AS STRING) AS CPF_CNPJ_REL,
+        UPPER(WIT.PYT_PRVDR_DATA_DEST_HOLDER) AS NOME_PESSOA_REL
+    FROM
+        SBOX_LEGALES.STG_QS_AUX_PAYOUT_CAD_VF MOV
+        LEFT JOIN WHOWNER.BT_MP_PAYOUTS WIT ON MOV.ID_PAGAMENTO = WIT.PAYOUT_ID
+        LEFT JOIN SBOX_LEGALES.Dim_Instituicoes INSTITUT ON WIT.PYT_PRVDR_DATA_DEST_BANK_ID = CAST(INSTITUT.ISPB AS STRING) -- LEFT JOIN SBOX_LEGALES.TBL_BANCO_NOME_CODIGO BCO
+        -- ON UPPER(TRIM(WIT.PYT_PRVDR_DATA_DEST_BANK_NAME)) = UPPER(TRIM(BCO.NOME))
+);
+
+-- PAYIN
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_AUX_PAYIN_CAD_VF AS (
+    SELECT
+        ID_PAGAMENTO,
+        CODIGO_CHAVE_EXTRATO
+    FROM
+        SBOX_LEGALES.STG_QS_AUX_MOVIMENTACAO2_CAD_VF MOV
+    WHERE
+        TBL_RELACIONADO = 'Pix'
+);
+
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_AUX_PAYIN_REL_CAD_VF AS (
+    SELECT
+        DISTINCT MOV.ID_PAGAMENTO,
+        CODIGO_CHAVE_EXTRATO,
+        UPPER(TRIM(WIT.PYN_COLLECTOR_BANK_NAME)) AS NOME_BANCO_REL,
+        INSTITUT.NUMERO_CODIGO AS NUMERO_BANCO_REL,
+        '' AS NUMERO_AGENCIA_REL,
+        REGEXP_REPLACE(
+            CAST(WIT.PYN_BUY_ACCOUNT_ID AS STRING),
+            '[^a-zA-Z0-9]',
+            ''
+        ) AS NUMERO_CONTA_REL,
+        '4' AS TIPO_CONTA_REL,
+        CASE
+            WHEN WIT.PYN_PAYER_IDENTIFICATION_TYPE = 'CPF' THEN '1'
+            WHEN WIT.PYN_PAYER_IDENTIFICATION_TYPE = 'CNPJ' THEN '2'
+            ELSE NULL
+        END AS TIPO_PESSOA_REL,
+        CAST(WIT.PYN_PAYER_IDENTIFICATION_NUMBER AS STRING) AS CPF_CNPJ_REL,
+        UPPER(WIT.PYN_PAYER_NAME) AS NOME_PESSOA_REL
+    FROM
+        SBOX_LEGALES.STG_QS_AUX_PAYIN_CAD_VF MOV
+        LEFT JOIN WHOWNER.BT_MP_PAY_PAYIN WIT ON CAST(MOV.ID_PAGAMENTO AS STRING) = CAST(WIT.PYN_ID AS STRING)
+        LEFT JOIN SBOX_LEGALES.Dim_Instituicoes INSTITUT ON WIT.PYN_BUY_BANK_ID = CAST(INSTITUT.ISPB AS STRING)
+);
+
+-- PAYMENTS
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_AUX_PAYMENTS_COMID_CAD_VF AS (
+    SELECT
+        ID_PAGAMENTO,
+        ID_RELACIONADO,
+        CUS_CUST_ID,
+        CODIGO_CHAVE_EXTRATO
+    FROM
+        SBOX_LEGALES.STG_QS_AUX_MOVIMENTACAO2_CAD_VF MOV
+    WHERE
+        TBL_RELACIONADO = 'Payments'
+        AND ID_RELACIONADO IS NOT NULL
+);
+
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_AUX_PAYMENTS_SEMID_CAD_VF AS (
+    SELECT
+        ID_PAGAMENTO,
+        ID_RELACIONADO,
+        CUS_CUST_ID,
+        CODIGO_CHAVE_EXTRATO
+    FROM
+        SBOX_LEGALES.STG_QS_AUX_MOVIMENTACAO2_CAD_VF MOV
+    WHERE
+        TBL_RELACIONADO = 'Payments'
+        AND ID_RELACIONADO IS NULL
+);
+
+-- TRAZ AS INFORMAÇÕES DO RELACIONADO COM A TABELA DE PAGAMENTO
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_PAGAMENTO_CAD_VF AS (
+    SELECT
+        MOV.ID_PAGAMENTO,
+        MOV.ID_RELACIONADO,
+        CAST(CODIGO_CHAVE_EXTRATO AS STRING) AS CODIGO_CHAVE_EXTRATO,
+        CAST((NULL) AS STRING) AS PAY_REASON_ID
+    FROM
+        SBOX_LEGALES.STG_QS_AUX_PAYMENTS_COMID_CAD_VF MOV
+    WHERE
+        MOV.ID_RELACIONADO IS NOT NULL
+    UNION
+    ALL
+    SELECT
+        MOV.ID_PAGAMENTO,
+        CASE
+            WHEN MOV.ID_RELACIONADO IS NOT NULL THEN MOV.ID_RELACIONADO
+            WHEN MOV.CUS_CUST_ID = PAY.CUS_CUST_ID_SEL THEN PAY.CUS_CUST_ID_BUY
+            WHEN MOV.CUS_CUST_ID = PAY.CUS_CUST_ID_BUY THEN PAY.CUS_CUST_ID_SEL
+        END AS ID_RELACIONADO,
+        CAST(CODIGO_CHAVE_EXTRATO AS STRING) AS CODIGO_CHAVE_EXTRATO,
+        REGEXP_REPLACE(
+            CAST((PAY.PAY_REASON_ID) AS STRING),
+            '[^0-9a-zA-Z]',
+            ' '
+        ) AS PAY_REASON_ID
+    FROM
+        SBOX_LEGALES.STG_QS_AUX_PAYMENTS_SEMID_CAD_VF MOV
+        LEFT JOIN WHOWNER.BT_MP_PAY_PAYMENTS_ALL PAY ON MOV.ID_PAGAMENTO = PAY.PAY_PAYMENT_ID
+        AND PAY.SIT_SITE_ID = 'MLB'
+        AND MOV.ID_RELACIONADO IS NULL
+    WHERE
+        MOV.ID_RELACIONADO IS NULL
+);
+
+-- TRAZER AS INFORMAÇOES DOS RELACIONADOS COM ID DE PAGAMENTO
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_PAGAMENTO_REL_CAD_VF AS (
+    SELECT
+        PAG.ID_PAGAMENTO,
+        CODIGO_CHAVE_EXTRATO,
+        CAST(PAG.ID_RELACIONADO AS STRING) AS NUMERO_CONTA_REL,
+        CAST(
+            CASE
+                WHEN KYC.KYC_IDENTIFICATION_TYPE = 'CPF'
+                AND KYC.KYC_IDENTIFICATION_NUMBER IS NOT NULL
+                AND KYC.KYC_PER_FULL_NAME IS NOT NULL THEN 1
+                WHEN KYC.KYC_IDENTIFICATION_TYPE = 'CNPJ'
+                AND KYC.KYC_IDENTIFICATION_NUMBER IS NOT NULL
+                AND KYC.KYC_COMP_CORPORATE_NAME IS NOT NULL THEN 2
+                WHEN LENGTH(REL.CUS_CUST_DOC_NUMBER) = 11 THEN 1
+                WHEN LENGTH(REL.CUS_CUST_DOC_NUMBER) = 14 THEN 2 -- WHEN CI.CUS_CUST_ID IS NOT NULL THEN 2
+                ELSE NULL
+            END AS STRING
+        ) AS TIPO_PESSOA_REL,
+        CAST(
+            CASE
+                WHEN KYC.KYC_IDENTIFICATION_TYPE IN ('CPF', 'CNPJ')
+                AND KYC.KYC_IDENTIFICATION_NUMBER IS NOT NULL THEN KYC.KYC_IDENTIFICATION_NUMBER
+                WHEN REL.CUS_CUST_DOC_NUMBER IS NOT NULL THEN REGEXP_REPLACE(REL.CUS_CUST_DOC_NUMBER, '[^a-zA-Z0-9]', '') -- WHEN CI.CUS_CUST_ID IS NOT NULL THEN CI.CADASTRO_MLB
+                ELSE NULL
+            END AS STRING
+        ) AS CPF_CNPJ_REL,
+        CAST(
+            UPPER(
+                CASE
+                    WHEN KYC.KYC_IDENTIFICATION_TYPE = 'CPF'
+                    AND KYC.KYC_PER_FULL_NAME IS NOT NULL THEN KYC.KYC_PER_FULL_NAME
+                    WHEN KYC.KYC_IDENTIFICATION_TYPE = 'CNPJ'
+                    AND KYC.KYC_COMP_CORPORATE_NAME IS NOT NULL THEN KYC.KYC_COMP_CORPORATE_NAME -- WHEN CI.CUS_CUST_ID IS NOT NULL THEN CI.CUS_NAME
+                    WHEN REL.CUS_FIRST_NAME IS NULL THEN COALESCE(REL.CUS_FIRST_NAME, REL.CUS_LAST_NAME)
+                    ELSE CONCAT(REL.CUS_FIRST_NAME, ' ', REL.CUS_LAST_NAME)
+                END
+            ) AS STRING
+        ) AS NOME_REL
+    FROM
+        SBOX_LEGALES.STG_QS_PAGAMENTO_CAD_VF PAG
+        LEFT JOIN WHOWNER.LK_CUS_CUSTOMERS_DATA REL ON PAG.ID_RELACIONADO = REL.CUS_CUST_ID -- LEFT JOIN SBOX_LEGALES.TBL_CAD_QS_CONTAS_INTERNAS CI
+        -- ON CAST(PAG.ID_RELACIONADO AS STRING) = CAST(CI.CUS_CUST_ID AS STRING)
+        LEFT JOIN WHOWNER.LK_KYC_VAULT_USER KYC ON KYC.CUS_CUST_ID = PAG.ID_RELACIONADO
+        AND SIT_SITE_ID = 'MLB'
+);
+
+-- WIT
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_AUX_WITHDRAWAL_CAD_VF AS (
+    SELECT
+        ID_PAGAMENTO,
+        CODIGO_CHAVE_EXTRATO
+    FROM
+        SBOX_LEGALES.STG_QS_AUX_MOVIMENTACAO2_CAD_VF MOV
+    WHERE
+        TBL_RELACIONADO = 'Withdrawal'
+);
+
+-- TRAZER AS INFORMAÇOES DOS RELACIONADOS COM RETIROS
+CREATE
+OR REPLACE TABLE SBOX_LEGALES.STG_QS_WITHDRAWAL_REL_CAD_VF AS (
+    SELECT
+        MOV.ID_PAGAMENTO,
+        CODIGO_CHAVE_EXTRATO,
+        WIT.WIT_BANK_ACC_BANK_ID AS NUMERO_BANCO_REL,
+        REGEXP_REPLACE(WIT.WIT_BANK_ACC_BRANCH_ID, '[^a-zA-Z0-9]', '') AS NUMERO_AGENCIA_REL,
+        REGEXP_REPLACE(WIT.WIT_BANK_ACC_NUMBER, '[^a-zA-Z0-9]', '') AS NUMERO_CONTA_REL,
+        '4' AS TIPO_CONTA_REL,
+        CASE
+            WHEN WIT.WIT_BANK_ACC_ID_TYPE_ID IS NULL
+            AND LENGTH(WIT.WIT_BANK_ACC_ID_NUMBER) = 11 THEN '1'
+            WHEN WIT.WIT_BANK_ACC_ID_TYPE_ID IS NULL
+            AND LENGTH(WIT.WIT_BANK_ACC_ID_NUMBER) = 14 THEN '2'
+            WHEN WIT.WIT_BANK_ACC_ID_TYPE_ID = 'CPF' THEN '1'
+            WHEN WIT.WIT_BANK_ACC_ID_TYPE_ID = 'CNPJ' THEN '2'
+            ELSE NULL
+        END AS TIPO_PESSOA_REL,
+        WIT.WIT_BANK_ACC_ID_NUMBER AS CPF_CNPJ_REL,
+        UPPER(
+            COALESCE(
+                WIT.WIT_BANK_ACC_ALIAS,
+                WIT.WIT_BANK_ACC_HOLDER_ID
+            )
+        ) AS NOME_PESSOA_REL
+    FROM
+        SBOX_LEGALES.STG_QS_AUX_WITHDRAWAL_CAD_VF MOV
+        LEFT JOIN WHOWNER.BT_MP_WITHDRAWALS WIT ON MOV.ID_PAGAMENTO = WIT.WIT_WITHDRAWAL_ID
+        AND WIT.SIT_SITE_ID = 'MLB'
+);

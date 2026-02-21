@@ -1,0 +1,123 @@
+import os
+import re
+import unicodedata
+import fitz  # PyMuPDF
+import pdfplumber
+import pandas as pd
+
+# ====== Caminhos ======
+pdf_path = r"G:\Drives compartilhados\Legales_Analytics\002 - Python\002-1 - DEV\Dev - CLM Ma e Mu\Matriz de arquivos\1dX1DC-vrs7w8rk_U2xUil3aPi8S_rNZF.pdf"
+empresas_path = r"G:\Drives compartilhados\Legales_Analytics\002 - Python\002-1 - DEV\Dev - CLM Ma e Mu\Outros arquivos\Listado de empresas.xlsx"
+output_xlsx = r"G:\Drives compartilhados\Legales_Analytics\002 - Python\002-1 - DEV\Dev - CLM Ma e Mu\Resultado\Resultado.xlsx"
+
+# ====== 1) Ler metadados ======
+doc = fitz.open(pdf_path)
+metadata = doc.metadata
+page_count = doc.page_count
+file_size_kb = round(doc.tobytes().__sizeof__() / 1024, 2)
+doc.close()
+
+# ====== 2) Extrair conteúdo (pdfplumber) ======
+pages_data = []
+with pdfplumber.open(pdf_path) as pdf:
+    for i, page in enumerate(pdf.pages, start=1):
+        text = page.extract_text() or ""
+        pages_data.append({"pagina": i, "conteudo": text.strip()})
+
+df = pd.DataFrame([p for p in pages_data if p["conteudo"]])
+full_text = "\n".join(df["conteudo"].tolist())
+
+# ====== 3) Regex de busca ======
+GUID_RE = re.compile(r"\b[0-9A-Fa-f]{8}-(?:[0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}\b")
+DOCUSIGN_RE = re.compile(r"DocuSign\s*Envelope\s*ID\s*[:\-–]?\s*([^\n]+)", flags=re.IGNORECASE)
+PAT = re.compile(r"(CPF|CNPJ|Multa)[^\d]{0,40}([\d\.\-\/,\s]{3,60})", flags=re.IGNORECASE | re.DOTALL)
+
+def normalize_id(term: str, raw_number: str) -> str:
+    term_up = term.upper()
+    digits = re.sub(r"\D", "", raw_number)
+    if term_up == "CPF":
+        m = re.search(r"\d{11}", digits)
+        return m.group(0) if m else digits
+    if term_up == "CNPJ":
+        m = re.search(r"\d{14}", digits)
+        return m.group(0) if m else digits
+    m = re.search(r"\d[\d\.\s]{0,15},\d{2}", raw_number) or re.search(r"\d[\d\.\s]{3,}", raw_number)
+    if m:
+        val = m.group(0)
+        val = re.sub(r"\s", "", val).replace(".", "").replace(",", ".")
+        return val
+    return re.sub(r"[^\d,\.]", "", raw_number)
+
+# ====== 4) Extrair DocuSign Envelope ID ======
+envelope_id = ""
+m_env = DOCUSIGN_RE.search(full_text)
+if m_env:
+    g = GUID_RE.search(m_env.group(0))
+    if g:
+        envelope_id = g.group(0).upper()
+
+# ====== 5) Extrair chaves principais ======
+matches_total = []
+for _, row in df.iterrows():
+    t = row["conteudo"]
+    for m in PAT.finditer(t):
+        term = m.group(1)
+        raw_num = m.group(2)
+        clean = normalize_id(term, raw_num)
+        matches_total.append({
+            "pagina": row["pagina"],
+            "termo": term.upper(),
+            "numero_encontrado": clean
+        })
+
+doc_id = os.path.splitext(os.path.basename(pdf_path))[0]
+provedores_rows = []
+for m in matches_total:
+    provedores_rows.append({
+        "DOC_ID": doc_id,
+        "DocuSign Envelope ID": envelope_id,
+        "CHAVE": m["termo"],
+        "CHAVE_ID": m["numero_encontrado"]
+    })
+
+provedores_df = pd.DataFrame(provedores_rows, columns=["DOC_ID", "DocuSign Envelope ID", "CHAVE", "CHAVE_ID"])
+
+# ====== 6) Busca secundária (Empresas) ======
+def normalize_text(text: str) -> str:
+    nfkd = unicodedata.normalize("NFKD", text)
+    return "".join(c for c in nfkd if not unicodedata.combining(c)).lower()
+
+# ✅ leitura robusta das colunas C e D (índices 2 e 3)
+empresas_df = pd.read_excel(empresas_path, sheet_name="Planilha1", header=0)
+empresas = empresas_df.iloc[:, [2, 3]].copy()
+empresas.columns = ["Empresa", "Domicilio"]
+
+full_text_norm = normalize_text(full_text)
+resultado_secundario_rows = []
+
+for _, row in empresas.iterrows():
+    empresa = str(row["Empresa"]).strip()
+    domicilio = str(row["Domicilio"]).strip()
+    if not empresa or empresa.lower() == "nan":
+        continue
+    if normalize_text(empresa) in full_text_norm:
+        resultado_secundario_rows.append({
+            "DOC_ID": doc_id,
+            "DocuSign Envelope ID": envelope_id,
+            "Empresa": empresa,
+            "Domicilio": domicilio
+        })
+
+resultado_secundario_df = pd.DataFrame(resultado_secundario_rows, columns=["DOC_ID", "DocuSign Envelope ID", "Empresa", "Domicilio"])
+
+# ====== 7) Salvar em XLSX ======
+if os.path.exists(output_xlsx):
+    os.remove(output_xlsx)
+
+with pd.ExcelWriter(output_xlsx, engine="openpyxl") as writer:
+    provedores_df.to_excel(writer, index=False, sheet_name="Provedores_Resultado")
+    resultado_secundario_df.to_excel(writer, index=False, sheet_name="resultado_secundario")
+
+print(f"\n✅ Arquivo salvo em: {output_xlsx}")
+print(f"📄 Linhas (Provedores): {len(provedores_df)} | ✉️ Envelope: {envelope_id or '—'}")
+print(f"🏢 Linhas (Resultado Secundário): {len(resultado_secundario_df)}")

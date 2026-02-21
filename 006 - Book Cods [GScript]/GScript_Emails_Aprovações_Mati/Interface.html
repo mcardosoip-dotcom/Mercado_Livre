@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>Processador de Emails - Aprovação de Regalos</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      color: #1a73e8;
+      margin-top: 0;
+      font-size: 24px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #5f6368;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1);
+    }
+    
+    .help-text {
+      font-size: 12px;
+      color: #80868b;
+      margin-top: 4px;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    
+    button {
+      flex: 1;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .btn-primary {
+      background-color: #1a73e8;
+      color: white;
+    }
+    
+    .btn-primary:hover:not(:disabled) {
+      background-color: #1557b0;
+    }
+    
+    .btn-secondary {
+      background-color: #34a853;
+      color: white;
+    }
+    
+    .btn-secondary:hover:not(:disabled) {
+      background-color: #2d8e47;
+    }
+    
+    .status {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 4px;
+      display: none;
+    }
+    
+    .status.success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #4caf50;
+      display: block;
+    }
+    
+    .status.error {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ef5350;
+      display: block;
+    }
+    
+    .status.info {
+      background-color: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #42a5f5;
+      display: block;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #1a73e8;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .stats {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      display: none;
+    }
+    
+    .stats.show {
+      display: block;
+    }
+    
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .stat-item:last-child {
+      border-bottom: none;
+    }
+    
+    .stat-label {
+      color: #5f6368;
+    }
+    
+    .stat-value {
+      font-weight: 600;
+      color: #202124;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📧 Processador de Emails</h1>
+    <p style="color: #5f6368; margin-bottom: 30px;">
+      Configure o valor limite de aprovação e processe os emails de solicitação de regalos.
+    </p>
+    
+    <div class="form-group">
+      <label for="valorLimite">Valor Limite de Aprovação (USD)</label>
+      <input 
+        type="number" 
+        id="valorLimite" 
+        name="valorLimite" 
+        min="0" 
+        step="0.01" 
+        value="1000"
+        placeholder="Digite o valor limite"
+      >
+      <div class="help-text">
+        Emails com valor menor que este limite serão aprovados automaticamente.
+      </div>
+    </div>
+    
+    <div class="button-group">
+      <button id="btnProcessar" class="btn-primary" onclick="processarEmails()">
+        Processar Emails
+      </button>
+      <button id="btnAbrirPlanilha" class="btn-secondary" onclick="abrirPlanilha()" disabled>
+        Abrir Planilha
+      </button>
+    </div>
+    
+    <div id="status" class="status"></div>
+    
+    <div id="stats" class="stats">
+      <div class="stat-item">
+        <span class="stat-label">Emails Processados:</span>
+        <span class="stat-value" id="statProcessados">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Aprovados:</span>
+        <span class="stat-value" id="statAprovados">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Não Aprovados (Valor):</span>
+        <span class="stat-value" id="statNaoAprovadosValor">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Não Aprovados (Erro):</span>
+        <span class="stat-value" id="statNaoAprovadosErro">0</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SPREADSHEET_ID = '1zZKbLVkwo7HDanWbliIy76NgmPf6c_l02UaqXk1zFt0';
+    
+    function processarEmails() {
+      const valorLimite = parseFloat(document.getElementById('valorLimite').value);
+      
+      if (isNaN(valorLimite) || valorLimite < 0) {
+        mostrarStatus('Por favor, insira um valor válido maior ou igual a zero.', 'error');
+        return;
+      }
+      
+      // Desabilitar botão e mostrar loading
+      const btnProcessar = document.getElementById('btnProcessar');
+      btnProcessar.disabled = true;
+      btnProcessar.innerHTML = '<span class="loading"></span>Processando...';
+      
+      mostrarStatus('Processando emails... Isso pode levar alguns minutos.', 'info');
+      document.getElementById('stats').classList.remove('show');
+      
+      // Chamar função do servidor
+      google.script.run
+        .withSuccessHandler(onProcessamentoSucesso)
+        .withFailureHandler(onProcessamentoErro)
+        .processarEmailsComValorLimite(valorLimite);
+    }
+    
+    function onProcessamentoSucesso(resultado) {
+      const btnProcessar = document.getElementById('btnProcessar');
+      btnProcessar.disabled = false;
+      btnProcessar.innerHTML = 'Processar Emails';
+      
+      if (resultado && resultado.success) {
+        mostrarStatus('Processamento concluído com sucesso!', 'success');
+        
+        // Mostrar estatísticas
+        if (resultado.estatisticas) {
+          document.getElementById('statProcessados').textContent = resultado.estatisticas.total || 0;
+          document.getElementById('statAprovados').textContent = resultado.estatisticas.aprovados || 0;
+          document.getElementById('statNaoAprovadosValor').textContent = resultado.estatisticas.naoAprovadosValor || 0;
+          document.getElementById('statNaoAprovadosErro').textContent = resultado.estatisticas.naoAprovadosErro || 0;
+          document.getElementById('stats').classList.add('show');
+        }
+        
+        // Habilitar botão para abrir planilha
+        document.getElementById('btnAbrirPlanilha').disabled = false;
+      } else {
+        mostrarStatus(resultado.message || 'Processamento concluído, mas sem emails para processar.', 'info');
+        document.getElementById('btnAbrirPlanilha').disabled = false;
+      }
+    }
+    
+    function onProcessamentoErro(error) {
+      const btnProcessar = document.getElementById('btnProcessar');
+      btnProcessar.disabled = false;
+      btnProcessar.innerHTML = 'Processar Emails';
+      
+      mostrarStatus('Erro ao processar emails: ' + error.message, 'error');
+    }
+    
+    function mostrarStatus(mensagem, tipo) {
+      const statusDiv = document.getElementById('status');
+      statusDiv.textContent = mensagem;
+      statusDiv.className = 'status ' + tipo;
+    }
+    
+    function abrirPlanilha() {
+      const url = 'https://docs.google.com/spreadsheets/d/' + SPREADSHEET_ID;
+      window.open(url, '_blank');
+    }
+  </script>
+</body>
+</html>

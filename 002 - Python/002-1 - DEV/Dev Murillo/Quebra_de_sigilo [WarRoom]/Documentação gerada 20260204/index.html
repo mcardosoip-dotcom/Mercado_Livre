@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentação Pipelines - Quebra de Sigilo</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --font: 'DM Sans', system-ui, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font);
+      background: var(--bg-dark);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .nav {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .nav a {
+      color: var(--accent);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav a:hover, .nav a.active { background: var(--accent-soft); color: #fff; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .page { display: none; }
+    .page.active { display: block; }
+    h1 { font-size: 2rem; margin-bottom: 0.5rem; color: #fff; }
+    .subtitle { color: var(--text-muted); margin-bottom: 2rem; }
+    h2 { font-size: 1.5rem; margin: 2rem 0 1rem; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+    h3 { font-size: 1.2rem; margin: 1rem 0 0.5rem; color: var(--text); }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .flow-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.5rem 0; }
+    .flow-node {
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .flow-arrow { color: var(--accent); font-size: 1.2rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+    th, td { border: 1px solid var(--border); padding: 0.6rem 0.8rem; text-align: left; }
+    th { background: var(--bg-dark); color: var(--accent); }
+    tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+    .diagram-box {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+    .diagram-box pre { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted); white-space: pre; }
+    /* Diagramas visuais SVG */
+    .diagram-wrap {
+      background: linear-gradient(145deg, #0f172a 0%, #1a1f35 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      overflow: auto;
+      min-height: 200px;
+    }
+    .diagram-wrap svg {
+      display: block;
+      margin: 0 auto;
+      font-family: var(--font);
+    }
+    .diagram-wrap .node-entrada { fill: #059669; stroke: #10b981; }
+    .diagram-wrap .node-fonte { fill: #ea580c; stroke: #f97316; }
+    .diagram-wrap .node-staging { fill: #2563eb; stroke: #3b82f6; }
+    .diagram-wrap .node-relacionado { fill: #7c3aed; stroke: #8b5cf6; }
+    .diagram-wrap .node-final { fill: #be185d; stroke: #ec4899; }
+    .diagram-wrap .node-title { font-weight: 700; font-size: 11px; fill: #fff; }
+    .diagram-wrap .node-item { font-size: 9px; fill: #e2e8f0; }
+    .diagram-wrap .arrow { stroke: var(--accent); stroke-width: 2; fill: none; }
+    .diagram-wrap svg .arrow { marker-end: url(#arrowhead); }
+    .diagram-wrap svg .arrow-alt { marker-end: url(#arrowhead2026); }
+    .diagram-wrap svg .arrow-poc { marker-end: url(#arrowheadPOC); }
+    .diagram-wrap .arrow-dash { stroke-dasharray: 6 4; }
+    .diagram-legend { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.85rem; }
+    .diagram-legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+    .diagram-legend .leg-box { width: 14px; height: 14px; border-radius: 4px; }
+    .diagram-legend .leg-box.entrada { background: #059669; }
+    .diagram-legend .leg-box.fonte { background: #ea580c; }
+    .diagram-legend .leg-box.staging { background: #2563eb; }
+    .diagram-legend .leg-box.relacionado { background: #7c3aed; }
+    .diagram-legend .leg-box.final { background: #be185d; }
+    ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+    .comparison-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1rem 0; }
+    .comparison-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+    .comparison-card h3 { margin-top: 0; }
+    .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.75rem; margin-right: 0.25rem; }
+    .badge-orig { background: #475569; color: #fff; }
+    .badge-2026 { background: #0ea5e9; color: #0f172a; }
+    .badge-poc { background: #22c55e; color: #0f172a; }
+    /* Cards de etapa (onboarding) */
+    .step-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .step-card h4 { font-size: 1.05rem; color: var(--accent); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .step-card .step-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .step-card dl { margin: 0.5rem 0 0; font-size: 0.9rem; }
+    .step-card dt { color: var(--text-muted); font-weight: 600; margin-top: 0.4rem; }
+    .step-card dd { margin-left: 0; padding-left: 0; margin-top: 0.2rem; }
+    .step-card dd ul { margin: 0.2rem 0 0 1rem; padding: 0; }
+    .step-num { display: inline-flex; align-items: center; justify-content: center; width: 1.75rem; height: 1.75rem; background: var(--accent-soft); color: var(--accent); border-radius: 6px; font-weight: 700; font-size: 0.85rem; }
+    .diagram-wrap .node-step { font-size: 8px; }
+    .diagram-wrap .node-step-title { font-weight: 700; font-size: 9px; fill: #fff; }
+    /* ERD: DESTAQUE PRINCIPAL - qual tabela se relaciona com qual e através de qual coluna */
+    .erd-hero {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.18) 0%, rgba(30, 41, 59, 0.98) 50%);
+      border: 3px solid var(--accent);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 0 0 2rem 0;
+      box-shadow: 0 0 0 1px var(--border), 0 0 32px rgba(56, 189, 248, 0.2), 0 8px 24px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .erd-hero::before {
+      content: 'PRINCIPAL';
+      position: absolute;
+      top: 0;
+      right: 1rem;
+      background: var(--accent);
+      color: var(--bg-dark);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 0 0 6px 6px;
+    }
+    .erd-hero h2 {
+      color: var(--accent);
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      border: none;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .erd-hero h2::before { content: '▸'; }
+    .erd-hero .erd-intro {
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    .erd-hero .erd-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .erd-hero .erd-legend strong { color: var(--accent); }
+    .erd-section { margin: 1.5rem 0; }
+    .erd-section h3 { font-size: 1.15rem; color: var(--accent); margin-bottom: 0.5rem; }
+    .erd-section p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; }
+    .erd-wrap {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 85vh;
+    }
+    .erd-wrap svg { font-family: 'Consolas', 'JetBrains Mono', monospace; display: block; margin: 0 auto; }
+    .erd-table-rect { fill: #1e293b; stroke: #475569; stroke-width: 1.5; }
+    .erd-table-header { fill: #334155; }
+    .erd-col-text { font-size: 9px; fill: #e2e8f0; }
+    .erd-col-pk { fill: #38bdf8; font-weight: 600; }
+    .erd-link-line { stroke: #64748b; stroke-width: 1.5; fill: none; }
+    .erd-link-label { font-size: 8px; fill: #94a3b8; }
+    .erd-cardinality { font-size: 10px; fill: #f59e0b; font-weight: 700; }
+    .erd-table-name { font-size: 8px; fill: #94a3b8; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="#" data-page="index" class="active">Início</a>
+    <a href="#" data-page="original" title="ERD completo no topo da página">Versão Original</a>
+    <a href="#" data-page="2026" title="ERD completo no topo da página">Versão 2026</a>
+    <a href="#" data-page="poc" title="ERD completo no topo da página">Versão POC</a>
+    <a href="#" data-page="comparacao">Comparação</a>
+    <span style="color:var(--accent); font-weight:700; margin-left:0.5rem;">▸</span>
+  </nav>
+
+  <div class="container">
+    <!-- PÁGINA INICIAL -->
+    <div id="page-index" class="page active">
+      <h1>Documentação dos Pipelines – Quebra de Sigilo</h1>
+      <p class="subtitle">Mapeamento de processos, relacionamento de dados e fluxo de execução · WarRoom Legales Analytics</p>
+
+      <div class="erd-hero card" id="destaque-erd">
+        <h2>Diagrama de relacionamento entre tabelas (ERD) — recurso principal</h2>
+        <p class="erd-intro">O <strong>recurso mais importante</strong> desta documentação: cada pipeline tem um <strong>ERD individual</strong>, validado pelas tabelas que aparecem no código daquele processo. Mostra <em>qual tabela se relaciona com qual</em> e <em>através de qual coluna</em>, apenas com as tabelas presentes naquela versão.</p>
+        <div class="erd-legend">
+          <span><strong>+</strong> coluna = lado «um» (1)</span>
+          <span><strong>→</strong> coluna = lado «muitos» (N)</span>
+          <span><strong>Linha entre tabelas</strong> = relacionamento; rótulo = coluna de ligação ou fonte</span>
+        </div>
+        <p style="margin-bottom:0;"><strong>ERD por pipeline (validado no código):</strong></p>
+        <ul style="margin-top:0.5rem;">
+          <li><strong>Versão Original</strong> — Tabelas dos arquivos 000–003 (LK_KYC, LK_CUS, BT_MP_*; staging e TBL_*_FINCH)</li>
+          <li><strong>Versão 2026</strong> — Tabelas dos arquivos 000–023 (LK_REG_REGULATED_BASE_MLB, STG_NQS2_*, blocos PIX 013–014)</li>
+          <li><strong>Versão POC</strong> — Tabelas dos blocos SQL 00–07 e leituras dos scripts Python 01–11</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Visão geral</h2>
+        <p>Existem três pipelines de dados no projeto Quebra de Sigilo:</p>
+        <ul>
+          <li><strong>000 - Versão Original</strong> — Pipeline monolítico (16 etapas, arquivo principal com ~739 linhas).</li>
+          <li><strong>001 - Versão 2026</strong> — Pipeline modular (36 arquivos), mesma lógica quebrada em etapas nomeadas.</li>
+          <li><strong>003 - Versão POC</strong> — Arquitetura híbrida: 8 blocos SQL + 11 scripts Python para saídas.</li>
+        </ul>
+        <p>Objetivo comum: atender à <strong>Carta Circular 3454</strong> e <strong>Extrato Mercantil</strong>, gerando tabelas finais e arquivos (CSV, ZIP) para órgãos regulados.</p>
+      </div>
+      <div class="card">
+        <h2>Navegação</h2>
+        <p>Use o menu acima para acessar:</p>
+        <ul>
+          <li><strong>Versão Original</strong> — Fluxo de execução, <strong>detalhamento arquivo a arquivo (000 a 015)</strong>, diagrama e tabelas finais.</li>
+          <li><strong>Versão 2026</strong> — <strong>Detalhamento dos 36 arquivos (000 a 035)</strong>, diagrama e melhorias (base regulada, PIX em 2 blocos).</li>
+          <li><strong>Versão POC</strong> — <strong>Detalhamento dos 8 blocos SQL e 11 scripts Python</strong>, diagrama e tabelas finais.</li>
+          <li><strong>Comparação</strong> — Tabela comparativa entre as três versões (estrutura, arquivos, manutenção).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Para novos membros da equipe</h2>
+        <p>Esta documentação é a base de onboarding do pipeline Quebra de Sigilo. Em cada página de pipeline você encontra:</p>
+        <ul>
+          <li><strong>Detalhamento etapa a etapa (arquivo a arquivo)</strong> — Para cada arquivo: <em>Objetivo</em> (para que serve), <em>Entrada</em> (quais tabelas ou arquivos lê), <em>Saída</em> (o que gera) e <em>Observações</em> quando relevante. Use isso para entender o que cada passo faz e em que ordem executar.</li>
+          <li><strong>Diagrama de relacionamento</strong> — Visão do fluxo em caixas (cada caixa = um arquivo ou etapa). As setas indicam a ordem de execução e o fluxo de dados.</li>
+          <li><strong>Diagrama ERD (entidade-relacionamento)</strong> — Mostra <em>qual tabela se relaciona com qual</em> e <em>através de qual coluna</em> (ex.: CUS_CUST_ID entre Titular e Movimentações). Símbolo <strong>+</strong> = lado «um», seta <strong>→</strong> = lado «muitos».</li>
+          <li><strong>Tabelas finais</strong> — Lista das tabelas de destino (TBL_*_FINCH, CAD_*_FINCH) que alimentam as saídas (Carta Circular 3454, Extrato, ZIP).</li>
+        </ul>
+        <p><strong>Ordem de execução:</strong> sempre na sequência numérica (000 → 001 → … ou BLOCO_00 → BLOCO_01 → …). Não pule etapas; cada uma depende das anteriores.</p>
+      </div>
+    </div>
+
+    <!-- PÁGINA VERSÃO ORIGINAL -->
+    <div id="page-original" class="page">
+      <h1>Pipeline: Versão Original</h1>
+      <p class="subtitle">000 - Versão Original · Fluxo monolítico em SQL</p>
+
+      <div class="erd-hero">
+        <h2>ERD — Pipeline Original (000)</h2>
+        <p class="erd-intro">Diagrama validado pelas tabelas referenciadas nos arquivos <strong>000–003</strong> (Criação, Tabelas auxiliares, Tabelas auxiliares 2, Inserir tabelas finais). <strong>+</strong> = lado «um», <strong>→</strong> = lado «muitos».</p>
+        <div class="erd-wrap">
+          <svg viewBox="0 0 1680 720" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="erdArrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#64748b"/></marker></defs>
+            <rect x="10" y="10" width="140" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="10" y="10" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="80" y="25" class="erd-table-name" text-anchor="middle">TBL_QS_AUX_INVESTIGADO_FINCH</text>
+            <text x="18" y="42" class="erd-col-text erd-col-pk">+ APOIO_CPF_CNPJ</text>
+            <text x="18" y="54" class="erd-col-text">CASO, RANGE_MIN/MAX</text>
+            <line x1="150" y1="55" x2="168" y2="55" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <text x="159" y="50" class="erd-link-label" text-anchor="middle">DOC_NUMBER</text>
+            <rect x="168" y="10" width="140" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="168" y="10" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="238" y="25" class="erd-table-name" text-anchor="middle">STG_QS_PLANILHA_PRESENTA</text>
+            <text x="176" y="42" class="erd-col-text">→ DOC_NUMBER</text>
+            <text x="176" y="54" class="erd-col-text">CIRCULAR_3454, EXTRATO</text>
+            <text x="238" y="70" class="erd-link-label" text-anchor="middle">← LK_KYC_VAULT_USER, LK_CUS</text>
+            <line x1="308" y1="55" x2="326" y2="55" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <text x="317" y="50" class="erd-link-label" text-anchor="middle">DOC_NUMBER</text>
+            <rect x="326" y="10" width="140" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="326" y="10" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="396" y="25" class="erd-table-name" text-anchor="middle">STG_QS_INFO_TIT</text>
+            <text x="334" y="42" class="erd-col-text">→ DOC_NUMBER</text>
+            <text x="334" y="54" class="erd-col-text erd-col-pk">+ CUS_CUST_ID</text>
+            <text x="396" y="70" class="erd-link-label" text-anchor="middle">← BT_MP_KYC_LEVEL</text>
+            <line x1="466" y1="55" x2="484" y2="55" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <text x="475" y="50" class="erd-link-label" text-anchor="middle">CUS_CUST_ID</text>
+            <rect x="484" y="10" width="140" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="484" y="10" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="554" y="25" class="erd-table-name" text-anchor="middle">STG_QS_INFO_TIT_KYC</text>
+            <text x="492" y="42" class="erd-col-text">→ CUS_CUST_ID</text>
+            <line x1="624" y1="55" x2="642" y2="55" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <rect x="642" y="10" width="120" height="70" rx="6" class="erd-table-rect"/>
+            <rect x="642" y="10" width="120" height="22" rx="6" class="erd-table-header"/>
+            <text x="702" y="25" class="erd-table-name" text-anchor="middle">STG_QS_CORRESPONDENTE</text>
+            <text x="650" y="42" class="erd-col-text erd-col-pk">+ CUS_CUST_ID</text>
+            <text x="702" y="58" class="erd-link-label" text-anchor="middle">← BT_MP_ACCOUNT_VIRTUAL_KEY</text>
+            <line x1="762" y1="45" x2="780" y2="45" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <rect x="780" y="10" width="120" height="70" rx="6" class="erd-table-rect"/>
+            <rect x="780" y="10" width="120" height="22" rx="6" class="erd-table-header"/>
+            <text x="840" y="25" class="erd-table-name" text-anchor="middle">STG_QS_SPB</text>
+            <text x="788" y="42" class="erd-col-text">→ CUS_CUST_ID, DOC_NUMBER</text>
+            <line x1="900" y1="45" x2="918" y2="45" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <rect x="918" y="10" width="120" height="70" rx="6" class="erd-table-rect"/>
+            <rect x="918" y="10" width="120" height="22" rx="6" class="erd-table-header"/>
+            <text x="978" y="25" class="erd-table-name" text-anchor="middle">STG_QS_NOME_UNI_INV</text>
+            <text x="926" y="42" class="erd-col-text erd-col-pk">+ DOC_NUMBER</text>
+            <line x1="918" y1="80" x2="918" y2="128" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <rect x="850" y="128" width="140" height="90" rx="6" class="erd-table-rect"/>
+            <rect x="850" y="128" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="920" y="143" class="erd-table-name" text-anchor="middle">STG_QS_TITULAR</text>
+            <text x="858" y="160" class="erd-col-text erd-col-pk">+ CUS_CUST_ID</text>
+            <line x1="990" y1="173" x2="1008" y2="173" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <rect x="1008" y="128" width="140" height="90" rx="6" class="erd-table-rect"/>
+            <rect x="1008" y="128" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="1078" y="143" class="erd-table-name" text-anchor="middle">BT_MP_ACC_MOVEMENTS</text>
+            <text x="1016" y="160" class="erd-col-text">→ CUS_CUST_ID</text>
+            <line x1="1148" y1="173" x2="1166" y2="173" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <rect x="1166" y="128" width="160" height="90" rx="6" class="erd-table-rect"/>
+            <rect x="1166" y="128" width="160" height="22" rx="6" class="erd-table-header"/>
+            <text x="1246" y="143" class="erd-table-name" text-anchor="middle">STG_QS_AUX_MOVIMENTACAO</text>
+            <text x="1174" y="160" class="erd-col-text">→ CUS_CUST_ID, CODIGO_CHAVE_EXTRATO</text>
+            <line x1="1326" y1="173" x2="1344" y2="173" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <rect x="1344" y="128" width="160" height="90" rx="6" class="erd-table-rect"/>
+            <rect x="1344" y="128" width="160" height="22" rx="6" class="erd-table-header"/>
+            <text x="1424" y="143" class="erd-table-name" text-anchor="middle">STG_QS_AUX_MOVIMENTACAO2</text>
+            <text x="1352" y="160" class="erd-col-text">→ CUS_CUST_ID, ID_PAGAMENTO</text>
+            <line x1="1424" y1="218" x2="1424" y2="256" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <rect x="1340" y="256" width="168" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="1340" y="256" width="168" height="22" rx="6" class="erd-table-header"/>
+            <text x="1424" y="271" class="erd-table-name" text-anchor="middle">PAYOUT_REL, PAYIN_REL, PAGAMENTO_REL, WITHDRAWAL_REL</text>
+            <text x="1348" y="288" class="erd-col-text">← BT_MP_PAYOUTS, PAY_PAYIN, PAYMENTS_ALL, WITHDRAWALS</text>
+            <line x1="1340" y1="306" x2="1282" y2="306" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <rect x="1180" y="256" width="140" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="1180" y="256" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="1250" y="271" class="erd-table-name" text-anchor="middle">STG_QS_RELACIONADO</text>
+            <text x="1188" y="288" class="erd-col-text">UNION dos 4 REL acima</text>
+            <line x1="1180" y1="306" x2="1122" y2="306" class="erd-link-line" marker-end="url(#erdArrow)"/>
+            <rect x="980" y="256" width="220" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="980" y="256" width="220" height="22" rx="6" class="erd-table-header"/>
+            <text x="1090" y="271" class="erd-table-name" text-anchor="middle">TBL_*_FINCH + CAD_*_FINCH (003)</text>
+            <text x="988" y="288" class="erd-col-text">NAO_CORR, AGENCIAS, CONTAS, EXTRATO</text>
+            <text x="988" y="300" class="erd-col-text">TITULARES, ORIGEM_DESTINO, CAD_EXTRATO_*</text>
+            <rect x="642" y="90" width="120" height="50" rx="6" class="erd-table-rect"/>
+            <rect x="642" y="90" width="120" height="18" rx="6" class="erd-table-header"/>
+            <text x="702" y="102" class="erd-table-name" text-anchor="middle">STG_QS_NAO_CORRESPONDENTE</text>
+            <line x1="624" y1="65" x2="624" y2="90" class="erd-link-line" stroke-dasharray="4 3"/>
+          </svg>
+        </div>
+        <p style="margin-top:1rem; font-size:0.9rem;"><strong>Tabelas presentes neste pipeline (validadas no código):</strong> Entrada: TBL_QS_AUX_INVESTIGADO_FINCH. Staging (001–002): STG_QS_PLANILHA_PRESENTA, STG_QS_INFO_TIT, STG_QS_INFO_TIT_KYC, STG_QS_CORRESPONDENTE, STG_QS_NAO_CORRESPONDENTE, STG_QS_SPB, STG_QS_MAX_KYC, STG_QS_QTD_CUST_MAX_KYC, STG_QS_MAX_CUST, STG_QS_NOME_UNI_INV, STG_QS_TITULAR, STG_QS_AUX_MOVIMENTACAO, STG_QS_AUX_MOVIMENTACAO2, STG_QS_AUX_PAYOUT, STG_QS_AUX_PAYOUT_REL, STG_QS_AUX_PAYIN, STG_QS_AUX_PAYIN_REL, STG_QS_AUX_PAYMENTS_COMID, STG_QS_AUX_PAYMENTS_SEMID, STG_QS_PAGAMENTO, STG_QS_PAGAMENTO_REL, STG_QS_AUX_WITHDRAWAL, STG_QS_WITHDRAWAL_REL, STG_QS_RELACIONADO, STG_QS_FLAG_MOV. Fontes: LK_KYC_VAULT_USER, LK_CUS_CUSTOMERS_DATA, BT_MP_KYC_LEVEL, BT_MP_ACCOUNT_VIRTUAL_KEY, BT_MP_ACC_MOVEMENTS, BT_MP_PAYOUTS, BT_MP_PAY_PAYIN, BT_MP_PAY_PAYMENTS_ALL, BT_MP_WITHDRAWALS. Finais (003): TBL_QS_NAO_CORRESPONDENTE_FINCH, TBL_QS_AGENCIAS_FINCH, TBL_QS_CONTAS_FINCH, TBL_QS_EXTRATO_FINCH, TBL_QS_TITULARES_FINCH, TBL_QS_ORIGEM_DESTINO_FINCH, CAD_TBL_QS_EXTRATO_NAO_CORRESPONDENTE_FINCH, CAD_TBL_QS_EXTRATO_MOVIMENTACAO_FINCH.</p>
+      </div>
+
+      <h2>2. Fluxo de execução</h2>
+      <div class="flow-row">
+        <span class="flow-node">000 - Criação de tabelas</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">001 - Tabelas auxiliares (monolítico ~739 linhas)</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">002 - Tabelas auxiliares 2</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">003 - Inserir tabelas finais</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">004 a 015 - Saídas (Extrato, Carta 3454, ZIP)</span>
+      </div>
+
+      <h2>2. Detalhamento etapa a etapa (arquivo a arquivo)</h2>
+      <p class="subtitle" style="margin-bottom:1rem;">Cada arquivo do pipeline: objetivo, entrada, saída e observações para onboarding.</p>
+
+      <div class="step-card">
+        <h4><span class="step-num">000</span> 000 - Criação de tabelas</h4>
+        <div class="step-meta">Arquivo sem extensão (SQL) · Executar primeiro</div>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Criar todas as tabelas de staging (_FINCH) e finais que o pipeline vai usar, a partir da estrutura das tabelas já existentes (cópia de estrutura + truncate). Garante que o ambiente está limpo antes de rodar o 001.</dd>
+          <dt>Entrada</dt>
+          <dd><ul><li>Tabelas fonte: STG_QS_PLANILHA_PRESENTA_CAD_VF, STG_QS_INFO_TIT_CAD_VF, … (sem sufixo _FINCH)</li><li>Estruturas de TBL_* e CAD_* já existentes no schema</li></ul></dd>
+          <dt>Saída</dt>
+          <dd><ul><li>STG_QS_*_CAD_VF_FINCH (várias), TBL_QS_*_FINCH, CAD_TBL_QS_*_FINCH, Dim_Instituicoes_FINCH, Dim_DATE_FINCH — todas vazias (truncadas) ou recriadas</li></ul></dd>
+          <dt>Observações</dt>
+          <dd>Não popula dados; só DDL. A ordem de execução do pipeline é obrigatória: 000 → 001 → 002 → 003 → 004…015.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">001</span> 001 - Tabelas auxiliares</h4>
+        <div class="step-meta">Arquivo monolítico (~739 linhas) · Coração do ETL</div>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Executar todo o ETL de preparação em um único arquivo: da planilha de investigados até as tabelas de movimentações e relacionados (Payout, Payin, Payments, Withdrawal). Inclui base PRESENTA, info titular, KYC, correspondente/não correspondente, conta SPB, titular para carta, movimentações e todas as tabelas de relacionados.</dd>
+          <dt>Entrada</dt>
+          <dd><ul><li>TBL_QS_AUX_INVESTIGADO_FINCH (planilha/caso)</li><li>LK_KYC_VAULT_USER, LK_CUS_CUSTOMERS_DATA, BT_MP_KYC_LEVEL, BT_MP_ACCOUNT_VIRTUAL_KEY, BT_MP_ACC_MOVEMENTS (tabelas de negócio)</li></ul></dd>
+          <dt>Saída</dt>
+          <dd><ul><li>STG_QS_PLANILHA_PRESENTA_CAD_VF_FINCH, STG_QS_INFO_TIT_*, STG_QS_INFO_TIT_KYC_*, STG_QS_CORRESPONDENTE_*, STG_QS_NAO_CORRESPONDENTE_*, STG_QS_SPB_*, STG_QS_MAX_KYC_*, STG_QS_QTD_CUST_MAX_KYC_*, STG_QS_MAX_CUST_*, STG_QS_NOME_UNI_INV_*, STG_QS_TITULAR_*, STG_QS_AUX_MOVIMENTACAO_*, STG_QS_AUX_MOVIMENTACAO2_*, STG_QS_AUX_PAYOUT_*, STG_QS_AUX_PAYOUT_REL_*, STG_QS_AUX_PAYIN_*, STG_QS_AUX_PAYIN_REL_*, STG_QS_AUX_PAYMENTS_COMID_*, STG_QS_AUX_PAYMENTS_SEMID_*, STG_QS_PAGAMENTO_*, STG_QS_PAGAMENTO_REL_*, STG_QS_AUX_WITHDRAWAL_*, STG_QS_WITHDRAWAL_REL_*</li></ul></dd>
+          <dt>Observações</dt>
+          <dd>Arquivo mais crítico e difícil de manter. Qualquer alteração de regra de negócio aqui impacta todo o fluxo. Na versão 2026 essa lógica foi quebrada em vários arquivos (001 a 021).</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">002</span> 002 - Tabelas auxiliares 2</h4>
+        <div class="step-meta">Consolidação dos relacionados</div>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Unir em uma única tabela todos os relacionados (Payout, Payin, Payments, Withdrawal) e criar a flag de movimentação por conta. Essas tabelas alimentam a geração de Origem/Destino e Extrato nas etapas seguintes.</dd>
+          <dt>Entrada</dt>
+          <dd><ul><li>STG_QS_AUX_PAYOUT_REL_CAD_VF_FINCH, STG_QS_PAGAMENTO_REL_CAD_VF_FINCH, STG_QS_AUX_PAYIN_REL_CAD_VF_FINCH, STG_QS_WITHDRAWAL_REL_CAD_VF_FINCH</li></ul></dd>
+          <dt>Saída</dt>
+          <dd><ul><li>STG_QS_RELACIONADO_CAD_VF_FINCH (UNION das quatro fontes)</li><li>STG_QS_FLAG_MOV_CAD_VF_FINCH</li></ul></dd>
+          <dt>Observações</dt>
+          <dd>Tratamento de SPLITTER/PAYINS (valores nulos em banco/agência/conta quando aplicável).</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">003</span> 003 - inserir tabelas finais</h4>
+        <div class="step-meta">Carga nas tabelas de saída para Carta 3454</div>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Fazer MERGE (delete por DATAHORA_IMPORTACAO) e INSERT dos dados das staging nas tabelas finais consumidas pelos arquivos de saída (004 a 015) e por relatórios.</dd>
+          <dt>Entrada</dt>
+          <dd><ul><li>STG_QS_NAO_CORRESPONDENTE_*, STG_QS_CORRESPONDENTE_*, STG_QS_TITULAR_*, STG_QS_RELACIONADO_*, STG_QS_FLAG_MOV_*, STG_QS_AUX_MOVIMENTACAO2_*, DIM_DATE</li></ul></dd>
+          <dt>Saída</dt>
+          <dd><ul><li>TBL_QS_NAO_CORRESPONDENTE_FINCH, TBL_QS_AGENCIAS_FINCH, TBL_QS_CONTAS_FINCH, TBL_QS_EXTRATO_FINCH, TBL_QS_TITULARES_FINCH, TBL_QS_ORIGEM_DESTINO_FINCH</li></ul></dd>
+          <dt>Observações</dt>
+          <dd>Somente investigados com CIRCULAR_3454 = 'Sim' entram nas tabelas da Carta. As tabelas CAD_* são preenchidas no 004.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">004</span> 004 - Extrato Mercantil</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Popular os cadastros de extrato para não correspondentes e para movimentação (uso em Extrato Mercantil).</dd>
+          <dt>Entrada</dt>
+          <dd>STG_QS_NAO_CORRESPONDENTE_*, STG_QS_TITULAR_* e tabelas de movimentação.</dd>
+          <dt>Saída</dt>
+          <dd>CAD_TBL_QS_EXTRATO_NAO_CORRESPONDENTE_FINCH, CAD_TBL_QS_EXTRATO_MOVIMENTACAO_FINCH.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">005</span> 005 - Carta Circular 3454 - Contas</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Gerar o artefato de Contas da Carta Circular 3454 (formato exigido pelo regulador).</dd>
+          <dt>Entrada</dt>
+          <dd>TBL_QS_CONTAS_FINCH, STG_QS_TITULAR_*, STG_QS_FLAG_MOV_*, DIM_DATE.</dd>
+          <dt>Saída</dt>
+          <dd>Arquivo(s) ou registros no formato da Carta (Contas).</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">006</span> 006 - Carta Circular 3454 - Agências</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Gerar o artefato de Agências da Carta 3454.</dd>
+          <dt>Entrada</dt>
+          <dd>TBL_QS_AGENCIAS_FINCH (dados fixos da agência MP).</dd>
+          <dt>Saída</dt>
+          <dd>Arquivo Agências no formato da Carta.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">007</span> 007 - Carta Circular 3454 - Extrato</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Gerar o extrato (lançamentos) no formato da Carta 3454.</dd>
+          <dt>Entrada</dt>
+          <dd>TBL_QS_EXTRATO_FINCH, STG_QS_TITULAR_*, STG_QS_RELACIONADO_*.</dd>
+          <dt>Saída</dt>
+          <dd>Arquivo Extrato da Carta.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">008</span> 008 - Carta Circular 3454 - Origem Destino</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Gerar origem/destino das transações (relacionados) no formato da Carta.</dd>
+          <dt>Entrada</dt>
+          <dd>TBL_QS_ORIGEM_DESTINO_FINCH, tabelas de apoio.</dd>
+          <dt>Saída</dt>
+          <dd>Arquivo Origem Destino da Carta.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">009</span> 009 - Carta Circular 3454 - Endereço v2</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Gerar endereços (ex.: por CEP) para a Carta; pode usar API ou tabela de CEP.</dd>
+          <dt>Entrada</dt>
+          <dd>TBL_QS_TITULARES_FINCH (ou equivalente), base de CEP.</dd>
+          <dt>Saída</dt>
+          <dd>Arquivo/tabela de Endereço no formato da Carta.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">010</span> 010 - Carta Circular 3454 - Titulares</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Gerar o artefato de Titulares da Carta 3454.</dd>
+          <dt>Entrada</dt>
+          <dd>TBL_QS_TITULARES_FINCH.</dd>
+          <dt>Saída</dt>
+          <dd>Arquivo Titulares da Carta.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">011</span> 011 - Carta Circular 3454 - Investigados</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Gerar lista de investigados no formato da Carta.</dd>
+          <dt>Entrada</dt>
+          <dd>Tabelas de investigados/correspondentes.</dd>
+          <dt>Saída</dt>
+          <dd>Arquivo Investigados da Carta.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">012</span> 012 - Carta Circular 3454 - Não Correspondente</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Gerar o artefato de não correspondentes da Carta 3454.</dd>
+          <dt>Entrada</dt>
+          <dd>TBL_QS_NAO_CORRESPONDENTE_FINCH.</dd>
+          <dt>Saída</dt>
+          <dd>Arquivo Não Correspondente da Carta.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">013</span> 013 - Extrato - Não Correspondente</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Gerar extrato para não correspondentes (formato extrato).</dd>
+          <dt>Entrada</dt>
+          <dd>CAD_TBL_QS_EXTRATO_NAO_CORRESPONDENTE_FINCH e dados associados.</dd>
+          <dt>Saída</dt>
+          <dd>Arquivo(s) de extrato não correspondente.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">014</span> 014 - Extrato - Extrato Financeiro - CSV</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Exportar extrato financeiro em CSV para entrega.</dd>
+          <dt>Entrada</dt>
+          <dd>CAD_TBL_QS_EXTRATO_MOVIMENTACAO_FINCH e tabelas de extrato.</dd>
+          <dt>Saída</dt>
+          <dd>CSV de extrato financeiro.</dd>
+        </dl>
+      </div>
+
+      <div class="step-card">
+        <h4><span class="step-num">015</span> 015 - Quebra De Sigilo - Geração Do Zip</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Empacotar todos os arquivos gerados (Carta 3454, extratos, CSV) em um único ZIP para entrega ao órgão solicitante.</dd>
+          <dt>Entrada</dt>
+          <dd>Arquivos produzidos nas etapas 004 a 014.</dd>
+          <dt>Saída</dt>
+          <dd>Um arquivo ZIP contendo a entrega da quebra de sigilo.</dd>
+          <dt>Observações</dt>
+          <dd>Última etapa do pipeline; o ZIP é o entregável final.</dd>
+        </dl>
+      </div>
+
+      <h2>3. Diagrama de relacionamento (arquivo a arquivo)</h2>
+      <p class="subtitle" style="margin-bottom:0.5rem;">Cada caixa é um arquivo; a seta indica ordem de execução e fluxo de dados. Consulte a seção anterior para detalhes de entrada/saída de cada um.</p>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 400 720" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#38bdf8" />
+            </marker>
+            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.25"/>
+            </filter>
+          </defs>
+          <rect x="80" y="8" width="240" height="36" rx="6" class="node-entrada" filter="url(#shadow)"/>
+          <text x="200" y="28" class="node-step-title" text-anchor="middle">ENTRADA</text>
+          <text x="200" y="40" class="node-step" text-anchor="middle">TBL_QS_AUX_INVESTIGADO_FINCH</text>
+          <path d="M 200 44 L 200 54" class="arrow"/>
+          <rect x="80" y="54" width="240" height="30" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="72" class="node-step-title" text-anchor="middle">000 · Criação de tabelas</text>
+          <path d="M 200 84 L 200 94" class="arrow"/>
+          <rect x="80" y="94" width="240" height="42" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="112" class="node-step-title" text-anchor="middle">001 · Tabelas auxiliares</text>
+          <text x="200" y="126" class="node-step" text-anchor="middle">(monólito ~739 linhas)</text>
+          <path d="M 200 136 L 200 146" class="arrow"/>
+          <rect x="80" y="146" width="240" height="30" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="164" class="node-step-title" text-anchor="middle">002 · Tabelas auxiliares 2</text>
+          <path d="M 200 176 L 200 186" class="arrow"/>
+          <rect x="80" y="186" width="240" height="30" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="204" class="node-step-title" text-anchor="middle">003 · inserir tabelas finais</text>
+          <path d="M 200 216 L 200 226" class="arrow"/>
+          <rect x="80" y="226" width="240" height="26" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="242" class="node-step-title" text-anchor="middle">004 · Extrato Mercantil</text>
+          <path d="M 200 252 L 200 262" class="arrow"/>
+          <rect x="80" y="262" width="240" height="26" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="278" class="node-step-title" text-anchor="middle">005 · Carta 3454 - Contas</text>
+          <path d="M 200 288 L 200 298" class="arrow"/>
+          <rect x="80" y="298" width="240" height="26" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="314" class="node-step-title" text-anchor="middle">006 · Carta 3454 - Agências</text>
+          <path d="M 200 324 L 200 334" class="arrow"/>
+          <rect x="80" y="334" width="240" height="26" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="350" class="node-step-title" text-anchor="middle">007 · Carta 3454 - Extrato</text>
+          <path d="M 200 360 L 200 370" class="arrow"/>
+          <rect x="80" y="370" width="240" height="26" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="386" class="node-step-title" text-anchor="middle">008 · Carta 3454 - Origem Destino</text>
+          <path d="M 200 396 L 200 406" class="arrow"/>
+          <rect x="80" y="406" width="240" height="26" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="422" class="node-step-title" text-anchor="middle">009 · Carta 3454 - Endereço v2</text>
+          <path d="M 200 432 L 200 442" class="arrow"/>
+          <rect x="80" y="442" width="240" height="26" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="458" class="node-step-title" text-anchor="middle">010 · Carta 3454 - Titulares</text>
+          <path d="M 200 468 L 200 478" class="arrow"/>
+          <rect x="80" y="478" width="240" height="26" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="494" class="node-step-title" text-anchor="middle">011 · Carta 3454 - Investigados</text>
+          <path d="M 200 504 L 200 514" class="arrow"/>
+          <rect x="80" y="514" width="240" height="26" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="530" class="node-step-title" text-anchor="middle">012 · Carta 3454 - Não Correspondente</text>
+          <path d="M 200 540 L 200 550" class="arrow"/>
+          <rect x="80" y="550" width="240" height="26" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="566" class="node-step-title" text-anchor="middle">013 · Extrato - Não Correspondente</text>
+          <path d="M 200 576 L 200 586" class="arrow"/>
+          <rect x="80" y="586" width="240" height="26" rx="6" class="node-staging" filter="url(#shadow)"/>
+          <text x="200" y="602" class="node-step-title" text-anchor="middle">014 · Extrato Financeiro - CSV</text>
+          <path d="M 200 612 L 200 622" class="arrow"/>
+          <rect x="80" y="622" width="240" height="34" rx="6" class="node-final" filter="url(#shadow)"/>
+          <text x="200" y="640" class="node-step-title" text-anchor="middle">015 · Geração Do Zip (entregável final)</text>
+        </svg>
+        <div class="diagram-legend">
+          <span><span class="leg-box entrada"></span> Entrada</span>
+          <span><span class="leg-box staging"></span> Arquivo do pipeline</span>
+          <span><span class="leg-box final"></span> Saída final</span>
+        </div>
+      </div>
+
+      <h2>4. Tabelas finais (destino)</h2>
+      <table>
+        <thead><tr><th>Tabela</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td>TBL_QS_NAO_CORRESPONDENTE_FINCH</td><td>Investigados sem conta MP</td></tr>
+          <tr><td>TBL_QS_AGENCIAS_FINCH</td><td>Dados fixos da agência MP</td></tr>
+          <tr><td>TBL_QS_CONTAS_FINCH</td><td>Contas dos investigados</td></tr>
+          <tr><td>TBL_QS_EXTRATO_FINCH</td><td>Lançamentos/movimentações</td></tr>
+          <tr><td>TBL_QS_TITULARES_FINCH</td><td>Titulares (nome, CEP, renda, etc.)</td></tr>
+          <tr><td>TBL_QS_ORIGEM_DESTINO_FINCH</td><td>Origem/destino das transações (relacionados)</td></tr>
+          <tr><td>CAD_TBL_QS_EXTRATO_NAO_CORRESPONDENTE_FINCH</td><td>Cadastro extrato não correspondente</td></tr>
+          <tr><td>CAD_TBL_QS_EXTRATO_MOVIMENTACAO_FINCH</td><td>Cadastro extrato movimentação</td></tr>
+        </tbody>
+      </table>
+
+      <h2>5. Exemplo focado: Titular → Movimentações → Aux 2</h2>
+      <p class="subtitle" style="margin-bottom:0.5rem;">Detalhe do fluxo principal (presente neste pipeline). Símbolo <strong>+</strong> = lado «um», <strong>→</strong> = lado «muitos».</p>
+      <div class="erd-section">
+        <h3>Titular → BT_MP_ACC_MOVEMENTS → STG_QS_AUX_MOVIMENTACAO2</h3>
+        <p>Fluxo que alimenta o extrato: um titular (1) tem muitas movimentações (N); cada movimentação (1) gera um registro na auxiliar (N). A coluna de ligação é <strong>CUS_CUST_ID</strong>.</p>
+        <div class="erd-wrap">
+          <svg viewBox="0 0 920 320" xmlns="http://www.w3.org/2000/svg">
+            <!-- Tabela 1: STG_QS_TITULAR_CAD_VF_FINCH -->
+            <g>
+              <rect x="20" y="20" width="260" height="280" rx="6" class="erd-table-rect"/>
+              <rect x="20" y="20" width="260" height="28" rx="6" class="erd-table-header"/>
+              <text x="150" y="38" class="erd-col-text" text-anchor="middle" font-weight="700">STG_QS_TITULAR_CAD_VF_FINCH</text>
+              <text x="32" y="58" class="erd-col-text erd-col-pk">+ CUS_CUST_ID</text>
+              <text x="32" y="72" class="erd-col-text">CIRCULAR_3454</text>
+              <text x="32" y="86" class="erd-col-text">EXTRATO</text>
+              <text x="32" y="100" class="erd-col-text">RANGE_MIN</text>
+              <text x="32" y="114" class="erd-col-text">RANGE_MAX</text>
+              <text x="32" y="128" class="erd-col-text">DOC_NUMBER</text>
+              <text x="32" y="142" class="erd-col-text">IDENTIFICACAO</text>
+              <text x="32" y="156" class="erd-col-text">FLAG_INVESTIGADO</text>
+              <text x="32" y="170" class="erd-col-text">SISTEMA</text>
+              <text x="32" y="184" class="erd-col-text">CONTA_SPB</text>
+              <text x="32" y="198" class="erd-col-text">DATA_ABERTURA</text>
+              <text x="32" y="212" class="erd-col-text">NOME_INVESTIGADO</text>
+              <text x="32" y="226" class="erd-col-text">CEP</text>
+              <text x="32" y="240" class="erd-col-text">TELEFONE_PESSOA</text>
+              <text x="32" y="254" class="erd-col-text">VALOR_RENDA</text>
+              <text x="32" y="268" class="erd-col-text">MOVIMENTACAO_MIN</text>
+              <text x="32" y="282" class="erd-col-text">DATAHORA_IMPORTACAO</text>
+            </g>
+            <!-- Tabela 2: BT_MP_ACC_MOVEMENTS -->
+            <g>
+              <rect x="330" y="20" width="260" height="280" rx="6" class="erd-table-rect"/>
+              <rect x="330" y="20" width="260" height="28" rx="6" class="erd-table-header"/>
+              <text x="460" y="38" class="erd-col-text" text-anchor="middle" font-weight="700">BT_MP_ACC_MOVEMENTS</text>
+              <text x="342" y="58" class="erd-col-text erd-col-pk">+ CUS_CUST_ID</text>
+              <text x="342" y="72" class="erd-col-text">CUS_CUST_ID_SEL</text>
+              <text x="342" y="86" class="erd-col-text">CUS_CUST_ID_BUY</text>
+              <text x="342" y="100" class="erd-col-text">MOV_MOVE_ID</text>
+              <text x="342" y="114" class="erd-col-text">MOV_DETAIL</text>
+              <text x="342" y="128" class="erd-col-text">MOV_CREATED_DT</text>
+              <text x="342" y="142" class="erd-col-text">MOV_AMOUNT</text>
+              <text x="342" y="156" class="erd-col-text">MOV_TYPE_ID</text>
+              <text x="342" y="170" class="erd-col-text">MOV_REFERENCE_ID</text>
+              <text x="342" y="184" class="erd-col-text">PAY_PAYMENT_ID</text>
+              <text x="342" y="198" class="erd-col-text">WIT_WITHDRAW_ID</text>
+              <text x="342" y="212" class="erd-col-text">PAY_PAYMENT_METHOD_ID</text>
+              <text x="342" y="226" class="erd-col-text">MOV_LABEL</text>
+            </g>
+            <!-- Tabela 3: STG_QS_AUX_MOVIMENTACAO2_CAD_VF_FINCH -->
+            <g>
+              <rect x="640" y="20" width="260" height="280" rx="6" class="erd-table-rect"/>
+              <rect x="640" y="20" width="260" height="28" rx="6" class="erd-table-header"/>
+              <text x="770" y="38" class="erd-col-text" text-anchor="middle" font-weight="700">STG_QS_AUX_MOVIMENTACAO2_CAD_VF_FINCH</text>
+              <text x="652" y="58" class="erd-col-text">→ CUS_CUST_ID</text>
+              <text x="652" y="72" class="erd-col-text">CODIGO_CHAVE_EXTRATO</text>
+              <text x="652" y="86" class="erd-col-text">DATA_LANCAMENTO</text>
+              <text x="652" y="100" class="erd-col-text">DESCRICAO_LANCAMENTO</text>
+              <text x="652" y="114" class="erd-col-text">TIPO_LANCAMENTO</text>
+              <text x="652" y="128" class="erd-col-text">VALOR_LANCAMENTO</text>
+              <text x="652" y="142" class="erd-col-text">NATUREZA_LANCAMENTO</text>
+              <text x="652" y="156" class="erd-col-text">NATUREZA_SALDO</text>
+              <text x="652" y="170" class="erd-col-text">ID_RELACIONADO</text>
+              <text x="652" y="184" class="erd-col-text">ID_PAGAMENTO</text>
+              <text x="652" y="198" class="erd-col-text">TBL_RELACIONADO</text>
+              <text x="652" y="212" class="erd-col-text">MOV_DETAIL</text>
+              <text x="652" y="226" class="erd-col-text">MOV_TYPE_ID</text>
+              <text x="652" y="240" class="erd-col-text">MOV_LABEL</text>
+            </g>
+            <!-- Relacionamento 1: TITULAR (1) --CUS_CUST_ID--> BT_MP_ACC_MOVEMENTS (N) -->
+            <path d="M 280 74 L 330 74" class="erd-link-line"/>
+            <text x="305" y="68" class="erd-link-label" text-anchor="middle">CUS_CUST_ID</text>
+            <text x="298" y="80" class="erd-cardinality" text-anchor="middle">1</text>
+            <text x="312" y="80" class="erd-cardinality" text-anchor="middle">N</text>
+            <!-- Relacionamento 2: BT_MP_ACC_MOVEMENTS (1) --CUS_CUST_ID--> MOVIMENTACAO2 (N) -->
+            <path d="M 590 74 L 640 74" class="erd-link-line"/>
+            <text x="615" y="68" class="erd-link-label" text-anchor="middle">CUS_CUST_ID</text>
+            <text x="608" y="80" class="erd-cardinality" text-anchor="middle">1</text>
+            <text x="622" y="80" class="erd-cardinality" text-anchor="middle">N</text>
+          </svg>
+        </div>
+        <p style="margin-top:0.75rem; font-size:0.85rem;"><strong>Resumo:</strong> <code>STG_QS_TITULAR_CAD_VF_FINCH</code> (1) relaciona-se com <code>BT_MP_ACC_MOVEMENTS</code> (N) pela coluna <strong>CUS_CUST_ID</strong>. <code>BT_MP_ACC_MOVEMENTS</code> (1) relaciona-se com <code>STG_QS_AUX_MOVIMENTACAO2_CAD_VF_FINCH</code> (N) também por <strong>CUS_CUST_ID</strong>.</p>
+      </div>
+    </div>
+
+    <!-- PÁGINA VERSÃO 2026 -->
+    <div id="page-2026" class="page">
+      <h1>Pipeline: Versão 2026</h1>
+      <p class="subtitle">001 - Versão 2026 · Modularização extrema em SQL</p>
+
+      <div class="erd-hero">
+        <h2>ERD — Pipeline Versão 2026 (001)</h2>
+        <p class="erd-intro">Diagrama validado pelas tabelas referenciadas nos arquivos <strong>000–023</strong>. Este pipeline usa <strong>LK_REG_REGULATED_BASE_MLB</strong> e <strong>STG_NQS2_*</strong> (info titular consolidada). <strong>+</strong> = lado «um», <strong>→</strong> = lado «muitos».</p>
+        <div class="erd-wrap">
+          <svg viewBox="0 0 1680 720" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="erdArrow2026" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#64748b"/></marker></defs>
+            <rect x="10" y="10" width="140" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="10" y="10" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="80" y="25" class="erd-table-name" text-anchor="middle">TBL_QS_AUX_INVESTIGADO_FINCH</text>
+            <text x="18" y="42" class="erd-col-text erd-col-pk">+ APOIO_CPF_CNPJ</text>
+            <line x1="150" y1="55" x2="168" y2="55" class="erd-link-line" marker-end="url(#erdArrow2026)"/>
+            <text x="159" y="50" class="erd-link-label" text-anchor="middle">DOC_NUMBER</text>
+            <rect x="168" y="10" width="140" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="168" y="10" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="238" y="25" class="erd-table-name" text-anchor="middle">STG_QS_PLANILHA_PRESENTA</text>
+            <text x="176" y="42" class="erd-col-text">→ DOC_NUMBER</text>
+            <text x="238" y="70" class="erd-link-label" text-anchor="middle">← LK_REG_REGULATED_BASE_MLB</text>
+            <line x1="308" y1="55" x2="326" y2="55" class="erd-link-line" marker-end="url(#erdArrow2026)"/>
+            <rect x="326" y="10" width="160" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="326" y="10" width="160" height="22" rx="6" class="erd-table-header"/>
+            <text x="406" y="25" class="erd-table-name" text-anchor="middle">STG_NQS2_INFO_TIT (002)</text>
+            <text x="334" y="42" class="erd-col-text erd-col-pk">+ CUS_CUST_ID, DOC_NUMBER</text>
+            <text x="334" y="54" class="erd-col-text">NOME_INVESTIGADO, CEP, KYC_LEVEL</text>
+            <line x1="486" y1="55" x2="504" y2="55" class="erd-link-line" marker-end="url(#erdArrow2026)"/>
+            <rect x="504" y="10" width="160" height="70" rx="6" class="erd-table-rect"/>
+            <rect x="504" y="10" width="160" height="22" rx="6" class="erd-table-header"/>
+            <text x="584" y="25" class="erd-table-name" text-anchor="middle">STG_NQS2_INFO_TIT_STEP2 (003)</text>
+            <text x="512" y="42" class="erd-col-text">by range LK_REG</text>
+            <line x1="584" y1="80" x2="584" y2="128" class="erd-link-line" marker-end="url(#erdArrow2026)"/>
+            <rect x="534" y="128" width="100" height="50" rx="6" class="erd-table-rect"/>
+            <rect x="534" y="128" width="100" height="18" rx="6" class="erd-table-header"/>
+            <text x="584" y="141" class="erd-table-name" text-anchor="middle">STG_QS_CORRESPONDENTE (004)</text>
+            <rect x="644" y="128" width="100" height="50" rx="6" class="erd-table-rect"/>
+            <rect x="644" y="128" width="100" height="18" rx="6" class="erd-table-header"/>
+            <text x="694" y="141" class="erd-table-name" text-anchor="middle">STG_QS_NAO_CORR (005)</text>
+            <line x1="584" y1="178" x2="584" y2="206" class="erd-link-line" marker-end="url(#erdArrow2026)"/>
+            <rect x="504" y="206" width="200" height="70" rx="6" class="erd-table-rect"/>
+            <rect x="504" y="206" width="200" height="22" rx="6" class="erd-table-header"/>
+            <text x="604" y="223" class="erd-table-name" text-anchor="middle">STG_QS_SPB, MAX_KYC, QTD_CUST, MAX_CUST (007)</text>
+            <text x="512" y="238" class="erd-col-text">STG_QS_NOME_UNI_INV</text>
+            <line x1="604" y1="276" x2="604" y2="304" class="erd-link-line" marker-end="url(#erdArrow2026)"/>
+            <rect x="504" y="304" width="200" height="70" rx="6" class="erd-table-rect"/>
+            <rect x="504" y="304" width="200" height="22" rx="6" class="erd-table-header"/>
+            <text x="604" y="321" class="erd-table-name" text-anchor="middle">STG_QS_TITULAR (008–009)</text>
+            <text x="512" y="336" class="erd-col-text">from NQS2 + NOME_UNI</text>
+            <line x1="604" y1="374" x2="604" y2="402" class="erd-link-line" marker-end="url(#erdArrow2026)"/>
+            <rect x="504" y="402" width="140" height="70" rx="6" class="erd-table-rect"/>
+            <rect x="504" y="402" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="574" y="419" class="erd-table-name" text-anchor="middle">STG_QS_AUX_MOVIMENTACAO (006)</text>
+            <text x="512" y="434" class="erd-col-text">from STG_NQS2_INFO_TIT + BT_MP_ACC_MOVEMENTS</text>
+            <line x1="574" y1="472" x2="574" y2="500" class="erd-link-line" marker-end="url(#erdArrow2026)"/>
+            <rect x="504" y="500" width="140" height="70" rx="6" class="erd-table-rect"/>
+            <rect x="504" y="500" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="574" y="517" class="erd-table-name" text-anchor="middle">STG_QS_AUX_MOVIMENTACAO2 (010)</text>
+            <line x1="644" y1="535" x2="724" y2="535" class="erd-link-line" marker-end="url(#erdArrow2026)"/>
+            <rect x="724" y="500" width="180" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="724" y="500" width="180" height="22" rx="6" class="erd-table-header"/>
+            <text x="814" y="517" class="erd-table-name" text-anchor="middle">PAYOUT_REL, PAYIN_REL (013–014 PIX),</text>
+            <text x="814" y="531" class="erd-table-name" text-anchor="middle">PAGAMENTO_REL, WITHDRAWAL_REL (011–021)</text>
+            <line x1="814" y1="600" x2="814" y2="628" class="erd-link-line" marker-end="url(#erdArrow2026)"/>
+            <rect x="724" y="628" width="180" height="60" rx="6" class="erd-table-rect"/>
+            <rect x="724" y="628" width="180" height="22" rx="6" class="erd-table-header"/>
+            <text x="814" y="645" class="erd-table-name" text-anchor="middle">STG_QS_RELACIONADO, FLAG_MOV (022)</text>
+            <line x1="814" y1="688" x2="814" y2="716" class="erd-link-line" marker-end="url(#erdArrow2026)"/>
+            <rect x="684" y="716" width="260" height="50" rx="6" class="erd-table-rect"/>
+            <rect x="684" y="716" width="260" height="22" rx="6" class="erd-table-header"/>
+            <text x="814" y="733" class="erd-table-name" text-anchor="middle">TBL_*_FINCH + CAD_*_FINCH (023)</text>
+          </svg>
+        </div>
+        <p style="margin-top:1rem; font-size:0.9rem;"><strong>Tabelas presentes neste pipeline (validadas no código):</strong> Entrada: TBL_QS_AUX_INVESTIGADO_FINCH. Staging: STG_QS_PLANILHA_PRESENTA (001), STG_NQS2_INFO_TIT_CAD_VF_FINCH (002, fonte LK_REG_REGULATED_BASE_MLB), STG_NQS2_INFO_TIT_CAD_VF_FINCH_STEP2 (003), STG_QS_CORRESPONDENTE (004), STG_QS_NAO_CORRESPONDENTE (005), STG_QS_AUX_MOVIMENTACAO (006), STG_QS_MAX_KYC, QTD_CUST_MAX_KYC, MAX_CUST, NOME_UNI_INV (007), STG_QS_TITULAR (008–009), STG_QS_AUX_MOVIMENTACAO2 (010), PAYOUT/PAYOUT_REL, PAYIN_REL (blocos PIX 013–014), PAYMENTS, PAGAMENTO_REL, WITHDRAWAL_REL (011–021), STG_QS_RELACIONADO, STG_QS_FLAG_MOV (022). Finais: TBL_*_FINCH, CAD_*_FINCH (023). Fonte principal: LK_REG_REGULATED_BASE_MLB; movimentações: BT_MP_ACC_MOVEMENTS.</p>
+      </div>
+
+      <h2>1. Fluxo de execução</h2>
+      <div class="flow-row">
+        <span class="flow-node">000 - Criação tabelas Finch</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">001–005 Base &amp; Reg</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">006–009 Mov &amp; Titular</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">010–021 Relacionados</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">022–023 Aux2 &amp; Finais</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">024–035 Saídas</span>
+      </div>
+
+      <h2>2. Detalhamento etapa a etapa (arquivo a arquivo)</h2>
+      <p class="subtitle" style="margin-bottom:1rem;">Cada arquivo do pipeline: objetivo, entrada e saída. Ordem de execução obrigatória (000 → 001 → … → 035).</p>
+
+      <div class="step-card">
+        <h4><span class="step-num">000</span> 000 - Criação de tabelas Finch</h4>
+        <dl><dt>Objetivo</dt><dd>Igual ao 000 da Original: criar/limpar todas as tabelas _FINCH.</dd><dt>Entrada</dt><dd>Estruturas das tabelas fonte (sem _FINCH).</dd><dt>Saída</dt><dd>Todas as STG_*_FINCH e TBL_*_FINCH vazias.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">001</span> 001 - PREPARAR BASE PRESENTA</h4>
+        <dl><dt>Objetivo</dt><dd>Montar a planilha PRESENTA a partir dos investigados: tipo de solicitação (Carta 3454 / Extrato), período (RANGE_MIN/MAX), DOC_NUMBER, IDENTIFICACAO.</dd><dt>Entrada</dt><dd>TBL_QS_AUX_INVESTIGADO_FINCH.</dd><dt>Saída</dt><dd>STG_QS_PLANILHA_PRESENTA_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">002</span> 002 - COLETAR INF - REG</h4>
+        <dl><dt>Objetivo</dt><dd>Enriquecer com informações da base regulada (ex. LK_REG_REGULATED_BASE_MLB). Melhoria de performance em relação à Original.</dd><dt>Entrada</dt><dd>STG_QS_PLANILHA_PRESENTA_*, tabelas de base regulada.</dd><dt>Saída</dt><dd>Tabela(s) de info regulada (ex. STG_NQS2_INFO_TIT_* ou equivalente).</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">003</span> 003 - COLETAR INF - REG by range</h4>
+        <dl><dt>Objetivo</dt><dd>Filtrar informações reguladas por período (RANGE_MIN / RANGE_MAX).</dd><dt>Entrada</dt><dd>Saída do 002.</dd><dt>Saída</dt><dd>Base regulada filtrada por data.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">004</span> 004 - TRAZER APENAS INVESTIGADO COM CUST</h4>
+        <dl><dt>Objetivo</dt><dd>Manter só investigados com CUS_CUST_ID preenchido (correspondentes no MP).</dd><dt>Entrada</dt><dd>Info titular/KYC (do 002/003 ou equivalente).</dd><dt>Saída</dt><dd>STG_QS_CORRESPONDENTE_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">005</span> 005 - TRAZER NAO CORRESPONDENTE</h4>
+        <dl><dt>Objetivo</dt><dd>Separar investigados sem conta (CUS_CUST_ID nulo).</dd><dt>Entrada</dt><dd>Mesma base de info titular.</dd><dt>Saída</dt><dd>STG_QS_NAO_CORRESPONDENTE_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">006</span> 006 - Movimentações</h4>
+        <dl><dt>Objetivo</dt><dd>Buscar todas as movimentações dos titulares em BT_MP_ACC_MOVEMENTS no período (MOVIMENTACAO_MIN a RANGE_MAX).</dd><dt>Entrada</dt><dd>STG_QS_TITULAR_* (ou equivalente), BT_MP_ACC_MOVEMENTS.</dd><dt>Saída</dt><dd>STG_QS_AUX_MOVIMENTACAO_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">007</span> 007 - TRAZER NOME E CEP UNICO</h4>
+        <dl><dt>Objetivo</dt><dd>Definir um nome e CEP únicos por investigado (regras de MAX_KYC / MAX_CUST).</dd><dt>Entrada</dt><dd>SPB e tabelas de KYC/cust.</dd><dt>Saída</dt><dd>STG_QS_NOME_UNI_INV_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">008</span> 008 - CRIAR TABELA TITULAR PARA A CARTA (1)</h4>
+        <dl><dt>Objetivo</dt><dd>Montar a tabela de titulares para a Carta 3454 (primeira versão).</dd><dt>Entrada</dt><dd>STG_QS_SPB_*, STG_QS_NOME_UNI_INV_*.</dd><dt>Saída</dt><dd>STG_QS_TITULAR_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">009</span> 009 - CRIAR TABELA TITULAR PARA A CARTA (2)</h4>
+        <dl><dt>Objetivo</dt><dd>Consolidar/sobrescrever a tabela de titulares (mesma estrutura, lógica complementar).</dd><dt>Entrada</dt><dd>STG_QS_SPB_*, STG_QS_NOME_UNI_INV_*.</dd><dt>Saída</dt><dd>STG_QS_TITULAR_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">010</span> 010 - MOVIMENTAÇÕES QUE NÃO TEM CANCELAMENTO ATRELADO</h4>
+        <dl><dt>Objetivo</dt><dd>Excluir movimentações que possuem cancelamento associado.</dd><dt>Entrada</dt><dd>STG_QS_AUX_MOVIMENTACAO_CAD_VF_FINCH.</dd><dt>Saída</dt><dd>STG_QS_AUX_MOVIMENTACAO2_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">011</span> 011 - PAYOUT</h4>
+        <dl><dt>Objetivo</dt><dd>Extrair dados de Payout para os movimentos do tipo payouts.</dd><dt>Entrada</dt><dd>Movimentação e tabelas de Payout.</dd><dt>Saída</dt><dd>STG_QS_AUX_PAYOUT_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">012</span> 012 - STG_QS_AUX_PAYOUT_REL_CAD_VF_FINCH</h4>
+        <dl><dt>Objetivo</dt><dd>Montar relacionados de Payout (banco, agência, conta, CPF/CNPJ, nome).</dd><dt>Entrada</dt><dd>STG_QS_AUX_PAYOUT_*, tabelas de Payout.</dd><dt>Saída</dt><dd>STG_QS_AUX_PAYOUT_REL_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">013</span> 013 - BLOCO PIX 1</h4>
+        <dl><dt>Objetivo</dt><dd>Construir base PIX (particionada por data, cluster por ID_PAGAMENTO).</dd><dt>Entrada</dt><dd>Movimentações PIX, tabelas de pagamento.</dd><dt>Saída</dt><dd>Tabela base PIX (usada no 014).</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">014</span> 014 - BLOCO PIX 2</h4>
+        <dl><dt>Objetivo</dt><dd>Enriquecer PIX com dados regulados (ex. preencher conta/agência quando vazios).</dd><dt>Entrada</dt><dd>Saída do 013, base regulada.</dd><dt>Saída</dt><dd>Tabela PIX enriquecida (Payin/Payout).</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">015</span> 015 - STG_QS_AUX_PAYIN_REL_CAD_VF_FINCH</h4>
+        <dl><dt>Objetivo</dt><dd>Montar relacionados de Payin (PIX recebido).</dd><dt>Entrada</dt><dd>Payin, PIX, movimentação.</dd><dt>Saída</dt><dd>STG_QS_AUX_PAYIN_REL_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">016</span> 016 - PAYMENTS</h4>
+        <dl><dt>Objetivo</dt><dd>Extrair dados de Payments (pagamentos entre contas, etc.).</dd><dt>Entrada</dt><dd>Movimentação, tabelas de pagamento.</dd><dt>Saída</dt><dd>STG_QS_AUX_PAYMENTS_* ou PAGAMENTO.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">017</span> 017 - STG_QS_AUX_PAYMENTS_SEMID_CAD_VF_FINCH</h4>
+        <dl><dt>Objetivo</dt><dd>Tratar payments sem ID (complementar identificação).</dd><dt>Entrada</dt><dd>Payments.</dd><dt>Saída</dt><dd>STG_QS_AUX_PAYMENTS_SEMID_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">018</span> 018 - INFORMAÇÕES DO RELACIONADO COM A TABELA DE PAGAMENTO</h4>
+        <dl><dt>Objetivo</dt><dd>Enriquecer tabela de pagamento com dados do relacionado.</dd><dt>Entrada</dt><dd>Pagamento, tabelas de relacionado.</dd><dt>Saída</dt><dd>STG_QS_PAGAMENTO_CAD_VF_FINCH (ou intermediária).</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">019</span> 019 - INFORMAÇOES DOS RELACIONADOS COM ID DE PAGAMENTO</h4>
+        <dl><dt>Objetivo</dt><dd>Vincular relacionados ao ID de pagamento.</dd><dt>Entrada</dt><dd>Pagamento, relacionados.</dd><dt>Saída</dt><dd>STG_QS_PAGAMENTO_REL_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">020</span> 020 - WITHDRAWL</h4>
+        <dl><dt>Objetivo</dt><dd>Extrair dados de retiradas (TED/DOC, saque).</dd><dt>Entrada</dt><dd>Movimentação, tabelas de Withdrawal.</dd><dt>Saída</dt><dd>STG_QS_AUX_WITHDRAWAL_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">021</span> 021 - INFORMAÇOES DOS RELACIONADOS COM RETIROS</h4>
+        <dl><dt>Objetivo</dt><dd>Montar relacionados de Withdrawal (banco, agência, conta, etc.).</dd><dt>Entrada</dt><dd>STG_QS_AUX_WITHDRAWAL_*.</dd><dt>Saída</dt><dd>STG_QS_WITHDRAWAL_REL_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">022</span> 022 - Tabelas auxiliares 2</h4>
+        <dl><dt>Objetivo</dt><dd>Unir todos os relacionados (Payout, Payin, Payments, Withdrawal) e criar flag de movimentação.</dd><dt>Entrada</dt><dd>STG_QS_AUX_PAYOUT_REL_*, STG_QS_PAGAMENTO_REL_*, STG_QS_AUX_PAYIN_REL_*, STG_QS_WITHDRAWAL_REL_*.</dd><dt>Saída</dt><dd>STG_QS_RELACIONADO_CAD_VF_FINCH, STG_QS_FLAG_MOV_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">023</span> 023 - inserir tabelas finais</h4>
+        <dl><dt>Objetivo</dt><dd>MERGE/INSERT nas tabelas finais (igual ao 003 da Original).</dd><dt>Entrada</dt><dd>Staging de não correspondente, correspondente, titular, relacionado, flag mov, extrato.</dd><dt>Saída</dt><dd>TBL_QS_NAO_CORRESPONDENTE_FINCH, TBL_QS_AGENCIAS_FINCH, TBL_QS_CONTAS_FINCH, TBL_QS_EXTRATO_FINCH, TBL_QS_TITULARES_FINCH, TBL_QS_ORIGEM_DESTINO_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">024–035</span> 024 a 035 - Saídas (Extrato Mercantil, Carta 3454, ZIP)</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Gerar os mesmos artefatos da Original, um arquivo por etapa: 024 Extrato Mercantil, 025 Carta 3454 - Contas, 026 Agências, 027 Extrato, 028 Origem Destino, 029 Endereço v2, 030 Titulares, 031 Investigados, 032 Não Correspondente, 033 Extrato - Não Correspondente, 034 Extrato Financeiro CSV, 035 Geração do ZIP.</dd>
+          <dt>Entrada</dt>
+          <dd>TBL_*_FINCH e CAD_*_FINCH preenchidas no 023 e 024.</dd>
+          <dt>Saída</dt>
+          <dd>Arquivos da Carta 3454, extratos e ZIP final.</dd>
+        </dl>
+      </div>
+
+      <h2>3. Diagrama de relacionamento (arquivo a arquivo)</h2>
+      <p class="subtitle" style="margin-bottom:0.5rem;">Cada caixa é um arquivo (000 a 035). Consulte a seção anterior para entrada/saída de cada um.</p>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 1200 1520" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead2026" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#38bdf8" />
+            </marker>
+            <filter id="shadow2026" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+            </filter>
+            <linearGradient id="grad2026" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#1e3a5f"/>
+              <stop offset="100%" style="stop-color:#2563eb"/>
+            </linearGradient>
+          </defs>
+          <g filter="url(#shadow2026)">
+            <rect x="20" y="20" width="280" height="52" rx="8" class="node-entrada"/>
+            <text x="160" y="42" class="node-title" text-anchor="middle">ENTRADA</text>
+            <text x="160" y="56" class="node-item" text-anchor="middle">TBL_QS_AUX_INVESTIGADO_FINCH</text>
+          </g>
+          <path d="M 160 72 L 160 95" class="arrow arrow-alt"/>
+          <g filter="url(#shadow2026)">
+            <rect x="20" y="95" width="280" height="115" rx="8" class="node-staging"/>
+            <text x="160" y="118" class="node-title" text-anchor="middle">001–005 BASE E REG</text>
+            <text x="30" y="138" class="node-item">001 PREPARAR BASE PRESENTA</text>
+            <text x="30" y="153" class="node-item">002 COLETAR INF-REG (LK_REG_REGULATED_BASE_MLB)</text>
+            <text x="30" y="168" class="node-item">003 COLETAR INF-REG by range</text>
+            <text x="30" y="183" class="node-item">004 TRAZER INVESTIGADO COM CUST → CORRESPONDENTE</text>
+            <text x="30" y="198" class="node-item">005 TRAZER NAO CORRESPONDENTE</text>
+          </g>
+          <path d="M 160 210 L 160 238" class="arrow arrow-alt"/>
+          <rect x="20" y="238" width="135" height="50" rx="8" class="node-staging" filter="url(#shadow2026)"/>
+          <text x="87" y="258" class="node-title" text-anchor="middle">004 CORRESPONDENTE</text>
+          <text x="87" y="278" class="node-item" text-anchor="middle">STG_QS_CORRESPONDENTE_*</text>
+          <rect x="165" y="238" width="135" height="50" rx="8" class="node-staging" filter="url(#shadow2026)"/>
+          <text x="232" y="258" class="node-title" text-anchor="middle">005 NÃO CORR.</text>
+          <text x="232" y="278" class="node-item" text-anchor="middle">STG_QS_NAO_CORRESPONDENTE_*</text>
+          <path d="M 87 288 L 87 318" class="arrow arrow-alt"/>
+          <path d="M 232 288 L 232 420" class="arrow arrow-alt arrow-dash"/>
+          <g filter="url(#shadow2026)">
+            <rect x="20" y="318" width="280" height="95" rx="8" class="node-staging"/>
+            <text x="160" y="342" class="node-title" text-anchor="middle">006–009 MOVIMENTAÇÕES E TITULAR</text>
+            <text x="30" y="362" class="node-item">006 Movimentações → STG_QS_AUX_MOVIMENTACAO_*</text>
+            <text x="30" y="377" class="node-item">007 TRAZER NOME E CEP UNICO → STG_QS_NOME_UNI_INV_*</text>
+            <text x="30" y="392" class="node-item">008–009 CRIAR TABELA TITULAR PARA CARTA (1 e 2)</text>
+            <text x="30" y="407" class="node-item">→ STG_QS_TITULAR_CAD_VF_FINCH</text>
+          </g>
+          <path d="M 160 413 L 160 438" class="arrow arrow-alt"/>
+          <g filter="url(#shadow2026)">
+            <rect x="20" y="438" width="280" height="95" rx="8" class="node-relacionado"/>
+            <text x="160" y="462" class="node-title" text-anchor="middle">010–021 RELACIONADOS</text>
+            <text x="30" y="482" class="node-item">010 MOVIMENTAÇÕES SEM CANCELAMENTO → MOVIMENTACAO2</text>
+            <text x="30" y="497" class="node-item">011–012 PAYOUT + STG_QS_AUX_PAYOUT_REL_*</text>
+            <text x="30" y="512" class="node-item">013–014 BLOCO PIX 1 e 2 (particionado + enriquecimento)</text>
+            <text x="30" y="527" class="node-item">015 PAYIN REL · 016–019 PAYMENTS · 020–021 WITHDRAWL REL</text>
+          </g>
+          <path d="M 160 533 L 160 558" class="arrow arrow-alt"/>
+          <g filter="url(#shadow2026)">
+            <rect x="20" y="558" width="280" height="55" rx="8" class="node-staging"/>
+            <text x="160" y="582" class="node-title" text-anchor="middle">022–023 CONSOLIDAÇÃO E FINAIS</text>
+            <text x="30" y="602" class="node-item">022 Tabelas auxiliares 2: STG_QS_RELACIONADO_*, STG_QS_FLAG_MOV_*</text>
+            <text x="30" y="617" class="node-item">023 inserir tabelas finais → MERGE/INSERT TBL_*_FINCH</text>
+          </g>
+          <path d="M 160 613 L 160 638" class="arrow arrow-alt"/>
+          <g filter="url(#shadow2026)">
+            <rect x="20" y="638" width="280" height="75" rx="8" class="node-staging"/>
+            <text x="160" y="662" class="node-title" text-anchor="middle">024–035 SAÍDAS (Carta 3454 + Extrato + ZIP)</text>
+            <text x="30" y="682" class="node-item">024 Extrato Mercantil · 025–031 Carta 3454 (Contas … Investigados)</text>
+            <text x="30" y="697" class="node-item">032 Não Correspondente · 033–034 Extrato CSV · 035 Geração ZIP</text>
+          </g>
+          <path d="M 160 713 L 160 748" class="arrow arrow-alt"/>
+          <g filter="url(#shadow2026)">
+            <rect x="20" y="748" width="280" height="165" rx="8" class="node-final"/>
+            <text x="160" y="772" class="node-title" text-anchor="middle">TABELAS FINAIS (8 tabelas)</text>
+            <text x="30" y="792" class="node-item">TBL_QS_NAO_CORRESPONDENTE_FINCH · TBL_QS_AGENCIAS_FINCH</text>
+            <text x="30" y="807" class="node-item">TBL_QS_CONTAS_FINCH · TBL_QS_EXTRATO_FINCH</text>
+            <text x="30" y="822" class="node-item">TBL_QS_TITULARES_FINCH · TBL_QS_ORIGEM_DESTINO_FINCH</text>
+            <text x="30" y="837" class="node-item">CAD_TBL_QS_EXTRATO_NAO_CORRESPONDENTE_FINCH</text>
+            <text x="30" y="852" class="node-item">CAD_TBL_QS_EXTRATO_MOVIMENTACAO_FINCH</text>
+          </g>
+        </svg>
+        <div class="diagram-legend">
+          <span><span class="leg-box entrada"></span> Entrada</span>
+          <span><span class="leg-box staging"></span> Etapas SQL</span>
+          <span><span class="leg-box relacionado"></span> Relacionados (PIX, Payout, etc.)</span>
+          <span><span class="leg-box final"></span> Tabelas finais</span>
+        </div>
+      </div>
+
+      <h2>4. Melhorias em relação à Original</h2>
+      <ul>
+        <li>Uso de <strong>LK_REG_REGULATED_BASE_MLB</strong> (base regulada) onde aplicável.</li>
+        <li>PIX em dois blocos (013–014): particionamento e enriquecimento.</li>
+        <li>Arquivo dedicado para movimentações sem cancelamento (010).</li>
+        <li>Uma responsabilidade por arquivo; nomes descritivos.</li>
+      </ul>
+    </div>
+
+    <!-- PÁGINA POC -->
+    <div id="page-poc" class="page">
+      <h1>Pipeline: Versão POC</h1>
+      <p class="subtitle">003 - Versão POC · SQL (blocos) + Python (saídas)</p>
+
+      <div class="erd-hero">
+        <h2>ERD — Pipeline POC (003)</h2>
+        <p class="erd-intro">Diagrama validado pelos <strong>8 blocos SQL</strong> (BLOCO_00–07) e <strong>11 scripts Python</strong>. SQL gera as tabelas; Python lê TBL_*_FINCH, CAD_*_FINCH e STG_QS_PLANILHA_PRESENTA. Fonte regulada: <strong>LK_REG_REGULATED_BASE_MLB</strong>. <strong>+</strong> = lado «um», <strong>→</strong> = lado «muitos».</p>
+        <div class="erd-wrap">
+          <svg viewBox="0 0 1680 720" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="erdArrowPOC" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#64748b"/></marker></defs>
+            <rect x="10" y="10" width="140" height="90" rx="6" class="erd-table-rect"/>
+            <rect x="10" y="10" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="80" y="25" class="erd-table-name" text-anchor="middle">TBL_QS_AUX_INVESTIGADO_FINCH</text>
+            <text x="18" y="42" class="erd-col-text erd-col-pk">+ APOIO_CPF_CNPJ</text>
+            <line x1="150" y1="55" x2="168" y2="55" class="erd-link-line" marker-end="url(#erdArrowPOC)"/>
+            <rect x="168" y="10" width="140" height="90" rx="6" class="erd-table-rect"/>
+            <rect x="168" y="10" width="140" height="22" rx="6" class="erd-table-header"/>
+            <text x="238" y="25" class="erd-table-name" text-anchor="middle">STG_QS_PLANILHA_PRESENTA (BLOCO_01)</text>
+            <text x="176" y="42" class="erd-col-text">→ DOC_NUMBER</text>
+            <text x="238" y="62" class="erd-link-label" text-anchor="middle">← lido pelos scripts Python</text>
+            <line x1="308" y1="55" x2="326" y2="55" class="erd-link-line" marker-end="url(#erdArrowPOC)"/>
+            <rect x="326" y="10" width="160" height="90" rx="6" class="erd-table-rect"/>
+            <rect x="326" y="10" width="160" height="22" rx="6" class="erd-table-header"/>
+            <text x="406" y="25" class="erd-table-name" text-anchor="middle">STG_NQS2_INFO_TIT (BLOCO_02)</text>
+            <text x="334" y="42" class="erd-col-text">LK_REG_REGULATED_BASE_MLB</text>
+            <line x1="486" y1="55" x2="544" y2="55" class="erd-link-line" marker-end="url(#erdArrowPOC)"/>
+            <rect x="544" y="10" width="220" height="100" rx="6" class="erd-table-rect"/>
+            <rect x="544" y="10" width="220" height="22" rx="6" class="erd-table-header"/>
+            <text x="654" y="25" class="erd-table-name" text-anchor="middle">BLOCO_03: CORR, NAO_CORR, MAX_KYC, QTD_CUST, MAX_CUST</text>
+            <text x="552" y="42" class="erd-col-text">NOME_UNI_INV, SPB, STG_QS_TITULAR</text>
+            <line x1="654" y1="110" x2="654" y2="138" class="erd-link-line" marker-end="url(#erdArrowPOC)"/>
+            <rect x="554" y="138" width="200" height="70" rx="6" class="erd-table-rect"/>
+            <rect x="554" y="138" width="200" height="22" rx="6" class="erd-table-header"/>
+            <text x="654" y="155" class="erd-table-name" text-anchor="middle">BLOCO_04: AUX_MOVIMENTACAO, AUX_MOVIMENTACAO2</text>
+            <text x="562" y="170" class="erd-col-text">STG_QS_TITULAR + BT_MP_ACC_MOVEMENTS</text>
+            <line x1="654" y1="208" x2="654" y2="236" class="erd-link-line" marker-end="url(#erdArrowPOC)"/>
+            <rect x="554" y="236" width="200" height="90" rx="6" class="erd-table-rect"/>
+            <rect x="554" y="236" width="200" height="22" rx="6" class="erd-table-header"/>
+            <text x="654" y="253" class="erd-table-name" text-anchor="middle">BLOCO_05: PAYOUT, PAYOUT_REL, PAYIN, PAYIN_REL</text>
+            <text x="562" y="268" class="erd-col-text">STG_NQS2_AUX_PAYIN_REL_BASE, PAGAMENTO, WITHDRAWAL_*</text>
+            <line x1="654" y1="326" x2="654" y2="354" class="erd-link-line" marker-end="url(#erdArrowPOC)"/>
+            <rect x="554" y="354" width="200" height="60" rx="6" class="erd-table-rect"/>
+            <rect x="554" y="354" width="200" height="22" rx="6" class="erd-table-header"/>
+            <text x="654" y="371" class="erd-table-name" text-anchor="middle">BLOCO_06: STG_QS_RELACIONADO, STG_QS_FLAG_MOV</text>
+            <line x1="654" y1="414" x2="654" y2="442" class="erd-link-line" marker-end="url(#erdArrowPOC)"/>
+            <rect x="504" y="442" width="300" height="80" rx="6" class="erd-table-rect"/>
+            <rect x="504" y="442" width="300" height="22" rx="6" class="erd-table-header"/>
+            <text x="654" y="459" class="erd-table-name" text-anchor="middle">BLOCO_07: TBL_*_FINCH, CAD_*_FINCH (inserção final)</text>
+            <text x="512" y="476" class="erd-col-text">NAO_CORR, AGENCIAS, CONTAS, EXTRATO, TITULARES, ORIGEM_DESTINO</text>
+            <text x="512" y="490" class="erd-col-text">CAD_EXTRATO_NAO_CORR, CAD_EXTRATO_MOVIMENTACAO</text>
+            <line x1="654" y1="522" x2="654" y2="560" class="erd-link-line" marker-end="url(#erdArrowPOC)"/>
+            <rect x="504" y="560" width="300" height="90" rx="6" fill="#0d9488" stroke="#14b8a6"/>
+            <rect x="504" y="560" width="300" height="22" rx="6" fill="#0f766e"/>
+            <text x="654" y="577" class="erd-table-name" text-anchor="middle">Python 01–11: leitura para saídas</text>
+            <text x="512" y="594" class="erd-col-text">TBL_*_FINCH, CAD_*_FINCH, STG_QS_PLANILHA_PRESENTA</text>
+            <text x="512" y="608" class="erd-col-text">TBL_QS_TITULARES_COM_ENDERECOS_VALIDADOS_FINCH (script 06→07)</text>
+          </svg>
+        </div>
+        <p style="margin-top:1rem; font-size:0.9rem;"><strong>Tabelas presentes neste pipeline (validadas no código):</strong> Entrada: TBL_QS_AUX_INVESTIGADO_FINCH. SQL: STG_QS_PLANILHA_PRESENTA (BLOCO_01), STG_NQS2_INFO_TIT (BLOCO_02, LK_REG_REGULATED_BASE_MLB), STG_QS_CORRESPONDENTE, NAO_CORRESPONDENTE, MAX_KYC, QTD_CUST_MAX_KYC, MAX_CUST, NOME_UNI_INV, SPB, STG_QS_TITULAR (BLOCO_03), STG_QS_AUX_MOVIMENTACAO, AUX_MOVIMENTACAO2 (BLOCO_04), PAYOUT, PAYOUT_REL, PAYIN, STG_NQS2_AUX_PAYIN_REL_BASE, PAYIN_REL, PAGAMENTO, PAGAMENTO_REL, WITHDRAWAL, WITHDRAWAL_REL (BLOCO_05), STG_QS_RELACIONADO, STG_QS_FLAG_MOV (BLOCO_06), TBL_*_FINCH e CAD_*_FINCH (BLOCO_07). Python lê: TBL_QS_NAO_CORRESPONDENTE_FINCH, TBL_QS_AGENCIAS_FINCH, TBL_QS_CONTAS_FINCH, TBL_QS_EXTRATO_FINCH, TBL_QS_TITULARES_FINCH, TBL_QS_ORIGEM_DESTINO_FINCH, CAD_TBL_QS_EXTRATO_*_FINCH, STG_QS_PLANILHA_PRESENTA, TBL_QS_TITULARES_COM_ENDERECOS_VALIDADOS_FINCH.</p>
+      </div>
+
+      <h2>1. Fluxo de execução</h2>
+      <div class="flow-row">
+        <span class="flow-node">SQL BLOCO_00–07</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node">Python 01–11 (saídas)</span>
+      </div>
+      <p style="margin-top:0.5rem;">SQL: preparação e ETL. Python: Extrato Mercantil, Carta 3454 (Contas, Agências, Extrato, Origem Destino, Endereço, Titulares, Investigados, Não Correspondente), Extrato CSV, Geração ZIP.</p>
+
+      <h2>2. Detalhamento etapa a etapa (arquivo a arquivo)</h2>
+      <p class="subtitle" style="margin-bottom:1rem;">Cada bloco SQL e cada script Python: objetivo, entrada e saída. Executar SQL na ordem 00→07; depois Python 01→11.</p>
+
+      <div class="step-card">
+        <h4><span class="step-num">00</span> BLOCO_00 - Preparacao_Inicial.sql</h4>
+        <dl><dt>Objetivo</dt><dd>Criar e limpar todas as tabelas _FINCH (staging e finais) para rodar o pipeline em ambiente isolado.</dd><dt>Entrada</dt><dd>Estruturas das tabelas fonte (sem _FINCH).</dd><dt>Saída</dt><dd>Todas as STG_*_FINCH e TBL_*_FINCH vazias (truncadas).</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">01</span> BLOCO_01 - Preparacao_Base_Investigados.sql</h4>
+        <dl><dt>Objetivo</dt><dd>Montar a planilha PRESENTA (Carta 3454 / Extrato, RANGE_MIN/MAX, DOC_NUMBER, IDENTIFICACAO) a partir dos investigados.</dd><dt>Entrada</dt><dd>TBL_QS_AUX_INVESTIGADO_FINCH.</dd><dt>Saída</dt><dd>STG_QS_PLANILHA_PRESENTA_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">02</span> BLOCO_02 - Coleta_Informacoes_Reguladas.sql</h4>
+        <dl><dt>Objetivo</dt><dd>Enriquecer com dados regulados: info titular (KYC, nome, CEP, etc.), correspondente/não correspondente, conta SPB, e base para titulares.</dd><dt>Entrada</dt><dd>STG_QS_PLANILHA_PRESENTA_*, LK_REG_*, LK_KYC_VAULT_USER, BT_MP_KYC_LEVEL, BT_MP_ACCOUNT_VIRTUAL_KEY.</dd><dt>Saída</dt><dd>STG_QS_INFO_TIT_*, STG_QS_INFO_TIT_KYC_*, STG_QS_CORRESPONDENTE_*, STG_QS_NAO_CORRESPONDENTE_*, STG_QS_SPB_*, tabelas de KYC/cust.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">03</span> BLOCO_03 - Processamento_Titulares.sql</h4>
+        <dl><dt>Objetivo</dt><dd>Definir nome e CEP únicos por investigado e montar a tabela de titulares para a Carta.</dd><dt>Entrada</dt><dd>SPB, MAX_KYC, NOME_UNI (ou equivalente).</dd><dt>Saída</dt><dd>STG_QS_NOME_UNI_INV_*, STG_QS_TITULAR_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">04</span> BLOCO_04 - Coleta_Movimentacoes.sql</h4>
+        <dl><dt>Objetivo</dt><dd>Buscar movimentações no período e excluir as que têm cancelamento atrelado.</dd><dt>Entrada</dt><dd>STG_QS_TITULAR_*, BT_MP_ACC_MOVEMENTS.</dd><dt>Saída</dt><dd>STG_QS_AUX_MOVIMENTACAO_CAD_VF_FINCH, STG_QS_AUX_MOVIMENTACAO2_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">05</span> BLOCO_05 - Processamento_Relacionados.sql</h4>
+        <dl><dt>Objetivo</dt><dd>Montar todas as tabelas de relacionados: Payout, Payin, PIX, Payments, Withdrawal (com banco, agência, conta, CPF/CNPJ, nome).</dd><dt>Entrada</dt><dd>Movimentação, tabelas de Payout, Payin, PIX, Payments, Withdrawal.</dd><dt>Saída</dt><dd>STG_QS_AUX_PAYOUT_*, STG_QS_AUX_PAYOUT_REL_*, STG_QS_AUX_PAYIN_*, STG_QS_AUX_PAYIN_REL_*, STG_QS_PAGAMENTO_*, STG_QS_PAGAMENTO_REL_*, STG_QS_AUX_WITHDRAWAL_*, STG_QS_WITHDRAWAL_REL_*.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">06</span> BLOCO_06 - Consolidacao_Relacionados.sql</h4>
+        <dl><dt>Objetivo</dt><dd>Unir todos os relacionados em uma única tabela e criar a flag de movimentação por conta.</dd><dt>Entrada</dt><dd>STG_QS_AUX_PAYOUT_REL_*, STG_QS_PAGAMENTO_REL_*, STG_QS_AUX_PAYIN_REL_*, STG_QS_WITHDRAWAL_REL_*.</dd><dt>Saída</dt><dd>STG_QS_RELACIONADO_CAD_VF_FINCH, STG_QS_FLAG_MOV_CAD_VF_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">07</span> BLOCO_07 - Insercao_Tabelas_Finais.sql</h4>
+        <dl><dt>Objetivo</dt><dd>Fazer MERGE/INSERT nas tabelas finais consumidas pelos scripts Python.</dd><dt>Entrada</dt><dd>Staging de não correspondente, correspondente, titular, relacionado, flag mov, extrato.</dd><dt>Saída</dt><dd>TBL_QS_NAO_CORRESPONDENTE_FINCH, TBL_QS_AGENCIAS_FINCH, TBL_QS_CONTAS_FINCH, TBL_QS_EXTRATO_FINCH, TBL_QS_TITULARES_FINCH, TBL_QS_ORIGEM_DESTINO_FINCH, CAD_TBL_QS_EXTRATO_NAO_CORRESPONDENTE_FINCH, CAD_TBL_QS_EXTRATO_MOVIMENTACAO_FINCH.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">01</span> 01 - Extrato Mercantil.py</h4>
+        <dl><dt>Objetivo</dt><dd>Popular/exportar dados do extrato mercantil (não correspondentes e movimentação).</dd><dt>Entrada</dt><dd>CAD_TBL_QS_EXTRATO_NAO_CORRESPONDENTE_FINCH, CAD_TBL_QS_EXTRATO_MOVIMENTACAO_FINCH e tabelas relacionadas.</dd><dt>Saída</dt><dd>Arquivos ou registros de extrato mercantil.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">02–09</span> 02 a 09 - Carta Circular 3454 (Python)</h4>
+        <dl>
+          <dt>Objetivo</dt>
+          <dd>Cada script gera um artefato da Carta 3454: 02 Contas, 03 Agencias, 04 Extrato, 05 Origem Destino, 06 Endereco, 07 Titulares, 08 Investigados, 09 Nao Correspondente. Leem das TBL_*_FINCH e gravam arquivos no formato exigido.</dd>
+          <dt>Entrada</dt>
+          <dd>TBL_QS_*_FINCH e tabelas de apoio (DIM_DATE, etc.).</dd>
+          <dt>Saída</dt>
+          <dd>Arquivos da Carta 3454 (CSV ou outro formato).</dd>
+        </dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">10</span> 10 - Extrato Financeiro CSV.py</h4>
+        <dl><dt>Objetivo</dt><dd>Exportar o extrato financeiro em CSV para entrega.</dd><dt>Entrada</dt><dd>CAD_TBL_QS_EXTRATO_MOVIMENTACAO_FINCH e tabelas de extrato.</dd><dt>Saída</dt><dd>Arquivo(s) CSV de extrato financeiro.</dd></dl>
+      </div>
+      <div class="step-card">
+        <h4><span class="step-num">11</span> 11 - Geracao ZIP.py</h4>
+        <dl><dt>Objetivo</dt><dd>Empacotar todos os arquivos gerados (Carta 3454, extratos, CSV) em um único ZIP para entrega.</dd><dt>Entrada</dt><dd>Arquivos produzidos pelos scripts 01 a 10.</dd><dt>Saída</dt><dd>Um arquivo ZIP (entregável final da quebra de sigilo).</dd><dt>Observações</dt><dd>Última etapa; executar após todos os scripts de saída.</dd></dl>
+      </div>
+
+      <h2>3. Diagrama de relacionamento (arquivo a arquivo)</h2>
+      <p class="subtitle" style="margin-bottom:0.5rem;">Cada caixa é um bloco SQL ou script Python. Consulte a seção anterior para entrada/saída.</p>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 1200 1480" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowheadPOC" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#22c55e" />
+            </marker>
+            <filter id="shadowPOC" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+            </filter>
+          </defs>
+          <g filter="url(#shadowPOC)">
+            <rect x="20" y="20" width="280" height="52" rx="8" class="node-entrada"/>
+            <text x="160" y="42" class="node-title" text-anchor="middle">ENTRADA</text>
+            <text x="160" y="56" class="node-item" text-anchor="middle">TBL_QS_AUX_INVESTIGADO_FINCH</text>
+          </g>
+          <path d="M 160 72 L 160 95" class="arrow arrow-poc"/>
+          <g filter="url(#shadowPOC)">
+            <rect x="20" y="95" width="280" height="42" rx="8" class="node-staging"/>
+            <text x="160" y="118" class="node-title" text-anchor="middle">BLOCO_00 - Preparacao_Inicial.sql</text>
+            <text x="160" y="132" class="node-item" text-anchor="middle">DDL: criação/limpeza tabelas STG_*_FINCH</text>
+          </g>
+          <path d="M 160 137 L 160 162" class="arrow arrow-poc"/>
+          <g filter="url(#shadowPOC)">
+            <rect x="20" y="162" width="280" height="42" rx="8" class="node-staging"/>
+            <text x="160" y="185" class="node-title" text-anchor="middle">BLOCO_01 — Preparacao_Base_Investigados.sql</text>
+            <text x="160" y="199" class="node-item" text-anchor="middle">STG_QS_PLANILHA_PRESENTA_CAD_VF_FINCH</text>
+          </g>
+          <path d="M 160 204 L 160 229" class="arrow arrow-poc"/>
+          <g filter="url(#shadowPOC)">
+            <rect x="20" y="229" width="280" height="95" rx="8" class="node-staging"/>
+            <text x="160" y="252" class="node-title" text-anchor="middle">BLOCO_02 — Coleta_Informacoes_Reguladas.sql</text>
+            <text x="30" y="272" class="node-item">INFO_TIT → INFO_TIT_KYC → CORRESPONDENTE / NAO_CORRESPONDENTE</text>
+            <text x="30" y="287" class="node-item">SPB (BT_MP_ACCOUNT_VIRTUAL_KEY) → titulares base</text>
+            <text x="30" y="302" class="node-item">Fontes: LK_REG_*, LK_KYC_VAULT_USER, BT_MP_KYC_LEVEL</text>
+            <text x="30" y="317" class="node-item">Saídas: STG_QS_CORRESPONDENTE_*, STG_QS_NAO_CORRESPONDENTE_*</text>
+          </g>
+          <path d="M 160 324 L 160 349" class="arrow arrow-poc"/>
+          <g filter="url(#shadowPOC)">
+            <rect x="20" y="349" width="280" height="42" rx="8" class="node-staging"/>
+            <text x="160" y="372" class="node-title" text-anchor="middle">BLOCO_03 — Processamento_Titulares.sql</text>
+            <text x="160" y="386" class="node-item" text-anchor="middle">NOME_UNICO → STG_QS_TITULAR_CAD_VF_FINCH</text>
+          </g>
+          <path d="M 160 391 L 160 416" class="arrow arrow-poc"/>
+          <g filter="url(#shadowPOC)">
+            <rect x="20" y="416" width="280" height="42" rx="8" class="node-staging"/>
+            <text x="160" y="439" class="node-title" text-anchor="middle">BLOCO_04 — Coleta_Movimentacoes.sql</text>
+            <text x="160" y="453" class="node-item" text-anchor="middle">AUX_MOVIMENTACAO → AUX_MOVIMENTACAO2 (sem cancelamento)</text>
+          </g>
+          <path d="M 160 458 L 160 483" class="arrow arrow-poc"/>
+          <g filter="url(#shadowPOC)">
+            <rect x="20" y="483" width="280" height="75" rx="8" class="node-relacionado"/>
+            <text x="160" y="506" class="node-title" text-anchor="middle">BLOCO_05 — Processamento_Relacionados.sql</text>
+            <text x="30" y="526" class="node-item">PAYOUT, PAYIN, PIX, PAYMENTS, WITHDRAWAL</text>
+            <text x="30" y="541" class="node-item">Tabelas: _PAYOUT_REL, _PAYIN_REL, PAGAMENTO, PAGAMENTO_REL, _WITHDRAWAL_*</text>
+            <text x="30" y="556" class="node-item">BT_MP_ACC_MOVEMENTS como fonte de movimentações</text>
+          </g>
+          <path d="M 160 558 L 160 583" class="arrow arrow-poc"/>
+          <g filter="url(#shadowPOC)">
+            <rect x="20" y="583" width="280" height="55" rx="8" class="node-staging"/>
+            <text x="160" y="606" class="node-title" text-anchor="middle">BLOCO_06 — Consolidacao_Relacionados.sql</text>
+            <text x="30" y="626" class="node-item">STG_QS_RELACIONADO_CAD_VF_FINCH (UNION)</text>
+            <text x="30" y="641" class="node-item">STG_QS_FLAG_MOV_CAD_VF_FINCH</text>
+          </g>
+          <path d="M 160 638 L 160 663" class="arrow arrow-poc"/>
+          <g filter="url(#shadowPOC)">
+            <rect x="20" y="663" width="280" height="115" rx="8" class="node-final"/>
+            <text x="160" y="686" class="node-title" text-anchor="middle">BLOCO_07 — Insercao_Tabelas_Finais.sql</text>
+            <text x="30" y="706" class="node-item">MERGE/INSERT: TBL_QS_NAO_CORRESPONDENTE_FINCH</text>
+            <text x="30" y="721" class="node-item">TBL_QS_AGENCIAS_FINCH · TBL_QS_CONTAS_FINCH</text>
+            <text x="30" y="736" class="node-item">TBL_QS_EXTRATO_FINCH · TBL_QS_TITULARES_FINCH</text>
+            <text x="30" y="751" class="node-item">TBL_QS_ORIGEM_DESTINO_FINCH</text>
+            <text x="30" y="766" class="node-item">CAD_TBL_QS_EXTRATO_NAO_CORRESPONDENTE_FINCH · CAD_*_MOVIMENTACAO_FINCH</text>
+          </g>
+          <path d="M 160 778 L 160 808" class="arrow arrow-poc"/>
+          <g filter="url(#shadowPOC)">
+            <rect x="20" y="808" width="280" height="115" rx="8" fill="#0d9488" stroke="#14b8a6"/>
+            <text x="160" y="831" class="node-title" text-anchor="middle">PYTHON 01–11 — Geração de saídas</text>
+            <text x="30" y="851" class="node-item">01 Extrato Mercantil · 02–09 Carta 3454 (Contas, Agências, Extrato,</text>
+            <text x="30" y="866" class="node-item">Origem Destino, Endereço, Titulares, Investigados, Não Correspondente)</text>
+            <text x="30" y="881" class="node-item">10 Extrato Financeiro CSV · 11 Geração ZIP</text>
+            <text x="30" y="896" class="node-item">Leitura: TBL_*_FINCH e CAD_*_FINCH → CSV/ZIP</text>
+          </g>
+        </svg>
+        <div class="diagram-legend">
+          <span><span class="leg-box entrada"></span> Entrada</span>
+          <span><span class="leg-box staging"></span> Blocos SQL</span>
+          <span><span class="leg-box relacionado"></span> Relacionados</span>
+          <span><span class="leg-box final"></span> Tabelas finais</span>
+          <span><span class="leg-box" style="background:#0d9488"></span> Python (saídas)</span>
+        </div>
+      </div>
+
+      <h2>4. Tabelas finais (iguais às outras versões)</h2>
+      <p>TBL_QS_NAO_CORRESPONDENTE_FINCH, TBL_QS_AGENCIAS_FINCH, TBL_QS_CONTAS_FINCH, TBL_QS_EXTRATO_FINCH, TBL_QS_TITULARES_FINCH, TBL_QS_ORIGEM_DESTINO_FINCH, CAD_TBL_QS_EXTRATO_NAO_CORRESPONDENTE_FINCH, CAD_TBL_QS_EXTRATO_MOVIMENTACAO_FINCH.</p>
+    </div>
+
+    <!-- PÁGINA COMPARAÇÃO -->
+    <div id="page-comparacao" class="page">
+      <h1>Comparação entre os 3 pipelines</h1>
+      <p class="subtitle">Versão Original × Versão 2026 × Versão POC</p>
+
+      <h2>1. Visão geral</h2>
+      <div class="comparison-grid">
+        <div class="comparison-card">
+          <span class="badge badge-orig">Original</span>
+          <h3>000 - Versão Original</h3>
+          <p><strong>Arquivos:</strong> 16 etapas (000–015) + scripts/querys auxiliares.</p>
+          <p><strong>Característica:</strong> Monolítico; 001 com ~739 linhas.</p>
+          <p><strong>Linguagem:</strong> SQL (DDL + ETL + saídas em arquivos).</p>
+        </div>
+        <div class="comparison-card">
+          <span class="badge badge-2026">2026</span>
+          <h3>001 - Versão 2026</h3>
+          <p><strong>Arquivos:</strong> 36 arquivos (000–035).</p>
+          <p><strong>Característica:</strong> Modular; uma responsabilidade por arquivo.</p>
+          <p><strong>Linguagem:</strong> SQL; melhorias (base regulada, PIX em 2 blocos).</p>
+        </div>
+        <div class="comparison-card">
+          <span class="badge badge-poc">POC</span>
+          <h3>003 - Versão POC</h3>
+          <p><strong>Arquivos:</strong> 8 blocos SQL + 11 scripts Python.</p>
+          <p><strong>Característica:</strong> Híbrido; SQL = ETL, Python = geração de saídas.</p>
+          <p><strong>Linguagem:</strong> SQL + Python.</p>
+        </div>
+      </div>
+
+      <h2>2. Tabela comparativa</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Aspecto</th>
+            <th>Versão Original</th>
+            <th>Versão 2026</th>
+            <th>Versão POC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Total de arquivos (etapas)</td><td>16</td><td>36</td><td>19 (8 SQL + 11 Python)</td></tr>
+          <tr><td>Arquivo maior</td><td>~739 linhas (001)</td><td>~157 linhas</td><td>~170 linhas</td></tr>
+          <tr><td>Estrutura</td><td>Monolítica</td><td>Modular extrema</td><td>Híbrida (SQL + Python)</td></tr>
+          <tr><td>Fonte entrada</td><td>TBL_QS_AUX_INVESTIGADO_FINCH</td><td>Idem</td><td>Idem</td></tr>
+          <tr><td>Base regulada (LK_REG_*)</td><td>Não (múltiplos JOINs)</td><td>Sim (002/003)</td><td>Sim (BLOCO_02)</td></tr>
+          <tr><td>PIX</td><td>Incluído no monolito</td><td>2 blocos (013–014)</td><td>Dentro BLOCO_05</td></tr>
+          <tr><td>Cancelamentos</td><td>No mesmo fluxo</td><td>Arquivo dedicado (010)</td><td>BLOCO_04</td></tr>
+          <tr><td>Tabelas finais</td><td>8 (TBL_* + CAD_*)</td><td>8 (iguais)</td><td>8 (iguais)</td></tr>
+          <tr><td>Saídas (Carta 3454, Extrato, ZIP)</td><td>SQL/scripts (004–015)</td><td>SQL (024–035)</td><td>Python (01–11)</td></tr>
+          <tr><td>Manutenibilidade</td><td>Baixa</td><td>Alta</td><td>Alta</td></tr>
+          <tr><td>Testabilidade</td><td>Baixa (pipeline inteiro)</td><td>Média (por arquivo)</td><td>Alta (blocos + scripts isolados)</td></tr>
+        </tbody>
+      </table>
+
+      <h2>3. Diagrama de equivalência lógica (completo)</h2>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 1000 720" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowheadComp" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+            </marker>
+            <filter id="shadowComp" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.25"/>
+            </filter>
+          </defs>
+          <!-- Cabeçalhos -->
+          <rect x="40" y="15" width="280" height="36" rx="6" fill="#475569" filter="url(#shadowComp)"/>
+          <text x="180" y="38" class="node-title" text-anchor="middle">000 - Original</text>
+          <rect x="360" y="15" width="280" height="36" rx="6" fill="#0ea5e9" filter="url(#shadowComp)"/>
+          <text x="500" y="38" class="node-title" text-anchor="middle">001 - Versão 2026</text>
+          <rect x="680" y="15" width="280" height="36" rx="6" fill="#22c55e" filter="url(#shadowComp)"/>
+          <text x="820" y="38" class="node-title" text-anchor="middle">003 - POC</text>
+          <!-- Linha 1: Entrada -->
+          <text x="20" y="88" class="node-item">Entrada</text>
+          <rect x="40" y="68" width="280" height="38" rx="6" fill="#1e293b" stroke="#334155" filter="url(#shadowComp)"/>
+          <text x="180" y="92" class="node-item" text-anchor="middle">TBL_QS_AUX_INVESTIGADO_FINCH</text>
+          <rect x="360" y="68" width="280" height="38" rx="6" fill="#1e293b" stroke="#334155" filter="url(#shadowComp)"/>
+          <text x="500" y="92" class="node-item" text-anchor="middle">Idem</text>
+          <rect x="680" y="68" width="280" height="38" rx="6" fill="#1e293b" stroke="#334155" filter="url(#shadowComp)"/>
+          <text x="820" y="92" class="node-item" text-anchor="middle">Idem</text>
+          <!-- Linha 2: Preparação -->
+          <text x="20" y="143" class="node-item">Preparação</text>
+          <rect x="40" y="123" width="280" height="38" rx="6" fill="#1e293b" stroke="#475569" filter="url(#shadowComp)"/>
+          <text x="180" y="147" class="node-item" text-anchor="middle">001 (tudo no monolito)</text>
+          <rect x="360" y="123" width="280" height="38" rx="6" fill="#1e293b" stroke="#0ea5e9" filter="url(#shadowComp)"/>
+          <text x="500" y="147" class="node-item" text-anchor="middle">001–005 (base + REG)</text>
+          <rect x="680" y="123" width="280" height="38" rx="6" fill="#1e293b" stroke="#22c55e" filter="url(#shadowComp)"/>
+          <text x="820" y="147" class="node-item" text-anchor="middle">BLOCO_00–02</text>
+          <!-- Linha 3: Titular/SPB/KYC -->
+          <text x="20" y="198" class="node-item">Titular / SPB / KYC</text>
+          <rect x="40" y="178" width="280" height="38" rx="6" fill="#1e293b" stroke="#475569" filter="url(#shadowComp)"/>
+          <text x="180" y="202" class="node-item" text-anchor="middle">Dentro do 001</text>
+          <rect x="360" y="178" width="280" height="38" rx="6" fill="#1e293b" stroke="#0ea5e9" filter="url(#shadowComp)"/>
+          <text x="500" y="202" class="node-item" text-anchor="middle">006–009</text>
+          <rect x="680" y="178" width="280" height="38" rx="6" fill="#1e293b" stroke="#22c55e" filter="url(#shadowComp)"/>
+          <text x="820" y="202" class="node-item" text-anchor="middle">BLOCO_02–03</text>
+          <!-- Linha 4: Movimentações -->
+          <text x="20" y="253" class="node-item">Movimentações</text>
+          <rect x="40" y="233" width="280" height="38" rx="6" fill="#1e293b" stroke="#475569" filter="url(#shadowComp)"/>
+          <text x="180" y="257" class="node-item" text-anchor="middle">001 + 002</text>
+          <rect x="360" y="233" width="280" height="38" rx="6" fill="#1e293b" stroke="#0ea5e9" filter="url(#shadowComp)"/>
+          <text x="500" y="257" class="node-item" text-anchor="middle">006, 010, 011–021</text>
+          <rect x="680" y="233" width="280" height="38" rx="6" fill="#1e293b" stroke="#22c55e" filter="url(#shadowComp)"/>
+          <text x="820" y="257" class="node-item" text-anchor="middle">BLOCO_04–05</text>
+          <!-- Linha 5: Relacionados -->
+          <text x="20" y="308" class="node-item">Relacionados</text>
+          <rect x="40" y="288" width="280" height="38" rx="6" fill="#1e293b" stroke="#475569" filter="url(#shadowComp)"/>
+          <text x="180" y="312" class="node-item" text-anchor="middle">001 + 002 (UNION)</text>
+          <rect x="360" y="288" width="280" height="38" rx="6" fill="#1e293b" stroke="#0ea5e9" filter="url(#shadowComp)"/>
+          <text x="500" y="312" class="node-item" text-anchor="middle">022</text>
+          <rect x="680" y="288" width="280" height="38" rx="6" fill="#1e293b" stroke="#22c55e" filter="url(#shadowComp)"/>
+          <text x="820" y="312" class="node-item" text-anchor="middle">BLOCO_05–06</text>
+          <!-- Linha 6: Inserção finais -->
+          <text x="20" y="363" class="node-item">Inserção finais</text>
+          <rect x="40" y="343" width="280" height="38" rx="6" fill="#1e293b" stroke="#475569" filter="url(#shadowComp)"/>
+          <text x="180" y="367" class="node-item" text-anchor="middle">003</text>
+          <rect x="360" y="343" width="280" height="38" rx="6" fill="#1e293b" stroke="#0ea5e9" filter="url(#shadowComp)"/>
+          <text x="500" y="367" class="node-item" text-anchor="middle">023</text>
+          <rect x="680" y="343" width="280" height="38" rx="6" fill="#1e293b" stroke="#22c55e" filter="url(#shadowComp)"/>
+          <text x="820" y="367" class="node-item" text-anchor="middle">BLOCO_07</text>
+          <!-- Linha 7: Saídas -->
+          <text x="20" y="418" class="node-item">Saídas arquivos</text>
+          <rect x="40" y="398" width="280" height="38" rx="6" fill="#1e293b" stroke="#475569" filter="url(#shadowComp)"/>
+          <text x="180" y="422" class="node-item" text-anchor="middle">004–015 (SQL/scripts)</text>
+          <rect x="360" y="398" width="280" height="38" rx="6" fill="#1e293b" stroke="#0ea5e9" filter="url(#shadowComp)"/>
+          <text x="500" y="422" class="node-item" text-anchor="middle">024–035 (SQL)</text>
+          <rect x="680" y="398" width="280" height="38" rx="6" fill="#0d9488" stroke="#14b8a6" filter="url(#shadowComp)"/>
+          <text x="820" y="422" class="node-title" text-anchor="middle">Python 01–11</text>
+          <!-- Setas verticais entre linhas (coluna central) -->
+          <path d="M 500 106 L 500 123" stroke="#64748b" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+          <path d="M 500 161 L 500 178" stroke="#64748b" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+          <path d="M 500 216 L 500 233" stroke="#64748b" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+          <path d="M 500 271 L 500 288" stroke="#64748b" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+          <path d="M 500 326 L 500 343" stroke="#64748b" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+          <path d="M 500 381 L 500 398" stroke="#64748b" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+          <!-- Tabelas finais (uma linha resumida) -->
+          <rect x="40" y="470" width="920" height="50" rx="8" fill="#334155" stroke="#64748b" filter="url(#shadowComp)"/>
+          <text x="500" y="495" class="node-title" text-anchor="middle">TABELAS FINAIS (comum às 3 versões)</text>
+          <text x="500" y="512" class="node-item" text-anchor="middle">TBL_QS_NAO_CORRESPONDENTE · TBL_QS_AGENCIAS · TBL_QS_CONTAS · TBL_QS_EXTRATO · TBL_QS_TITULARES · TBL_QS_ORIGEM_DESTINO · CAD_TBL_QS_EXTRATO_NAO_CORRESPONDENTE · CAD_TBL_QS_EXTRATO_MOVIMENTACAO</text>
+        </svg>
+        <div class="diagram-legend">
+          <span><span class="leg-box" style="background:#475569"></span> Original</span>
+          <span><span class="leg-box" style="background:#0ea5e9"></span> 2026</span>
+          <span><span class="leg-box" style="background:#22c55e"></span> POC</span>
+          <span><span class="leg-box" style="background:#0d9488"></span> Python (só POC)</span>
+        </div>
+      </div>
+
+      <h2>4. Recomendações</h2>
+      <ul>
+        <li><strong>Original:</strong> Referência histórica; evite alterações grandes no 001.</li>
+        <li><strong>2026:</strong> Boa opção para manter tudo em SQL com boa organização.</li>
+        <li><strong>POC:</strong> Melhor para evolução: ETL em SQL, regras de negócio e arquivos em Python; documentação por bloco.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.nav a').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const page = this.getAttribute('data-page');
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav a').forEach(x => x.classList.remove('active'));
+        const target = document.getElementById('page-' + page);
+        if (target) {
+          target.classList.add('active');
+          this.classList.add('active');
+          history.replaceState(null, '', '#' + page);
+        }
+      });
+    });
+    const hash = (location.hash || '#index').slice(1) || 'index';
+    const page = ['index','original','2026','poc','comparacao'].includes(hash) ? hash : 'index';
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav a').forEach(a => { a.classList.toggle('active', a.getAttribute('data-page') === page); });
+    const el = document.getElementById('page-' + page);
+    if (el) el.classList.add('active');
+    if (hash && hash !== page) history.replaceState(null, '', '#' + page);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1391 @@
+{
+  "name": "Deep Legal",
+  "nodes": [
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data"
+        },
+        "sqlQuery": "SELECT\n  numero_do_processo AS Numero_do_Processo,\n  processo_id AS Processo_ID,\n  OBJETO_TRATADO AS objeto,\n  advogado_responsavel AS Advogado_Responsavel,\n  objeto_1 AS Objeto_1,\n  processo_classificacao AS Processo_Classificacao,\n  tipo_de_contingencia AS Tipo_de_Contingencia,\n  page_report_escritorioresponsavel AS Page_Report_EscritorioResponsavel,\n  causas_raizes AS Causa_Raiz\nFROM\n  `pdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS`\nWHERE\n  status = 'Encerrado'\n  AND pais = 'Brasil'\n  AND area_do_direito IN ('Consumidor', 'Civel')\n  AND sub_area_do_direito = 'Judicial'\n  AND PARSE_DATE('%d/%m/%Y', DATA_DE_ENCERRAMENTO) > DATE '2024-01-01'\n  AND OBJETO_TRATADO NOT IN ('RECUPERAÇÃO DE CRÉDITO [MERCADO CRÉDITO]')\n",
+        "options": {}
+      },
+      "id": "d25b09d6-1e6d-47cf-8b06-b60110ab8d97",
+      "name": "Geral - Encerrados",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        288
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data"
+        },
+        "sqlQuery": "SELECT\n  numero_do_processo AS Numero_do_Processo,\n  processo_id AS Processo_ID,\n  OBJETO_TRATADO AS objeto,\n  advogado_responsavel AS Advogado_Responsavel,\n  objeto_1 AS Objeto_1,\n  processo_classificacao AS Processo_Classificacao,\n  tipo_de_contingencia AS Tipo_de_Contingencia,\n  page_report_escritorioresponsavel AS Page_Report_EscritorioResponsavel,\n  causas_raizes AS Causa_Raiz\nFROM\n  `pdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS`\nWHERE\n  status = 'Ativo'\n  AND pais = 'Brasil'\n  AND area_do_direito IN ('Consumidor', 'Civel')\n  AND sub_area_do_direito = 'Judicial'\n  AND OBJETO_TRATADO NOT IN ('RECUPERAÇÃO DE CRÉDITO [MERCADO CRÉDITO]')\n",
+        "options": {}
+      },
+      "id": "de170f0e-43ab-44db-8270-4b6d7127db4b",
+      "name": "Geral - Ativos",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        480
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data"
+        },
+        "sqlQuery": "SELECT\n  numero_do_processo AS Numero_do_Processo,\n  processo_id AS Processo_ID,\n  OBJETO_TRATADO AS objeto,\n  advogado_responsavel AS Advogado_Responsavel,\n  objeto_1 AS Objeto_1,\n  processo_classificacao AS Processo_Classificacao,\n  tipo_de_contingencia AS Tipo_de_Contingencia,\n  page_report_escritorioresponsavel AS Page_Report_EscritorioResponsavel,\n  causas_raizes AS Causa_Raiz\nFROM\n  `pdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS`\nWHERE\n  status = 'Ativo'\n  AND pais = 'Brasil'\n  AND area_do_direito IN ('Consumidor', 'Civel')\n  AND sub_area_do_direito = 'Judicial'\n  AND OBJETO_TRATADO = 'RECUPERAÇÃO DE CRÉDITO [MERCADO CRÉDITO]'\n",
+        "options": {}
+      },
+      "id": "fda36682-dac8-4f43-962e-7b0e9012b170",
+      "name": "Recup - Ativos",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        672
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data"
+        },
+        "sqlQuery": "SELECT\n  numero_do_processo AS Numero_do_Processo,\n  processo_id AS Processo_ID,\n  OBJETO_TRATADO AS objeto,\n  advogado_responsavel AS Advogado_Responsavel,\n  objeto_1 AS Objeto_1,\n  processo_classificacao AS Processo_Classificacao,\n  tipo_de_contingencia AS Tipo_de_Contingencia,\n  page_report_escritorioresponsavel AS Page_Report_EscritorioResponsavel,\n  causas_raizes AS Causa_Raiz\nFROM\n  `pdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS`\nWHERE\n  status = 'Encerrado'\n  AND pais = 'Brasil'\n  AND area_do_direito IN ('Consumidor', 'Civel')\n  AND sub_area_do_direito = 'Judicial'\n  AND OBJETO_TRATADO = 'RECUPERAÇÃO DE CRÉDITO [MERCADO CRÉDITO]'\n",
+        "options": {}
+      },
+      "id": "af6a0144-3d52-43b9-bb56-59bdd514d63a",
+      "name": "Recup - Encerrados",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        864
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 603354912,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit#gid=603354912",
+          "cachedResultName": "Deep_Geral_Ativos"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "Numero_do_Processo",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Numero_do_Processo",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Processo_ID",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Processo_ID",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "objeto",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "objeto",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Advogado_Responsavel",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Advogado_Responsavel",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Objeto_1",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Objeto_1",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Processo_Classificacao",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Processo_Classificacao",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo_de_Contingencia",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Tipo_de_Contingencia",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Page_Report_EscritorioResponsavel",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Page_Report_EscritorioResponsavel",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Causa_Raiz",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Causa_Raiz",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "9b843c11-455e-4025-95ad-bb68ecb50668",
+      "name": "Append or update row in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        288
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 603354912,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit#gid=603354912",
+          "cachedResultName": "Deep_Geral_Ativos"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "Numero_do_Processo",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Numero_do_Processo",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Processo_ID",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Processo_ID",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "objeto",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "objeto",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Advogado_Responsavel",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Advogado_Responsavel",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Objeto_1",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Objeto_1",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Processo_Classificacao",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Processo_Classificacao",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo_de_Contingencia",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Tipo_de_Contingencia",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Page_Report_EscritorioResponsavel",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Page_Report_EscritorioResponsavel",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Causa_Raiz",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Causa_Raiz",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "702da0a3-c947-4162-a9c2-eb895099ded0",
+      "name": "Append or update row in sheet1",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        480
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 686868207,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit#gid=686868207",
+          "cachedResultName": "Deep_Recup_Ativos"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "Numero_do_Processo",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Numero_do_Processo",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Processo_ID",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Processo_ID",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "objeto",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "objeto",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Advogado_Responsavel",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Advogado_Responsavel",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Objeto_1",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Objeto_1",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Processo_Classificacao",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Processo_Classificacao",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo_de_Contingencia",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Tipo_de_Contingencia",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Page_Report_EscritorioResponsavel",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Page_Report_EscritorioResponsavel",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Causa_Raiz",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Causa_Raiz",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "78e42386-7264-4428-aa52-0f25f80deee6",
+      "name": "Append or update row in sheet2",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        672
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1327863032,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit#gid=1327863032",
+          "cachedResultName": "Deep_Recup_Encerrados"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "Numero_do_Processo",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Numero_do_Processo",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Processo_ID",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Processo_ID",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "objeto",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "objeto",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Advogado_Responsavel",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Advogado_Responsavel",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Objeto_1",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Objeto_1",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Processo_Classificacao",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Processo_Classificacao",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo_de_Contingencia",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Tipo_de_Contingencia",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Page_Report_EscritorioResponsavel",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Page_Report_EscritorioResponsavel",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Causa_Raiz",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Causa_Raiz",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "0ef80f40-c440-4e3d-87d8-e276d9ddad89",
+      "name": "Append or update row in sheet3",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        864
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "id": "591ea81a-ca21-4f12-86ae-0d9f484c374f",
+      "name": "Convert to File",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        672,
+        288
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "id": "276278ef-426a-4dda-9b55-4aae6a46b3bd",
+      "name": "Convert to File1",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        672,
+        480
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "id": "27836c6e-4fae-449d-8238-dbd1183eeae3",
+      "name": "Convert to File2",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        672,
+        672
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "id": "55d0ca23-bb6e-4bd3-929d-ade6483c2c59",
+      "name": "Convert to File3",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        672,
+        864
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "name": "Deep_Geral_Encerrados.xlsx",
+        "driveId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://drive.google.com/drive/folders/1K_LxObMyKtGnQdgQFCCexT47TJPAz90O"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root"
+        },
+        "options": {}
+      },
+      "id": "2323837d-93ad-47b3-98d6-a6d253f527d9",
+      "name": "Upload file",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        896,
+        288
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit#gid=0",
+          "cachedResultName": "Deep_Geral_Encerrados"
+        }
+      },
+      "id": "6e3a89be-41f7-4d91-a19d-bbba694657df",
+      "name": "Clear sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        224,
+        96
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 603354912,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit#gid=603354912",
+          "cachedResultName": "Deep_Geral_Ativos"
+        }
+      },
+      "id": "28a646a7-6755-44a8-8440-95f2981d10ec",
+      "name": "Clear sheet1",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        96
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 686868207,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit#gid=686868207",
+          "cachedResultName": "Deep_Recup_Ativos"
+        }
+      },
+      "id": "367e6b8f-4826-4ea3-a73f-00d5e73cc339",
+      "name": "Clear sheet2",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        672,
+        96
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1327863032,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ll1phk7DSNoCgovD2KlyB7w-Ut16fY4NQ6WwaERZYlc/edit#gid=1327863032",
+          "cachedResultName": "Deep_Recup_Encerrados"
+        }
+      },
+      "id": "0374f46c-212b-4e2b-9ff5-66c5deda14e1",
+      "name": "Clear sheet3",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        896,
+        96
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "url",
+            "value": "https://drive.google.com/drive/folders/1K_LxObMyKtGnQdgQFCCexT47TJPAz90O"
+          }
+        },
+        "options": {}
+      },
+      "id": "894cde41-ad39-4978-9ee3-d7e1244f46c6",
+      "name": "Search files and folders",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        224,
+        -96
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteFile",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "5a812ef7-b6a5-4ee1-b343-499617c0f8a2",
+      "name": "Delete a file",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        672,
+        -96
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "fb12b31b-a80a-433d-a54b-b0062fd4d3c7",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              },
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "Deep_"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "496c6646-c7ac-4d6a-9b2a-64df02a322ee",
+      "name": "Filter",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        448,
+        -96
+      ],
+      "executeOnce": false,
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "name": "Deep_Geral_Ativos.xlsx",
+        "driveId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://drive.google.com/drive/folders/1K_LxObMyKtGnQdgQFCCexT47TJPAz90O"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root"
+        },
+        "options": {}
+      },
+      "id": "1d319046-f279-4988-a518-4a6420d9f21e",
+      "name": "Upload file1",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        896,
+        480
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Deep_Recup_Ativos.xlsx",
+        "driveId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://drive.google.com/drive/folders/1K_LxObMyKtGnQdgQFCCexT47TJPAz90O"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root"
+        },
+        "options": {}
+      },
+      "id": "5d64aacf-fc07-4a65-9562-14ee3380dec5",
+      "name": "Upload file2",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        896,
+        672
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Deep_Recup_Encerrados.xlsx",
+        "driveId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://drive.google.com/drive/folders/1K_LxObMyKtGnQdgQFCCexT47TJPAz90O"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root"
+        },
+        "options": {}
+      },
+      "id": "9351b84b-d0f3-4ca2-85e3-165dcb610bbc",
+      "name": "Upload file3",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        896,
+        864
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pythonCode": "from datetime import datetime\n\nDESTINATARIOS_EMAIL = [\n    \"marcelo.cardoso@mercadolivre.com\",\n    \"beatriz.ricco@mercadolivre.com\",\n    \"raphael.ferreira@mercadolivre.com\",\n    \"murillo.franca@mercadolivre.com\",\n]\n\nassunto = \"Bases DeepLegal Geradas e Disponíveis\"\nlink_drive = \"https://drive.google.com/drive/u/1/folders/1K_LxObMyKtGnQdgQFCCexT47TJPAz90O\"\n\ncorpo_html = f\"\"\"\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body {{\n      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;\n      line-height: 1.6;\n      color: #333;\n      margin: 0;\n      padding: 0;\n      background-color: #f5f5f5;\n    }}\n    .email-wrapper {{\n      max-width: 600px;\n      margin: 20px auto;\n      background-color: #ffffff;\n      border-radius: 8px;\n      overflow: hidden;\n      box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n    }}\n    .header {{\n      background-color: #FFE600;\n      padding: 40px 30px;\n      text-align: center;\n      border-bottom: 4px solid #2D3277;\n    }}\n    .header h1 {{\n      margin: 0;\n      font-size: 28px;\n      font-weight: 700;\n      color: #2D3277;\n    }}\n    .content {{\n      padding: 40px 30px;\n    }}\n    .message {{\n      font-size: 16px;\n      margin-bottom: 30px;\n    }}\n    .bases-box {{\n      background-color: #f8f9fa;\n      border-radius: 8px;\n      padding: 25px;\n      margin: 30px 0;\n    }}\n    .bases-box h3 {{\n      margin-bottom: 20px;\n      color: #2D3277;\n      font-size: 16px;\n    }}\n    .base-item {{\n      margin: 12px 0;\n    }}\n    .base-name {{\n      font-weight: 600;\n      color: #2D3277;\n      font-size: 14px;\n    }}\n    .base-desc {{\n      font-size: 14px;\n      color: #666;\n    }}\n    .steps-box {{\n      background-color: #fffef0;\n      border-left: 4px solid #FFE600;\n      padding: 25px;\n      margin: 30px 0;\n    }}\n    .steps-box h3 {{\n      margin-bottom: 15px;\n      color: #2D3277;\n      font-size: 16px;\n      text-transform: uppercase;\n    }}\n    .step {{\n      font-size: 14px;\n      margin: 8px 0;\n    }}\n    .button-container {{\n      text-align: center;\n      margin: 35px 0;\n    }}\n    .button {{\n      display: inline-block;\n      background-color: #FFE600;\n      color: #2D3277;\n      padding: 14px 35px;\n      text-decoration: none;\n      border-radius: 25px;\n      font-weight: 600;\n    }}\n  </style>\n</head>\n<body>\n  <div class=\"email-wrapper\">\n    <div class=\"header\">\n      <h1>Bases DeepLegal Atualizadas</h1>\n    </div>\n    <div class=\"content\">\n      <div class=\"message\">\n        As bases de dados do <strong>DeepLegal</strong> foram processadas com sucesso e estão disponíveis para download.\n      </div>\n\n      <div class=\"bases-box\">\n        <h3>Bases Disponíveis</h3>\n        <div class=\"base-item\">\n          <div class=\"base-name\">Deep_Geral_Encerrados.xlsx</div>\n          <div class=\"base-desc\">Processos gerais encerrados</div>\n        </div>\n        <div class=\"base-item\">\n          <div class=\"base-name\">Deep_Geral_Ativos.xlsx</div>\n          <div class=\"base-desc\">Processos gerais ativos</div>\n        </div>\n        <div class=\"base-item\">\n          <div class=\"base-name\">Deep_Recup_Encerrados.xlsx</div>\n          <div class=\"base-desc\">Recuperação de crédito encerrados</div>\n        </div>\n        <div class=\"base-item\">\n          <div class=\"base-name\">Deep_Recup_Ativos.xlsx</div>\n          <div class=\"base-desc\">Recuperação de crédito ativos</div>\n        </div>\n      </div>\n\n      <div class=\"steps-box\">\n        <h3>Próximos passos</h3>\n        <div class=\"step\">1. Acesse a pasta do Google Drive</div>\n        <div class=\"step\">2. Baixe os arquivos XLSX necessários</div>\n        <div class=\"step\">3. Carregue as bases na plataforma</div>\n      </div>\n\n      <div class=\"button-container\">\n        <a href=\"{link_drive}\" class=\"button\">Acessar Pasta do Drive</a>\n      </div>\n    </div>\n  </div>\n</body>\n</html>\n\"\"\"\n\ncorpo_texto = f\"\"\"\nBases DeepLegal Atualizadas\n\nAs bases de dados do DeepLegal foram processadas com sucesso e estão disponíveis para download.\n\nBases disponíveis:\n- Deep_Geral_Encerrados.xlsx\n- Deep_Geral_Ativos.xlsx\n- Deep_Recup_Encerrados.xlsx\n- Deep_Recup_Ativos.xlsx\n\nLink da pasta:\n{link_drive}\n\nGerado em {datetime.now().strftime('%d/%m/%Y %H:%M')}\n\"\"\"\n\nreturn {\n    \"to\": \",\".join(DESTINATARIOS_EMAIL),\n    \"subject\": assunto,\n    \"html\": corpo_html,\n    \"text\": corpo_texto\n}\n"
+      },
+      "id": "8a1d306b-e196-4570-aa01-a835c47b4214",
+      "name": "VerdiCode",
+      "type": "n8n-nodes-base.verdiCode",
+      "position": [
+        224,
+        1056
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sendTo": "marcelo.cardoso@mercadolivre.com\n, beatriz.ricco@mercadolivre.com\n, raphael.ferreira@mercadolivre.com\n, murillo.franca@mercadolivre.com",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "82c43ce9-d31a-4517-9bfd-ea606053cb5d",
+      "name": "Send a message",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        656,
+        1056
+      ],
+      "webhookId": "9acd6885-766f-4e43-a40d-1dcda9665ed8",
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "https://drive.google.com/drive/folders/1K_LxObMyKtGnQdgQFCCexT47TJPAz90O"
+      },
+      "id": "f1314445-61b5-4c6f-88c7-396a108e13b5",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -304,
+        464
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 1,16 * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        480
+      ],
+      "id": "1bd6cb1a-db93-4ad3-ade7-7846665486cd",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        1056
+      ],
+      "id": "df767e35-bc83-41fb-8a3a-8b7a33001f74",
+      "name": "Wait",
+      "webhookId": "e9b1e2e6-a012-42be-814b-f7bc9505423f"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Delete a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VerdiCode": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear sheet": {
+      "main": [
+        [
+          {
+            "node": "Clear sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        []
+      ]
+    },
+    "Clear sheet1": {
+      "main": [
+        [
+          {
+            "node": "Clear sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear sheet2": {
+      "main": [
+        [
+          {
+            "node": "Clear sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear sheet3": {
+      "main": [
+        []
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        []
+      ]
+    },
+    "Upload file2": {
+      "main": [
+        []
+      ]
+    },
+    "Upload file3": {
+      "main": [
+        []
+      ]
+    },
+    "Delete a file": {
+      "main": [
+        []
+      ]
+    },
+    "Geral - Ativos": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recup - Ativos": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File2": {
+      "main": [
+        [
+          {
+            "node": "Upload file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File3": {
+      "main": [
+        [
+          {
+            "node": "Upload file3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Geral - Encerrados": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recup - Encerrados": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Convert to File2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Convert to File3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clear sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Geral - Encerrados",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Geral - Ativos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Recup - Ativos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Recup - Encerrados",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "VerdiCode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e0de452f-50d2-4ba6-b43b-a7f2af77e927",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92a7841699b7656650cb4dc0dd4f4f4fdb565d51df3f1aaf3126caa7a316a77c"
+  },
+  "id": "GRgUVvAAS201MvNq",
+  "tags": []
+}

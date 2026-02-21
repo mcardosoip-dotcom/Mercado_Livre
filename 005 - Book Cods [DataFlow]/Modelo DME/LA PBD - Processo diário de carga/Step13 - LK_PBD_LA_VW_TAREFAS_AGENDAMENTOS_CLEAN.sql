@@ -1,0 +1,32 @@
+-- ============================================================================
+-- MACRO TAREFAS AGENDAMENTOS CLEAN
+-- Descrição: União das tabelas de tarefas agendamentos subsídios (pendentes e confirmados),
+--            com filtro por país, exclusão de área específica e cruzamento com DIM_WORKFLOW.
+-- ============================================================================
+
+CREATE OR REPLACE VIEW `<ENV>.STG.LK_PBD_LA_VW_TAREFAS_AGENDAMENTOS_CLEAN` AS
+
+WITH TAREFAS_UNIFICADAS AS (
+  SELECT *
+  FROM `<ENV>.STG.STG_INPUT_DATABASE_ELAW_TAREFAS_AGENDAMENTOS_SUBSIDIOS_CLEAN_PENDENTES_FINAL`
+
+  UNION ALL
+
+  SELECT *
+  FROM `<ENV>.STG.STG_INPUT_DATABASE_ELAW_TAREFAS_AGENDAMENTOS_SUBSIDIOS_CLEAN_CONFIRMADOS_FINAL`
+),
+
+TAREFAS_UNIFICADAS_FILTRADAS AS (
+  SELECT
+    tu.*,
+    wf.CONSIDERAR
+  FROM TAREFAS_UNIFICADAS tu
+  LEFT JOIN `<ENV>.STG.DIM_15_DIMENSAO_WORKFLOW` wf
+  ON UPPER(tu.WORKFLOW) = UPPER(wf.WORKFLOW)
+  AND UPPER(tu.FASE_DE_WORKFLOW) = UPPER(wf.FASE_DE_WORKFLOW)
+  WHERE UPPER(wf.CONSIDERAR) = 'SIM'
+  AND UPPER(tu.AREA_DO_DIREITO) <> 'CORP - TRIBUTÁRIO'
+)
+
+SELECT DISTINCT *
+FROM TAREFAS_UNIFICADAS_FILTRADAS;

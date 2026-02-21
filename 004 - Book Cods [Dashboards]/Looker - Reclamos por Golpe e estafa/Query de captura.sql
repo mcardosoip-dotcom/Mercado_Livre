@@ -1,0 +1,19 @@
+SELECT
+  FORMAT_DATE('%Y-%m', DATE(DATA_REGISTRADO_TRATADA)) AS mes,
+  PAIS,
+  DATA_REGISTRADO_TRATADA,
+  PROCESSO_ID,
+  AREA_DO_DIREITO,
+  OBJETO,
+  CAUSAS_RAIZES_2
+FROM `ddme000426-gopr4nla6zo-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS`
+WHERE
+  CAUSAS_RAIZES_2 = 'Golpe/ Estafa'
+  AND OBJETO = 'Processamento de Valores'
+  AND (
+    AREA_DO_DIREITO IN ('Cível', 'Consumidor') OR
+    AREA_DO_DIREITO IN ('CORP - Civil', 'CORP - Consumidor')
+  )
+  AND DATE(DATA_REGISTRADO_TRATADA) >= '2024-07-01'
+  AND PAIS IN ('Brasil', 'Argentina', 'México')
+ORDER BY mes, PAIS;

@@ -1,0 +1,105 @@
+import base64
+import json
+import os
+from datetime import date
+from google.oauth2 import service_account
+from google.cloud import storage, bigquery
+import pandas as pd
+import numpy as np
+
+area = os.environ.get("area")
+processing_date_string = date.today().strftime('%Y-%m-%d')
+execution_date = os.environ.get("DF_TIME_TO").replace("-", "").replace(":", "").replace(" ", "")
+project = 'meli-bi-data'
+
+storage_client = connections["SBOX_LEGALES"].storage_client
+bigquery_client = connections["SBOX_LEGALES"].bigquery_client
+
+bucket_name = "meli-bi-data-tmp"
+root_folder = f"LEGALES/{area}/QUEBRA_SIGILO_FINCH/"
+destination_execution_file = root_folder + execution_date + "/"
+# Outputs atualizados com _FINCH
+account_file = destination_execution_file + "ORIGEM_DESTINO.txt"
+circular_letter_3454_directory = destination_execution_file + "carta_circular_3454/"
+financial_statement_directory = destination_execution_file + "extrato_financeiro/"
+
+### Get Base
+# Tabela principal com _FINCH
+table_name = "meli-bi-data.SBOX_LEGALES.TBL_QS_ORIGEM_DESTINO_FINCH"
+command = """SELECT 
+              TRIM(IDENTIFICACAO) as IDENTIFICACAO,
+              CODIGO_CHAVE_OD,
+              CODIGO_CHAVE_EXTRATO,
+              VALOR_TRANSACAO,
+              NUMERO_DOCUMENTO_TRANSACAO,
+              NUMERO_BANCO_OD,
+              NUMERO_AGENCIA_OD,
+              NUMERO_CONTA_OD,
+              TIPO_CONTA_OD,
+              TIPO_PESSOA_OD,
+              CPF_CNPJ_OD,
+              NOME_PESSOA_OD,
+              NOME_DOC_IDENTIFICACAO,
+              NUMERO_DOC_IDENTIFICACAO,
+              CODIGO_DE_BARRAS,
+              NOME_ENDOSSANTE_CHEQUE,
+              DOC_ENDOSSANTE_CHEQUE,
+              SITUACAO_IDENTIFICACAO,
+              OBSERVACAO
+FROM `{}` 
+WHERE DATAHORA_IMPORTACAO = (
+    SELECT MAX(DATAHORA_IMPORTACAO) FROM SBOX_LEGALES.STG_QS_PLANILHA_PRESENTA_CAD_VF_FINCH
+)
+ORDER BY CODIGO_CHAVE_EXTRATO DESC;""".format(table_name)
+query_job = bigquery_client.query(command)
+df = query_job.to_dataframe()
+
+### Save Base
+bucket = storage_client.bucket(bucket_name)
+blob = bucket.blob(account_file)
+blob.upload_from_string(df.to_csv(index=0, mode='w'), 'text/plain')
+
+### Generate Letters
+ids = df['IDENTIFICACAO'].unique()
+for id in ids:
+    print(f'Executando o processo: {id}')
+    id_sanitized = id.replace('/', '-').replace('\\', '-')
+    filtered_data = df.loc[df['IDENTIFICACAO'] == id]
+
+    ## Fix Data
+    filtered_data = filtered_data.astype(str).replace('nan', '').replace('None', '')
+
+    ### Remove Accents and Upper
+    cols = filtered_data.select_dtypes(include=[object]).columns
+    filtered_data[cols] = filtered_data[cols].apply(
+        lambda x: x.astype(str)
+                     .str.normalize('NFKD')
+                     .str.encode('ascii', errors='ignore')
+                     .str.decode('utf-8')
+                     .str.upper()
+    ).fillna('')
+    
+    ### Validate Record Empty
+    filtered_data = filtered_data.replace(r'^\s*$', np.nan, regex=True)
+    filtered_data.dropna(
+        how='all', 
+        subset=["CODIGO_CHAVE_OD", "CODIGO_CHAVE_EXTRATO", "VALOR_TRANSACAO", "NUMERO_DOCUMENTO_TRANSACAO", "NUMERO_BANCO_OD", "NUMERO_AGENCIA_OD", "NUMERO_CONTA_OD", 
+                "TIPO_CONTA_OD", "TIPO_PESSOA_OD", "CPF_CNPJ_OD", "NOME_PESSOA_OD", "NOME_DOC_IDENTIFICACAO", "NUMERO_DOC_IDENTIFICACAO", 
+                "CODIGO_DE_BARRAS", "NOME_ENDOSSANTE_CHEQUE", "DOC_ENDOSSANTE_CHEQUE", "SITUACAO_IDENTIFICACAO", "OBSERVACAO"], 
+        inplace=True
+    )
+    if len(filtered_data) > 0:
+        filtered_data = filtered_data.drop(columns=['IDENTIFICACAO'])
+        filtered_data = filtered_data.replace(np.nan, '')
+      
+        for index, row in filtered_data.iterrows():
+            if pd.isna(row['NUMERO_AGENCIA_OD']) and not pd.isna(row['CODIGO_CHAVE_EXTRATO']):
+                filtered_data.at[index, 'NUMERO_AGENCIA_OD'] = '9999'
+            if pd.isna(row['NUMERO_CONTA_OD']) and not pd.isna(row['CODIGO_CHAVE_EXTRATO']):
+                filtered_data.at[index, 'NUMERO_CONTA_OD'] = '99999999999999999999'
+      
+    # Generate By Id com nome de arquivo atualizado com _FINCH
+    id_directory = circular_letter_3454_directory + id_sanitized
+    id_filename = id_directory + '/' + id_sanitized + "_ORIGEM_DESTINO.txt"
+    blob = bucket.blob(id_filename)
+    blob.upload_from_string(filtered_data.to_csv(sep='\t', header=False, index=0, mode='w'), 'text/plain')

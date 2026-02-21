@@ -1,0 +1,1370 @@
+{
+  "name": "Maca_Base_MP_Creditos",
+  "nodes": [
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "pdme000426-c1s7scatwm0-furyid"
+        },
+        "sqlQuery": "SELECT\nPROCESSO_ID,\n\nEXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)) AS QUARTER,\nCONCAT(\nEXTRACT(YEAR FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)),\n'-Q',\nEXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO))\n) AS ANO_QUARTER,\n\nAREA_DO_DIREITO,\nSUB_AREA_DO_DIREITO,\nPAIS,\nDATA_REGISTRADO,\nSTATUS,\nPROCESSO_MATERIA,\nOBJETO_TRATADO,\nVALOR_DA_CAUSA,\nUNIDADE_TRATADA,\n\nPARTE_CONTRARIA_NOME AS PARTE_CONTRARIA,\n\nPROCESSO_FORO_TRIBUNAL_ORGAO AS ORGANISMO_JUDICIAL,\nNUMERO_DO_PROCESSO AS NUMERO_PROCESSO_JUDICIAL_EXPTE\n\nFROM\npdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS\nWHERE\nPARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) >= '2025-01-01'\nAND PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) < '2025-04-01'\n\nAND AREA_DO_DIREITO IN ('CORP - Consumidor', 'CORP - Civil')\nAND SUB_AREA_DO_DIREITO IN ('Pre-Judicial', 'Judicial', 'Administrativo', 'Pre-Administrativo')\n\nAND OBJETO_TRATADO IN (\n'CONTA INVADIDA',\n'CANCELAMENTO',\n'PROCESSAMENTO DE VALORES',\n'INABILITAÇÃO/RESTRIÇÃO',\n'BILLING & COLLECTION [MP]',\n'DESCONHECIMENTO DE CONTRATAÇÃO DO CRÉDITO',\n'NEGATIVAÇÃO',\n'COBRANÇA'\n)",
+        "options": {}
+      },
+      "id": "a3a1199f-8d89-40b6-8e50-b5cbc583dd63",
+      "name": "2025 - Q1",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        0
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit?gid=799779145#gid=799779145"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 799779145,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit#gid=799779145",
+          "cachedResultName": "2025-Q1"
+        },
+        "keepFirstRow": true
+      },
+      "id": "ff03b4fc-a6b9-4c50-8adc-27f3f4bb541d",
+      "name": "Clean 2025 Q1",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 4.4,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit?gid=799779145#gid=799779145"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 799779145,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit#gid=799779145",
+          "cachedResultName": "2025-Q1"
+        },
+        "keepFirstRow": true
+      },
+      "id": "fc771491-d6e3-4e97-adfb-2d21c0c9e5ab",
+      "name": "Clean 2025 Q2",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        0,
+        192
+      ],
+      "typeVersion": 4.4,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit?gid=799779145#gid=799779145"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 799779145,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit#gid=799779145",
+          "cachedResultName": "2025-Q1"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "PROCESSO_ID",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_ID",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "QUARTER",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "QUARTER",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ANO_QUARTER",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ANO_QUARTER",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SUB_AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "SUB_AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PAIS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PAIS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_REGISTRADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_REGISTRADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "STATUS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "STATUS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_MATERIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_MATERIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OBJETO_TRATADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OBJETO_TRATADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VALOR_DA_CAUSA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "VALOR_DA_CAUSA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UNIDADE_TRATADA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "UNIDADE_TRATADA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PARTE_CONTRARIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PARTE_CONTRARIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ORGANISMO_JUDICIAL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ORGANISMO_JUDICIAL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NUMERO_PROCESSO_JUDICIAL_EXPTE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "NUMERO_PROCESSO_JUDICIAL_EXPTE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3fb77ad2-5c41-4e57-9912-0edb3fe8418a",
+      "name": "Input 2025 - Q1",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        0
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit?gid=799779145#gid=799779145"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 2050473042,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit#gid=2050473042",
+          "cachedResultName": "2025-Q2"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "PROCESSO_ID",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_ID",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "QUARTER",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "QUARTER",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ANO_QUARTER",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ANO_QUARTER",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SUB_AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "SUB_AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PAIS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PAIS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_REGISTRADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_REGISTRADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "STATUS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "STATUS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_MATERIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_MATERIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OBJETO_TRATADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OBJETO_TRATADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VALOR_DA_CAUSA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "VALOR_DA_CAUSA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UNIDADE_TRATADA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "UNIDADE_TRATADA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PARTE_CONTRARIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PARTE_CONTRARIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ORGANISMO_JUDICIAL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ORGANISMO_JUDICIAL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NUMERO_PROCESSO_JUDICIAL_EXPTE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "NUMERO_PROCESSO_JUDICIAL_EXPTE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "0c958867-32d8-43fd-955e-8c197c3765d4",
+      "name": "Input 2025 - Q2",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        192
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "pdme000426-c1s7scatwm0-furyid"
+        },
+        "sqlQuery": "SELECT\nPROCESSO_ID,\n\nEXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)) AS QUARTER,\nCONCAT(\nEXTRACT(YEAR FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)),\n'-Q',\nEXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO))\n) AS ANO_QUARTER,\n\nAREA_DO_DIREITO,\nSUB_AREA_DO_DIREITO,\nPAIS,\nDATA_REGISTRADO,\nSTATUS,\nPROCESSO_MATERIA,\nOBJETO_TRATADO,\nVALOR_DA_CAUSA,\nUNIDADE_TRATADA,\n\nPARTE_CONTRARIA_NOME AS PARTE_CONTRARIA,\n\nPROCESSO_FORO_TRIBUNAL_ORGAO AS ORGANISMO_JUDICIAL,\nNUMERO_DO_PROCESSO AS NUMERO_PROCESSO_JUDICIAL_EXPTE\n\nFROM\npdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS\nWHERE\nPARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) >= '2026-01-01'\nAND PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) < '2026-04-01'\n\nAND AREA_DO_DIREITO IN ('CORP - Consumidor', 'CORP - Civil')\nAND SUB_AREA_DO_DIREITO IN ('Pre-Judicial', 'Judicial', 'Administrativo', 'Pre-Administrativo')\n\nAND OBJETO_TRATADO IN (\n'CONTA INVADIDA',\n'CANCELAMENTO',\n'PROCESSAMENTO DE VALORES',\n'INABILITAÇÃO/RESTRIÇÃO',\n'BILLING & COLLECTION [MP]',\n'DESCONHECIMENTO DE CONTRATAÇÃO DO CRÉDITO',\n'NEGATIVAÇÃO',\n'COBRANÇA'\n)\n",
+        "options": {}
+      },
+      "id": "b892d9ea-d6a3-40ee-9160-431dcad5c5b0",
+      "name": "2026 - Q1",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        768
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "pdme000426-c1s7scatwm0-furyid"
+        },
+        "sqlQuery": "SELECT\nPROCESSO_ID,\n\nEXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)) AS QUARTER,\nCONCAT(\nEXTRACT(YEAR FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)),\n'-Q',\nEXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO))\n) AS ANO_QUARTER,\n\nAREA_DO_DIREITO,\nSUB_AREA_DO_DIREITO,\nPAIS,\nDATA_REGISTRADO,\nSTATUS,\nPROCESSO_MATERIA,\nOBJETO_TRATADO,\nVALOR_DA_CAUSA,\nUNIDADE_TRATADA,\n\nPARTE_CONTRARIA_NOME AS PARTE_CONTRARIA,\n\nPROCESSO_FORO_TRIBUNAL_ORGAO AS ORGANISMO_JUDICIAL,\nNUMERO_DO_PROCESSO AS NUMERO_PROCESSO_JUDICIAL_EXPTE\n\nFROM\npdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS\nWHERE\nPARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) >= '2025-04-01'\nAND PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) < '2025-07-01'\n\nAND AREA_DO_DIREITO IN ('CORP - Consumidor', 'CORP - Civil')\nAND SUB_AREA_DO_DIREITO IN ('Pre-Judicial', 'Judicial', 'Administrativo', 'Pre-Administrativo')\n\nAND OBJETO_TRATADO IN (\n'CONTA INVADIDA',\n'CANCELAMENTO',\n'PROCESSAMENTO DE VALORES',\n'INABILITAÇÃO/RESTRIÇÃO',\n'BILLING & COLLECTION [MP]',\n'DESCONHECIMENTO DE CONTRATAÇÃO DO CRÉDITO',\n'NEGATIVAÇÃO',\n'COBRANÇA'\n)\n",
+        "options": {}
+      },
+      "id": "f22f5896-0a34-4643-8e8d-90d29621e854",
+      "name": "2025 - Q2",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        192
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "pdme000426-c1s7scatwm0-furyid"
+        },
+        "sqlQuery": "SELECT\nPROCESSO_ID,\n\nEXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)) AS QUARTER,\nCONCAT(\nEXTRACT(YEAR FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)),\n'-Q',\nEXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO))\n) AS ANO_QUARTER,\n\nAREA_DO_DIREITO,\nSUB_AREA_DO_DIREITO,\nPAIS,\nDATA_REGISTRADO,\nSTATUS,\nPROCESSO_MATERIA,\nOBJETO_TRATADO,\nVALOR_DA_CAUSA,\nUNIDADE_TRATADA,\n\nPARTE_CONTRARIA_NOME AS PARTE_CONTRARIA,\n\nPROCESSO_FORO_TRIBUNAL_ORGAO AS ORGANISMO_JUDICIAL,\nNUMERO_DO_PROCESSO AS NUMERO_PROCESSO_JUDICIAL_EXPTE\n\nFROM\npdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS\nWHERE\nPARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) >= '2025-07-01'\nAND PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) < '2025-10-01'\n\nAND AREA_DO_DIREITO IN ('CORP - Consumidor', 'CORP - Civil')\nAND SUB_AREA_DO_DIREITO IN ('Pre-Judicial', 'Judicial', 'Administrativo', 'Pre-Administrativo')\n\nAND OBJETO_TRATADO IN (\n'CONTA INVADIDA',\n'CANCELAMENTO',\n'PROCESSAMENTO DE VALORES',\n'INABILITAÇÃO/RESTRIÇÃO',\n'BILLING & COLLECTION [MP]',\n'DESCONHECIMENTO DE CONTRATAÇÃO DO CRÉDITO',\n'NEGATIVAÇÃO',\n'COBRANÇA'\n)\n",
+        "options": {}
+      },
+      "id": "2e7a3754-b3f1-4803-b662-7dc6809e6f4b",
+      "name": "2025 - Q3",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        384
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "pdme000426-c1s7scatwm0-furyid"
+        },
+        "sqlQuery": "SELECT\nPROCESSO_ID,\n\nEXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)) AS QUARTER,\nCONCAT(\nEXTRACT(YEAR FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO)),\n'-Q',\nEXTRACT(QUARTER FROM PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO))\n) AS ANO_QUARTER,\n\nAREA_DO_DIREITO,\nSUB_AREA_DO_DIREITO,\nPAIS,\nDATA_REGISTRADO,\nSTATUS,\nPROCESSO_MATERIA,\nOBJETO_TRATADO,\nVALOR_DA_CAUSA,\nUNIDADE_TRATADA,\n\nPARTE_CONTRARIA_NOME AS PARTE_CONTRARIA,\n\nPROCESSO_FORO_TRIBUNAL_ORGAO AS ORGANISMO_JUDICIAL,\nNUMERO_DO_PROCESSO AS NUMERO_PROCESSO_JUDICIAL_EXPTE\n\nFROM\npdme000426-c1s7scatwm0-furyid.STG.LK_PBD_LA_ENTRADAS_E_DESFECHOS\nWHERE\nPARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) >= '2025-10-01'\nAND PARSE_DATE('%d/%m/%Y', DATA_REGISTRADO) < '2026-01-01'\n\nAND AREA_DO_DIREITO IN ('CORP - Consumidor', 'CORP - Civil')\nAND SUB_AREA_DO_DIREITO IN ('Pre-Judicial', 'Judicial', 'Administrativo', 'Pre-Administrativo')\n\nAND OBJETO_TRATADO IN (\n'CONTA INVADIDA',\n'CANCELAMENTO',\n'PROCESSAMENTO DE VALORES',\n'INABILITAÇÃO/RESTRIÇÃO',\n'BILLING & COLLECTION [MP]',\n'DESCONHECIMENTO DE CONTRATAÇÃO DO CRÉDITO',\n'NEGATIVAÇÃO',\n'COBRANÇA'\n)\n",
+        "options": {}
+      },
+      "id": "9f08c55f-335c-4c9b-bb12-2d67ca634434",
+      "name": "2025 - Q4",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        576
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit?gid=799779145#gid=799779145"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 496811762,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit#gid=496811762",
+          "cachedResultName": "2025-Q3"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "PROCESSO_ID",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_ID",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "QUARTER",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "QUARTER",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ANO_QUARTER",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ANO_QUARTER",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SUB_AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "SUB_AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PAIS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PAIS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_REGISTRADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_REGISTRADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "STATUS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "STATUS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_MATERIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_MATERIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OBJETO_TRATADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OBJETO_TRATADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VALOR_DA_CAUSA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "VALOR_DA_CAUSA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UNIDADE_TRATADA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "UNIDADE_TRATADA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PARTE_CONTRARIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PARTE_CONTRARIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ORGANISMO_JUDICIAL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ORGANISMO_JUDICIAL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NUMERO_PROCESSO_JUDICIAL_EXPTE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "NUMERO_PROCESSO_JUDICIAL_EXPTE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "dd4b3c6e-a06f-42ca-a4ab-84bc30fa31f1",
+      "name": "Input 2025 - Q3",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        384
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit?gid=799779145#gid=799779145"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 241479762,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit#gid=241479762",
+          "cachedResultName": "2025-Q4"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "PROCESSO_ID",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_ID",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "QUARTER",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "QUARTER",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ANO_QUARTER",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ANO_QUARTER",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SUB_AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "SUB_AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PAIS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PAIS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_REGISTRADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_REGISTRADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "STATUS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "STATUS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_MATERIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_MATERIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OBJETO_TRATADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OBJETO_TRATADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VALOR_DA_CAUSA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "VALOR_DA_CAUSA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UNIDADE_TRATADA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "UNIDADE_TRATADA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PARTE_CONTRARIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PARTE_CONTRARIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ORGANISMO_JUDICIAL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ORGANISMO_JUDICIAL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NUMERO_PROCESSO_JUDICIAL_EXPTE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "NUMERO_PROCESSO_JUDICIAL_EXPTE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "479a442d-a1f0-4d8e-9f60-5c356c845637",
+      "name": "Input 2025 - Q4",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        576
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit?gid=799779145#gid=799779145"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 69418272,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit#gid=69418272",
+          "cachedResultName": "2026-Q1"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "PROCESSO_ID",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_ID",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "QUARTER",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "QUARTER",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ANO_QUARTER",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ANO_QUARTER",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SUB_AREA_DO_DIREITO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "SUB_AREA_DO_DIREITO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PAIS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PAIS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DATA_REGISTRADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "DATA_REGISTRADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "STATUS",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "STATUS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROCESSO_MATERIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PROCESSO_MATERIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OBJETO_TRATADO",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "OBJETO_TRATADO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VALOR_DA_CAUSA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "VALOR_DA_CAUSA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UNIDADE_TRATADA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "UNIDADE_TRATADA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PARTE_CONTRARIA",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "PARTE_CONTRARIA",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ORGANISMO_JUDICIAL",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "ORGANISMO_JUDICIAL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "NUMERO_PROCESSO_JUDICIAL_EXPTE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "NUMERO_PROCESSO_JUDICIAL_EXPTE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "c1388bdf-5b8e-41ca-aa17-d127812eed3a",
+      "name": "Input 2026 - Q1",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        448,
+        768
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit?gid=799779145#gid=799779145"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 799779145,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit#gid=799779145",
+          "cachedResultName": "2025-Q1"
+        },
+        "keepFirstRow": true
+      },
+      "id": "269fbe18-c661-4c73-b330-73943dbe4120",
+      "name": "Clean 2025 Q3",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        0,
+        384
+      ],
+      "typeVersion": 4.4,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit?gid=799779145#gid=799779145"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 799779145,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit#gid=799779145",
+          "cachedResultName": "2025-Q1"
+        },
+        "keepFirstRow": true
+      },
+      "id": "13e7d412-66db-41fa-9284-d316efadc55e",
+      "name": "Clean 2025 Q4",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        0,
+        576
+      ],
+      "typeVersion": 4.4,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit?gid=799779145#gid=799779145"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 69418272,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit#gid=69418272",
+          "cachedResultName": "2026-Q1"
+        },
+        "keepFirstRow": true
+      },
+      "id": "e3d72cd8-886f-42f0-8463-76611479757f",
+      "name": "Clean 2026 Q1",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        0,
+        768
+      ],
+      "typeVersion": 4.4,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "triggerAtHour": 23
+            }
+          ]
+        }
+      },
+      "id": "91e4d26b-8ffe-4cb8-afa8-30d8500c1e59",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -224,
+        384
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "https://docs.google.com/spreadsheets/d/1rXuUKW9A8lGkglyYbVefMDi4gEB560O_qtQqltrQgKo/edit?gid=0#gid=0"
+      },
+      "id": "715b5a4e-fbd6-4ab2-8f34-a5ea5fd60581",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        -16
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "2025 - Q1": {
+      "main": [
+        [
+          {
+            "node": "Input 2025 - Q1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2025 - Q2": {
+      "main": [
+        [
+          {
+            "node": "Input 2025 - Q2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2025 - Q3": {
+      "main": [
+        [
+          {
+            "node": "Input 2025 - Q3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2025 - Q4": {
+      "main": [
+        [
+          {
+            "node": "Input 2025 - Q4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2026 - Q1": {
+      "main": [
+        [
+          {
+            "node": "Input 2026 - Q1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean 2025 Q1": {
+      "main": [
+        [
+          {
+            "node": "2025 - Q1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean 2025 Q2": {
+      "main": [
+        [
+          {
+            "node": "2025 - Q2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean 2025 Q3": {
+      "main": [
+        [
+          {
+            "node": "2025 - Q3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean 2025 Q4": {
+      "main": [
+        [
+          {
+            "node": "2025 - Q4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean 2026 Q1": {
+      "main": [
+        [
+          {
+            "node": "2026 - Q1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Clean 2025 Q1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clean 2025 Q2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clean 2025 Q3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clean 2025 Q4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clean 2026 Q1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fdcf7260-0fbc-47bd-8093-2b828d3b4f86",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92a7841699b7656650cb4dc0dd4f4f4fdb565d51df3f1aaf3126caa7a316a77c"
+  },
+  "id": "yBkBdwoI2u3Zhfbz",
+  "tags": []
+}

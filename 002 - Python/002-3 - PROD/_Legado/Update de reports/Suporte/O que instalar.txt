@@ -1,0 +1,21 @@
+pip install pywin32
+pip install google-cloud-storage
+pip install google-auth-oauthlib
+pip install tableaudocumentapi
+pip install selenium webdriver-manager
+pip install auto-py-to-exe
+pip install selenium webdriver-manager
+pip install pyautogui
+pip install openpyxl
+pip install pyinstaller
+pip install pillow==10.2.0 pyscreeze==0.1.30 pyautogui==0.9.54
+pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib pandas openpyxl
+pip install lxml
+pip install google-cloud-bigquery
+pip install python-docx
+pip install polars pandas openpyxl xlsxwriter
+
+
+
+Criando um arquivo .exe
+power shell auto-py-to-exe

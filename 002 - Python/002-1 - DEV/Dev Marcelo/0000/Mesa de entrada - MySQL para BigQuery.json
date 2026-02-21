@@ -1,0 +1,174 @@
+{
+  "name": "Mesa de entrada - MySQL para BigQuery",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-200, 320],
+      "id": "trigger-mesa-entrada",
+      "name": "Executar workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "const tarefas = [\n  { query: 'SELECT *, DAYOFWEEK(fecha) AS dia_semana FROM vista_entradas', tableName: 'vista_entradas' },\n  { query: 'SELECT * FROM dw_hist_casos_x_estado', tableName: 'dw_hist_casos_x_estado' },\n  { query: 'SELECT * FROM entradas', tableName: 'tab_entradas' },\n  { query: 'SELECT * FROM vista_cantidad_casos_usuarios', tableName: 'vista_cantidad_casos_usuarios' },\n  { query: 'SELECT * FROM vista_usuarios', tableName: 'vista_usuarios' },\n  { query: 'SELECT * FROM mesa_entrada.v_metricas_qa', tableName: 'v_metricas_qa' },\n  { query: 'SELECT * FROM mesa_entrada.estados', tableName: 'estados' },\n  { query: 'SELECT * FROM mesa_entrada.tipo_documentos', tableName: 'tipo_documentos' },\n  { query: 'SELECT * FROM mesa_entrada.metricas_big_query', tableName: 'metricas_big_query' },\n  { query: 'SELECT * FROM mesa_entrada.origenes', tableName: 'origenes' },\n  { query: 'SELECT * FROM mesa_entrada.entradas_estados', tableName: 'entradas_estados' }\n];\nreturn tarefas.map(t => ({ json: t }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [20, 320],
+      "id": "set-tarefas",
+      "name": "Lista de tarefas (queries + tabelas BQ)"
+    },
+    {
+      "parameters": {
+        "batchSize": 1
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [260, 320],
+      "id": "loop-tarefas",
+      "name": "Loop Tarefas"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $json.query }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [500, 320],
+      "id": "mysql-execute",
+      "name": "MySQL - Extrair dados",
+      "credentials": {
+        "mySql": {
+          "id": "CONFIGURE_MYSQL_CREDENTIAL",
+          "name": "MySQL Mesa de Entrada"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "projectId": "SEU_PROJECT_ID",
+        "datasetId": "mesa_entrada",
+        "tableId": "={{ $('Loop Tarefas').item.json.tableName }}",
+        "options": {
+          "ignoreUnknownValues": true,
+          "skipInvalidRows": true
+        }
+      },
+      "type": "n8n-nodes-base.googleBigQuery",
+      "typeVersion": 1,
+      "position": [740, 320],
+      "id": "bigquery-insert",
+      "name": "BigQuery - Carregar tabela",
+      "credentials": {
+        "googleBigQueryOAuth2Api": {
+          "id": "CONFIGURE_BIGQUERY_CREDENTIAL",
+          "name": "Google BigQuery"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "log-msg",
+              "name": "log",
+              "value": "=Tabela {{ $('Loop Tarefas').item.json.tableName }}: {{ $items().length }} linhas carregadas",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [980, 320],
+      "id": "set-log",
+      "name": "Log da carga"
+    }
+  ],
+  "connections": {
+    "Executar workflow": {
+      "main": [
+        [
+          {
+            "node": "Lista de tarefas (queries + tabelas BQ)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lista de tarefas (queries + tabelas BQ)": {
+      "main": [
+        [
+          {
+            "node": "Loop Tarefas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Tarefas": {
+      "main": [
+        [
+          {
+            "node": "MySQL - Extrair dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL - Extrair dados": {
+      "main": [
+        [
+          {
+            "node": "BigQuery - Carregar tabela",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BigQuery - Carregar tabela": {
+      "main": [
+        [
+          {
+            "node": "Log da carga",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log da carga": {
+      "main": [
+        [
+          {
+            "node": "Loop Tarefas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "name": "GScript_Sortia_Consulta_Embargos_In_Out",
+  "nodes": [
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data&pli=1"
+        },
+        "sqlQuery": "CREATE OR REPLACE EXTERNAL TABLE `ddme000426-gopr4nla6zo-furyid.STG.Sortia_Embargos_InOut` (\n  user_from    STRING,\n  amount       STRING,\n  case_file    STRING,\n  court        STRING,\n  cover_sheet  STRING,\n  debt_id      STRING\n)\nOPTIONS (\n  format = 'GOOGLE_SHEETS',\n  skip_leading_rows = 1,\n  sheet_range = 'Resultado!A2:F',\n  uris = ['https://docs.google.com/spreadsheets/d/1zyhXcYfi7epUOjEyzeHA-nTYTAZryh74LArP39HzPN4/edit#gid=GID_DA_ABA']\n);\n",
+        "options": {}
+      },
+      "id": "0a7e2fe8-6d00-419d-afda-5da8ecd0d6bc",
+      "name": "Sortia_Embargos_InOut",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        192
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data&pli=1"
+        },
+        "sqlQuery": "CREATE OR REPLACE TABLE `ddme000426-gopr4nla6zo-furyid.STG.Sortia_Embargos_InOut_FE` AS\n\nSELECT DISTINCT *\nFROM (\n\n  SELECT\n    A.user_from,\n    A.amount,\n    A.case_file,\n    A.court,\n    A.cover_sheet,\n    A.debt_id,\n    A.case_file   AS EXPEDIENTE,\n    A.court       AS JUZGADO,\n    A.cover_sheet AS CARATULA,\n    B.DEBT_ID             AS DEBT_ID_DISP,\n    B.DEBT_USER_ID,\n    B.DEBT_SITE_ID,\n    B.DEBT_CURRENCY_ID,\n    B.DEBT_DEBT_TYPE_ID,\n    B.DEBT_CREATED_AT,\n    B.DEBT_TOTAL_AMOUNT,\n    B.DEBT_PAID_AMOUNT,\n    B.DEBT_STATUS,\n    B.DEBT_DESCRIPTION\n  FROM `ddme000426-gopr4nla6zo-furyid.STG.Sortia_Embargos_InOut` A\n  LEFT JOIN `meli-bi-data.WHOWNER.BT_MP_DISB_DEBT` B\n    ON A.debt_id = CAST(B.DEBT_ID AS STRING)\n   AND B.DEBT_DEBT_TYPE_ID IN (77, 437, 442, 459)\n   AND DATE(B.DEBT_CREATED_AT) >= DATE_SUB(CURRENT_DATE(), INTERVAL 20 DAY)\n\n  UNION ALL\n\n  SELECT\n    NULL AS user_from,\n    NULL AS amount,\n    NULL AS case_file,\n    NULL AS court,\n    NULL AS cover_sheet,\n    NULL AS debt_id,\n    'NA' AS EXPEDIENTE,\n    'NA' AS JUZGADO,\n    'NA' AS CARATULA,\n    B.DEBT_ID             AS DEBT_ID_DISP,\n    B.DEBT_USER_ID,\n    B.DEBT_SITE_ID,\n    B.DEBT_CURRENCY_ID,\n    B.DEBT_DEBT_TYPE_ID,\n    B.DEBT_CREATED_AT,\n    B.DEBT_TOTAL_AMOUNT,\n    B.DEBT_PAID_AMOUNT,\n    B.DEBT_STATUS,\n    B.DEBT_DESCRIPTION\n  FROM `meli-bi-data.WHOWNER.BT_MP_DISB_DEBT` B\n  WHERE B.DEBT_DEBT_TYPE_ID IN (77, 437, 442, 459)\n    AND DATE(B.DEBT_CREATED_AT) >= DATE_SUB(CURRENT_DATE(), INTERVAL 20 DAY)\n\n);\n",
+        "options": {}
+      },
+      "id": "817e3050-6b1d-4629-ab06-7524bfc1aaff",
+      "name": "Sortia_Embargos_InOut_FE",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        224,
+        384
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "// Input\n// https://drive.google.com/drive/folders/1-MTlq_7QLdTrA2ivk1fT4BJ198D_-wRJ\n\n// Output\n// https://drive.google.com/drive/folders/1uJJqqb5Ot9Mn7z4jNuFMdY4DyQIxrfOt",
+        "height": 192,
+        "width": 352
+      },
+      "id": "0a3a2a74-7f77-4d05-a43a-b266f2e40eb3",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -416,
+        160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2
+            }
+          ]
+        }
+      },
+      "id": "2a1bb88b-325c-4da2-ae71-e01974c4373a",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        0,
+        192
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "https://script.google.com/a/macros/mercadolivre.com/s/AKfycbw8O1lGPEg0Dn19XBBjAwDHr7hmTGBzGU-I6_lpYQ/dev"
+      },
+      "id": "000a7414-ae6a-4d44-9ff0-a3f52e1a620d",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        448,
+        160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://script.google.com/a/macros/mercadolivre.com/s/AKfycbw4h76ive9vA6EACMhfPXThVQP9UZFQf2qsIhraz1bCpXmfurj6fIJWHhDSig1UoQ/exec",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleGenericOAuth2Api",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "maxRedirects": 100
+            }
+          }
+        }
+      },
+      "id": "f68307d9-3998-4e52-ba96-b2a63ff51e4f",
+      "name": "GScript_Sortia_Consulta_Embargos_In_Out",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        224,
+        0
+      ],
+      "executeOnce": true,
+      "typeVersion": 4.2,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "GScript_Sortia_Consulta_Embargos_In_Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GScript_Sortia_Consulta_Embargos_In_Out": {
+      "main": [
+        [
+          {
+            "node": "Sortia_Embargos_InOut",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sortia_Embargos_InOut": {
+      "main": [
+        [
+          {
+            "node": "Sortia_Embargos_InOut_FE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b8df7ac9-2db7-4469-bafa-1e610d178d8d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92a7841699b7656650cb4dc0dd4f4f4fdb565d51df3f1aaf3126caa7a316a77c"
+  },
+  "id": "rTu9SgX3CRUqsQB4",
+  "tags": []
+}

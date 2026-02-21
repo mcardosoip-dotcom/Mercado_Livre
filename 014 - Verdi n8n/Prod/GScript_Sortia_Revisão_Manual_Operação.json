@@ -1,0 +1,611 @@
+{
+  "name": "GScript_Sortia_Revisão_Manual_Operação",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/16ty2m0fFDI20aSw4H0N3dkxKay2rX7_ew9L-RZvwFrM/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 2127878411,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16ty2m0fFDI20aSw4H0N3dkxKay2rX7_ew9L-RZvwFrM/edit#gid=2127878411",
+          "cachedResultName": "DataBase_Rev_Manual"
+        }
+      },
+      "id": "beaa0db7-397d-47fa-b025-a0937b56fb23",
+      "name": "Limpar colunas",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        0,
+        384
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2
+            }
+          ]
+        }
+      },
+      "id": "77051eb1-8042-4b75-9f26-115805d1486e",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -224,
+        384
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/16ty2m0fFDI20aSw4H0N3dkxKay2rX7_ew9L-RZvwFrM/edit?gid=1541458903#gid=1541458903"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 88154111,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16ty2m0fFDI20aSw4H0N3dkxKay2rX7_ew9L-RZvwFrM/edit#gid=88154111",
+          "cachedResultName": "Machine"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "Status",
+              "type": "string",
+              "display": true,
+              "removed": true,
+              "required": false,
+              "displayName": "Status",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [
+            "Status"
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "f5f1dabb-f01b-4872-a3c7-dca84f918ba3",
+      "name": "Input de dados",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        224,
+        192
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "73ba14ac-907b-4894-a2e4-5edd2f566a99",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "Salesforce_Report_Embargos_Revisao.csv"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1dccd633-8be6-491f-8998-c25fa4ee51d9",
+      "name": "Filter",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        672,
+        384
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "0c688a00-6edb-42bb-99bf-676becf1e8a3",
+      "name": "Download file",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        896,
+        384
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "cf3676cd-c620-4a00-8a3e-96f05ed15afa",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        224,
+        384
+      ],
+      "webhookId": "7c6cc0f2-62e5-468f-95a5-265ccc8bf215",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data"
+        },
+        "sqlQuery": "SELECT\n  ID,\n  FORMAT_DATE('%d/%m/%Y', DATE(FECHA_ISSUE)) AS FECHA_ISSUE,\n  FORMAT_DATE('%d/%m/%Y', DATE(PROCESSED_DATE)) AS PROCESSED_DATE,\n  LIFTING_TYPE,\n  SIT_SITE_ID,\n  CAUSE,\n  TOTAL_AMOUNT,\n  ISSUE,\n  ANALISIS_RESULT\nFROM\n  `meli-bi-data.WHOWNER.BT_SORTIA_EMBARGOS`\nWHERE\n  ANALISIS_RESULT = 'REVISION_MANUAL'\n  AND ISSUE IS NOT NULL\n  AND ISSUE <> 'null'\n  AND DATE(FECHA_ISSUE) >= DATE('2025-11-24')\nORDER BY\n  PROCESSED_DATE DESC\n",
+        "options": {}
+      },
+      "id": "433afb6c-26fc-4ff3-9683-d63948898b0e",
+      "name": "Query Machine",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        0,
+        192
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "url",
+            "value": "https://drive.google.com/drive/u/0/folders/1_YMwSIYMLf1Dos-Z1v2_MsIHHkm7P9_g"
+          }
+        },
+        "options": {}
+      },
+      "id": "057f75bf-0b45-4eed-b093-7b5e7f450b7c",
+      "name": "Busca Arquivo",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        448,
+        384
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "delimiter": ";",
+          "encoding": "ascii"
+        }
+      },
+      "id": "318e4cd1-3a40-49a9-80a3-e3ffe4c3ce79",
+      "name": "Convert",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        1120,
+        384
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/16ty2m0fFDI20aSw4H0N3dkxKay2rX7_ew9L-RZvwFrM/edit?gid=36549932#gid=36549932"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 2127878411,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16ty2m0fFDI20aSw4H0N3dkxKay2rX7_ew9L-RZvwFrM/edit#gid=2127878411",
+          "cachedResultName": "DataBase_Rev_Manual"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "Issue: Fecha de creación",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Issue: Fecha de creación",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Legales Fecha de Recepción",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Legales Fecha de Recepción",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Issue: Number",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Issue: Number",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "N°Causa / Expediente",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "N°Causa / Expediente",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Legales Autoridad Interviniente",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Legales Autoridad Interviniente",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "País",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "País",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Número de OE",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Número de OE",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Legales Approval Status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Legales Approval Status",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Legales Otros Requerimientos",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Legales Otros Requerimientos",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Legales Otros Requerimientos2",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Legales Otros Requerimientos2",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Legales Otros Requerimientos3",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Legales Otros Requerimientos3",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Representante Asignado",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Representante Asignado",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Issue: Tipo de registro",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Issue: Tipo de registro",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Status",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "ada7e03b-cd38-4f2c-b999-676fe5d0e7fd",
+      "name": "Input de infs",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1568,
+        384
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "691a764a-09e3-441e-ba02-ece2976ff53c",
+              "name": "Legales Reiteratorio",
+              "type": "string",
+              "value": "={{ Number($json['Legales Reiteratorio']) === 1 }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "4a5267d4-7944-4975-8eba-ea9ecd1880ab",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1344,
+        384
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "url": "https://script.google.com/a/macros/mercadolivre.com/s/AKfycbxTKhQ8H8APlXz-bHTNN-uscj3FRzwLHy6O4Wm0Pz2EGkqREhfl5XmsG6Cn7igTijVD/exec",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleGenericOAuth2Api",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "maxRedirects": 100
+            }
+          }
+        }
+      },
+      "id": "e5b56aeb-159f-4fc4-9dc9-29a1ecbff1ba",
+      "name": "Script_Sortia_Revisão_Manual_Operação",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        0,
+        576
+      ],
+      "executeOnce": true,
+      "typeVersion": 4.2,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "https://docs.google.com/spreadsheets/d/16ty2m0fFDI20aSw4H0N3dkxKay2rX7_ew9L-RZvwFrM/edit?gid=36549932#gid=36549932"
+      },
+      "id": "58fdfefd-217b-4a8e-82ea-3038bd63184e",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1504,
+        512
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Busca Arquivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Input de infs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Busca Arquivo": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Convert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Machine": {
+      "main": [
+        [
+          {
+            "node": "Input de dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limpar colunas": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Query Machine",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Limpar colunas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Script_Sortia_Revisão_Manual_Operação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Script_Sortia_Revisão_Manual_Operação": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "18afdc95-1470-4474-9f23-7f953a4f676f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "626fffdd02ff43c8fec19cc5b2b9179c3f5ba79837f01e829a9512fd4515ab26"
+  },
+  "id": "VOvb7gHBrzsEM2Ul",
+  "tags": []
+}

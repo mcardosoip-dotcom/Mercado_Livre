@@ -1,0 +1,165 @@
+{
+  "name": "Maca",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        96
+      ],
+      "id": "2f9be5b0-5838-4d47-88e5-cee720c0972e",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "value": "https://console.cloud.google.com/bigquery?project=meli-bi-data&pli=1&ws=!1m0",
+          "mode": "url"
+        },
+        "sqlQuery": "SELECT\nLEGAL_ID,\nLEGAL_JURISDICTION_STATE,\nLEGAL_AREA,\nLEGAL_AMOUNT_CLAIMED,\nLEGAL_CLOSING_DATE,\nLEGAL_SUBAREA\nFROM\nmeli-bi-data.WHOWNER.LK_LEGAL_DATABASE\nWHERE\nSIT_SITE_ID = 'MLA'\nAND SAFE_CAST(LEGAL_AMOUNT_CLAIMED AS NUMERIC) > 5000000\nAND DATE(LEGAL_ENTRY_DATE) >= DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)\nAND UPPER(LEGAL_PHASE_DETAIL) IN ('ENCERRADA SEM ACORDO')\nAND UPPER(LEGAL_AREA) NOT IN ('LABORAL', 'TRIBUTARIO', 'LABOR', 'TAX', 'CIVIL')\nAND UPPER(LEGAL_SUBAREA) NOT IN ('JUDICIAL', 'PREJUDICIAL')\nORDER BY\nSAFE_CAST(LEGAL_AMOUNT_CLAIMED AS NUMERIC) DESC",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleBigQuery",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        96
+      ],
+      "id": "b7cc107f-caa6-4609-8cfc-42d46e277f26",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        96
+      ],
+      "id": "6a24797e-cabc-4244-9d58-927161891fff",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "sendTo": "drc.hsp@mercadolibre.com,dre.hispanos@mercadolibre.com",
+        "subject": "Teste",
+        "message": "teste",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "21b02a6f-6581-4330-92ef-0a8d5ab71e86",
+      "name": "Send a message",
+      "webhookId": "dc5c61fa-ce49-4d25-ba54-ce657c307af6",
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "marcelo.cardoso@mercadolivre.com",
+        "subject": "Teste",
+        "message": "teste",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        192
+      ],
+      "id": "54db3961-d824-4142-a39b-1eb3dd91db67",
+      "name": "Send a message1",
+      "webhookId": "dc5c61fa-ce49-4d25-ba54-ce657c307af6",
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "DNjOQokUdH4Bz7pF",
+          "name": "Google - General"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a0886e1a-6d8b-4c05-b814-53f767961a4a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "09fc4d31b59a12de4e3c5da4e00a3cc2227c3ead2d6bbec9bace9eb089b79bfd"
+  },
+  "id": "xD9kXvvLaFVbee7C",
+  "tags": []
+}

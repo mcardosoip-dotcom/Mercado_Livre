@@ -1,0 +1,712 @@
+{
+  "name": "Migração GScripts - Cruces Financeiros",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "d5622b44-6333-4433-9037-a5426bed021f",
+      "name": "Limit to 1 item (Control)",
+      "type": "n8n-nodes-base.limit",
+      "position": [
+        1472,
+        1112
+      ],
+      "typeVersion": 1,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1bd2fc1-71fc-4c4d-a832-df209da29d96",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "47360cda-b500-4601-9943-a9e81722ee7b",
+      "name": "Set Control Item",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1696,
+        1112
+      ],
+      "typeVersion": 3.3,
+      "alwaysOutputData": true,
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "c46e68b7-11a8-4578-841f-ebafa32ffee5",
+      "name": "Limit to 1 item2",
+      "type": "n8n-nodes-base.limit",
+      "position": [
+        1920,
+        1112
+      ],
+      "typeVersion": 1,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "6e7ec50e-6888-45f0-9a6d-f55dab8b8fc3",
+      "name": "Agendamento (7h)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -320,
+        1112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "=ddme000426-gopr4nla6zo-furyid"
+        },
+        "sqlQuery": "\nCREATE OR REPLACE TABLE `ddme000426-gopr4nla6zo-furyid.STG.tb_resultado_validacao_cruces` AS\n\nWITH base_sheet AS (\n    SELECT \n      -- Adicionei DISTINCT para evitar que duplicidade de carga (linhas identicas) \n      -- acione a Flag 6 indevidamente\n      DISTINCT\n      id_de_deuda_indique_a_qu_id_de_deuda_corresponde_esta_transferencia AS id_deuda,\n      SAFE_CAST(REPLACE(monto_total, ',', '.') AS FLOAT64) AS monto_transferido,\n      -- Garante que tipo_conta nunca seja nulo para não quebrar o LIKE depois\n      IFNULL(LOWER(cul_es_el_tipo_de_cuenta), '') AS tipo_conta, \n      TRIM(cbu_22_dgitos) AS cbu_informado,\n      issue_en_salesforce as issue_salesforce\n    FROM\n      `ddme000426-gopr4nla6zo-furyid.STG.tb_carga_integridade`\n  ),\n\n  base_sheet_com_contagem AS (\n    SELECT\n      *,\n      -- Movemos a contagem para cá, após o DISTINCT\n      COUNT(*) OVER (\n        PARTITION BY id_deuda, SAFE_CAST(monto_transferido AS NUMERIC)\n      ) as qtd_ocorrencias\n    FROM base_sheet\n  ),\n\n  base_bq AS (\n    SELECT\n      CAST(DEBT_ID AS INT64) AS DEBT_ID,\n      DEBT_PAID_AMOUNT,\n      DEBT_STATUS_DETAIL,\n      DEBT_DEBT_TYPE_ID \n    FROM `meli-bi-data.WHOWNER.BT_MP_DISB_DEBT`\n    WHERE DEBT_DEBT_TYPE_ID IN (442, 77, 459, 437) \n    -- DICA: Se houver risco de duplicidade no BQ, descomente a linha abaixo:\n    -- QUALIFY ROW_NUMBER() OVER(PARTITION BY DEBT_ID ORDER BY DEBT_PAID_AMOUNT DESC) = 1\n  ),\n\n  JOINED_DATA AS (\n    SELECT \n      sheet.id_deuda,\n      sheet.monto_transferido,\n      bq.DEBT_PAID_AMOUNT,\n      sheet.cbu_informado,\n      sheet.issue_salesforce,\n      sheet.tipo_conta,\n      sheet.qtd_ocorrencias,         \n      bq.DEBT_DEBT_TYPE_ID,\n      bq.DEBT_STATUS_DETAIL,\n      bq.DEBT_ID AS bq_id_check\n    FROM base_sheet_com_contagem sheet\n    LEFT JOIN base_bq bq ON CAST(sheet.id_deuda as STRING) = CAST(bq.DEBT_ID AS STRING)\n  ),\n\n  CALC_FLAGS AS (\n    SELECT \n      *,\n      CURRENT_TIMESTAMP() as data_execucao,\n      (IFNULL(monto_transferido, 0) - IFNULL(DEBT_PAID_AMOUNT, 0)) as diferenca,\n\n      -- ======================================================================\n      -- DEFINIÇÃO DAS FLAGS (BLINDAGEM CONTRA NULL)\n      -- Usamos COALESCE(..., FALSE) para garantir booleano puro\n      -- ======================================================================\n\n      -- CRUCE 2: ID inexistente\n      COALESCE(bq_id_check IS NULL, FALSE) AS flag_cruce_2_id_inexistente,\n\n      -- DATA SUJA: Valor nulo\n      COALESCE(monto_transferido IS NULL, FALSE) AS flag_data_suja,\n\n      -- CRUCE 6: Duplicidade (Agora baseada na contagem pós-distinct)\n      COALESCE(qtd_ocorrencias > 1, FALSE) AS flag_cruce_6_duplicado,\n\n      -- CRUCE 5: CBU Inválido\n      COALESCE(cbu_informado IS NOT NULL AND NOT REGEXP_CONTAINS(cbu_informado, r'^[0-9]{22}$'), FALSE) AS flag_cruce_5_cbu_invalido,\n\n      -- CRUCE 7: Tipo de Dívida Incorreto\n      -- Como usamos IFNULL no tipo_conta lá em cima, o LIKE não vai retornar NULL\n      COALESCE(bq_id_check IS NOT NULL AND (\n          (tipo_conta LIKE '%no remun%' AND DEBT_DEBT_TYPE_ID NOT IN (77, 437, 459))\n          OR\n          (tipo_conta NOT LIKE '%no remun%' AND tipo_conta LIKE '%remun%' AND DEBT_DEBT_TYPE_ID != 442)\n      ), FALSE) AS flag_cruce_7_debt_type,\n\n      -- CRUCE 1: Valor Planilha > Banco\n      COALESCE(bq_id_check IS NOT NULL AND monto_transferido IS NOT NULL AND TRUNC(monto_transferido) > TRUNC(DEBT_PAID_AMOUNT), FALSE) AS flag_cruce_1_valor_maior,\n\n      -- CRUCE 4: Valor Planilha < Banco\n      COALESCE(bq_id_check IS NOT NULL AND monto_transferido IS NOT NULL AND TRUNC(monto_transferido) < TRUNC(DEBT_PAID_AMOUNT), FALSE) AS flag_cruce_4_valor_menor,\n\n      -- CRUCE 3: Status inválido\n      COALESCE(bq_id_check IS NOT NULL \n       AND (tipo_conta LIKE '%remun%') \n       AND (DEBT_STATUS_DETAIL NOT IN ('executed', 'partially_executed','awaiting_confirmation')) \n       AND (DEBT_DEBT_TYPE_ID = 442), FALSE\n      ) AS flag_cruce_3_status_invalido\n\n    FROM JOINED_DATA\n  )\n\nSELECT \n  id_deuda,\n  data_execucao,\n  monto_transferido,\n  DEBT_PAID_AMOUNT,\n  diferenca,\n  cbu_informado,\n  issue_salesforce,\n  tipo_conta,\n  DEBT_DEBT_TYPE_ID,\n\n  flag_cruce_1_valor_maior,\n  flag_cruce_2_id_inexistente,\n  flag_cruce_3_status_invalido,\n  flag_cruce_4_valor_menor,\n  flag_cruce_5_cbu_invalido,\n  flag_cruce_6_duplicado,\n  flag_cruce_7_debt_type,\n  flag_data_suja,\n\n  CASE \n    WHEN flag_cruce_1_valor_maior OR flag_cruce_2_id_inexistente OR flag_cruce_3_status_invalido OR \n         flag_cruce_4_valor_menor OR flag_cruce_5_cbu_invalido OR flag_cruce_6_duplicado OR \n         flag_cruce_7_debt_type OR flag_data_suja \n    THEN 'COM_ERRO'\n    ELSE 'OK'\n  END AS status_geral\n\nFROM CALC_FLAGS",
+        "options": {}
+      },
+      "id": "607cd976-c8f1-4e8a-b449-fbb04dda6a4d",
+      "name": "Executar Cruces (Query)",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        1024,
+        992
+      ],
+      "executeOnce": true,
+      "typeVersion": 2,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "YCWVcI8UePnVEDIN",
+          "name": "Google account vEpH-kQwGtOA0RpfF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1hrKq2U9y7LuTZqiIpmizk4j72FTyweZcnZShawPDhgY/edit?gid=0#gid=0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hrKq2U9y7LuTZqiIpmizk4j72FTyweZcnZShawPDhgY/edit#gid=0",
+          "cachedResultName": "base de solicitações"
+        },
+        "options": {}
+      },
+      "id": "aca061b4-c453-44c7-8ec5-8f78f22b54ee",
+      "name": "Get row(s) in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        -96,
+        1208
+      ],
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "YCWVcI8UePnVEDIN",
+          "name": "Google account vEpH-kQwGtOA0RpfF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pythonCode": "import re\nfrom datetime import datetime\n\n# ============================================================\n# 1. CONFIGURAÇÃO\n# ============================================================\n\n# Lista de colunas que devem ser convertidas para número (FLOAT)\n# Nota: Os nomes aqui devem ser o resultado \"limpo\" (sem acentos, minúsculo)\ncolunas_float = [\n    \"monto_total\",\n    \"transferido_remunerado\",\n    \"transferido_no_remunerado\",  # O regex vai remover o 'ã', transformando 'não' em 'no'\n    \"issue_monto\"\n]\n\n# Nome da coluna de data (resultado limpo de \"Carimbo de data/hora\")\ncoluna_data = \"carimbo_de_datahora\"\n\n# ============================================================\n# 2. FUNÇÕES DE LIMPEZA E CONVERSÃO\n# ============================================================\n\ndef limpar_cabecalho(texto):\n    if not texto: return \"coluna_vazia\"\n    texto_str = str(texto)\n    # Remove caracteres especiais e acentos (ex: 'ã' vira '', 'í' vira '', '(' some)\n    # Isso garante que \"CBU (22 dígitos)\" vire \"cbu_22_dgitos\" para bater com o SQL\n    limpo = re.sub(r'[^a-zA-Z0-9\\s_]', '', texto_str)\n    # Substitui espaços por _\n    limpo = re.sub(r'[\\s_]+', '_', limpo)\n    return limpo.strip('_').lower()\n\ndef converter_para_float(valor):\n    if valor is None or valor == \"\":\n        return 0.0\n    if isinstance(valor, (int, float)):\n        return float(valor)\n    valor_str = str(valor).strip()\n    \n    # Remove símbolos de moeda se houver (ex: R$, $)\n    valor_str = valor_str.replace('R$', '').replace('$', '').strip()\n    \n    # Tratamento para formatos europeu/brasileiro (ex: 1.000,00) vs americano (1,000.00)\n    # Se tiver vírgula e ponto, assumimos que ponto é milhar e vírgula é decimal\n    if ',' in valor_str and '.' in valor_str:\n        valor_str = valor_str.replace('.', '').replace(',', '.')\n    # Se tiver apenas vírgula, troca por ponto\n    elif ',' in valor_str:\n        valor_str = valor_str.replace(',', '.')\n        \n    try:\n        return float(valor_str)\n    except:\n        return 0.0\n\ndef converter_data(valor):\n    # Converte de DD/MM/YYYY HH:MM:SS para YYYY-MM-DD HH:MM:SS\n    if not valor: return None\n    valor_str = str(valor).strip()\n    try:\n        # Tenta formato completo com hora\n        dt_obj = datetime.strptime(valor_str, '%d/%m/%Y %H:%M:%S')\n        return dt_obj.strftime('%Y-%m-%d %H:%M:%S')\n    except ValueError:\n        try:\n            # Tenta apenas data\n            dt_obj = datetime.strptime(valor_str, '%d/%m/%Y')\n            return dt_obj.strftime('%Y-%m-%d')\n        except ValueError:\n            return None \n\n# ============================================================\n# 3. EXECUÇÃO OTIMIZADA (IN-PLACE)\n# ============================================================\n\n# Simulação da variável 'items' para teste (Remova isso no seu ambiente real)\n# items = [{'json': {'Carimbo de data/hora': '15/01/2026 10:00:00', 'Monto total': '1500,50', 'Transferido Não remunerado': '200'}}]\n\nfor item in items:\n    linha_original = item['json']\n    linha_limpa = {}\n\n    for chave, valor in linha_original.items():\n        # Aplica a limpeza para gerar chaves como: 'cbu_22_dgitos', 'cartula_de_la_causa', etc.\n        nova_chave = limpar_cabecalho(chave)\n\n        # 1. Verifica se é campo de data\n        if nova_chave == coluna_data:\n            linha_limpa[nova_chave] = converter_data(valor)\n        \n        # 2. Verifica se é campo numérico\n        elif nova_chave in colunas_float:\n            linha_limpa[nova_chave] = converter_para_float(valor)\n        \n        # 3. Caso contrário, mantém como string (ex: emails, IDs, textos)\n        else:\n            linha_limpa[nova_chave] = str(valor) if valor is not None else \"\"\n    \n    # Sobrescreve o JSON do item com as chaves limpas\n    item['json'] = linha_limpa\n\nreturn items"
+      },
+      "id": "2da5b575-2a8e-4c2d-9110-3ddd90502ffb",
+      "name": "VerdiCode",
+      "type": "n8n-nodes-base.verdiCode",
+      "position": [
+        352,
+        1304
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "batchSize": 150,
+        "options": {}
+      },
+      "id": "955af6c8-706c-4974-b67a-2ce61f5f465b",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        128,
+        1208
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ddme000426-gopr4nla6zo-furyid"
+        },
+        "sqlQuery": "CREATE OR REPLACE TABLE `ddme000426-gopr4nla6zo-furyid.STG.tb_carga_integridade` (\n  carimbo_de_datahora STRING,\n  endereco_de_email STRING,\n  fecha_de_solicitud_de_transferencia STRING,\n  issue_en_salesforce STRING,\n  n_de_expediente STRING,\n  cartula_de_la_causa STRING,\n  monto_total STRING,\n  id_de_deuda_indique_a_qu_id_de_deuda_corresponde_esta_transferencia STRING,\n  cul_es_el_tipo_de_cuenta STRING,\n  cbu_22_dgitos STRING,\n  banco_de_destino STRING,\n  cuit_del_banco_que_recibe STRING,\n  n_de_cuenta STRING,\n  sociedad STRING,\n  transferido_remunerado STRING,\n  transferido_no_remunerado STRING,\n  issue_monto STRING,\n  enviado_a_finanzas STRING\n);",
+        "options": {}
+      },
+      "id": "679a5779-d263-4612-b0d1-a0ea7a4e2a87",
+      "name": "Execute a SQL query",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        -96,
+        1016
+      ],
+      "executeOnce": true,
+      "retryOnFail": true,
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "YCWVcI8UePnVEDIN",
+          "name": "Google account vEpH-kQwGtOA0RpfF"
+        }
+      },
+      "disabled": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "carimbo_de_datahora, endereo_de_email, fecha_de_solicitud_de_transferencia, fecha_de_solicitud_de_transferencia, issue_en_salesforce, n_de_expediente, cartula_de_la_causa, monto_total, id_de_deuda_indique_a_qu_id_de_deuda_corresponde_esta_transferencia, cul_es_el_tipo_de_cuenta, cbu_22_dgitos, banco_de_destino, cuit_del_banco_que_recibe, n_de_cuenta, sociedad, transferido_remunerado, transferido_no_remunerado, issue_monto, enviado_a_finanzas",
+        "options": {}
+      },
+      "id": "86cd47f5-140a-42e6-b24e-b6915e036860",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        352,
+        1112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "amount": 90
+      },
+      "id": "11bc63bf-681b-4dd0-9b28-8d7d0bcc4713",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        576,
+        1112
+      ],
+      "webhookId": "b326ef50-bde8-46d5-99a1-8067cc773656",
+      "executeOnce": true,
+      "retryOnFail": true,
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "projectId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ddme000426-gopr4nla6zo-furyid"
+        },
+        "sqlQuery": "TRUNCATE TABLE `ddme000426-gopr4nla6zo-furyid.STG.tb_carga_integridade`",
+        "options": {}
+      },
+      "id": "993d6f69-51da-4ab9-97e8-103de85a27bb",
+      "name": "Execute a SQL query4",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        128,
+        1016
+      ],
+      "executeOnce": true,
+      "retryOnFail": true,
+      "typeVersion": 2.1,
+      "maxTries": 5,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "YCWVcI8UePnVEDIN",
+          "name": "Google account vEpH-kQwGtOA0RpfF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "projectId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ddme000426-gopr4nla6zo-furyid"
+        },
+        "datasetId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "STG"
+        },
+        "tableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "tb_carga_integridade"
+        },
+        "dataMode": "define",
+        "fieldsUi": {
+          "values": [
+            {
+              "fieldId": "carimbo_de_datahora",
+              "fieldValue": "={{ $json.carimbo_de_datahora }}"
+            },
+            {
+              "fieldId": "endereco_de_email",
+              "fieldValue": "={{ $json.endereo_de_email }}"
+            },
+            {
+              "fieldId": "fecha_de_solicitud_de_transferencia",
+              "fieldValue": "={{ $json.fecha_de_solicitud_de_transferencia }}"
+            },
+            {
+              "fieldId": "issue_en_salesforce",
+              "fieldValue": "={{ $json.issue_en_salesforce }}"
+            },
+            {
+              "fieldId": "n_de_expediente",
+              "fieldValue": "={{ $json.n_de_expediente }}"
+            },
+            {
+              "fieldId": "cartula_de_la_causa",
+              "fieldValue": "={{ $json.cartula_de_la_causa }}"
+            },
+            {
+              "fieldId": "monto_total",
+              "fieldValue": "={{ $json.monto_total }}"
+            },
+            {
+              "fieldId": "id_de_deuda_indique_a_qu_id_de_deuda_corresponde_esta_transferencia",
+              "fieldValue": "={{ $json.id_de_deuda_indique_a_qu_id_de_deuda_corresponde_esta_transferencia }}"
+            },
+            {
+              "fieldId": "cartula_de_la_causa",
+              "fieldValue": "={{ $json.cul_es_el_tipo_de_cuenta }}"
+            },
+            {
+              "fieldId": "cbu_22_dgitos",
+              "fieldValue": "={{ $json.cbu_22_dgitos }}"
+            },
+            {
+              "fieldId": "banco_de_destino",
+              "fieldValue": "={{ $json.banco_de_destino }}"
+            },
+            {
+              "fieldId": "cuit_del_banco_que_recibe",
+              "fieldValue": "={{ $json.cuit_del_banco_que_recibe }}"
+            },
+            {
+              "fieldId": "n_de_cuenta",
+              "fieldValue": "={{ $json.n_de_cuenta }}"
+            },
+            {
+              "fieldId": "sociedad",
+              "fieldValue": "={{ $json.sociedad }}"
+            },
+            {
+              "fieldId": "transferido_remunerado",
+              "fieldValue": "={{ $json.transferido_remunerado }}"
+            },
+            {
+              "fieldId": "transferido_no_remunerado",
+              "fieldValue": "={{ $json.transferido_no_remunerado }}"
+            },
+            {
+              "fieldId": "issue_monto",
+              "fieldValue": "={{ $json.issue_monto }}"
+            },
+            {
+              "fieldId": "enviado_a_finanzas",
+              "fieldValue": "={{ $json.enviado_a_finanzas }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "26054a0e-ef64-4f94-b7ce-00da710f8a7d",
+      "name": "Insert rows in a table",
+      "type": "n8n-nodes-base.googleBigQuery",
+      "position": [
+        800,
+        1112
+      ],
+      "executeOnce": true,
+      "retryOnFail": true,
+      "typeVersion": 2.1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "YCWVcI8UePnVEDIN",
+          "name": "Google account vEpH-kQwGtOA0RpfF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "spaceId": "spaces/AAQAwbVAd-0",
+        "messageUi": {
+          "text": "Bonitão, os cruces rodaram!"
+        },
+        "additionalFields": {}
+      },
+      "id": "19c01d5d-def4-49be-98b0-b0a8a4d4daaf",
+      "name": "Create a message",
+      "type": "n8n-nodes-base.googleChat",
+      "position": [
+        2592,
+        1112
+      ],
+      "webhookId": "368e9cb7-ca93-4835-bdfb-bcc5e122f85d",
+      "typeVersion": 1,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "YCWVcI8UePnVEDIN",
+          "name": "Google account vEpH-kQwGtOA0RpfF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://script.google.com/a/macros/mercadolivre.com/s/AKfycbwV8zS7w2AW2KITEoSSM9lPu-152ynxNuJKmx3sbKZhvkH3yWA6_f78bUbb2A6Daes/exec",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleGenericOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "source",
+              "value": "n8n"
+            },
+            {
+              "name": "execution_id",
+              "value": "={{ $execution.id }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {
+              "maxRedirects": 100
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "31c14b70-fadd-4ece-aa4c-29c827fb10bc",
+      "name": "n8n_GScript_Integridade_Embargos",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2144,
+        1112
+      ],
+      "executeOnce": true,
+      "notesInFlow": true,
+      "retryOnFail": false,
+      "typeVersion": 4.2,
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleGenericOAuth2Api": {
+          "id": "YCWVcI8UePnVEDIN",
+          "name": "Google account vEpH-kQwGtOA0RpfF"
+        }
+      },
+      "notes": "https://script.google.com/home/projects/1Eez0_shFDsJGbbkqQdmO0oRY6quW_-WP1YywUQA1mG5Rm7uJUy2e27aY/edit"
+    },
+    {
+      "parameters": {},
+      "id": "cad323a5-55d1-4193-b6cc-2607f09956d7",
+      "name": "Limit to 1 item3",
+      "type": "n8n-nodes-base.limit",
+      "position": [
+        2368,
+        1112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "amount": 180
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        1112
+      ],
+      "id": "2bfa40fd-11c2-4af9-8d5f-5b6cfcf75c01",
+      "name": "Wait1",
+      "webhookId": "0d2adfef-ec56-431f-aed2-3ff20b38e7cf"
+    },
+    {
+      "parameters": {},
+      "id": "limit-before-wait1",
+      "name": "Limit to 1 item (Before Wait1)",
+      "type": "n8n-nodes-base.limit",
+      "position": [
+        1000,
+        1112
+      ],
+      "typeVersion": 1,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "mode": "merge",
+        "mergeByFields": {
+          "values": []
+        },
+        "options": {}
+      },
+      "id": "merge-nodes",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        1400,
+        1112
+      ],
+      "typeVersion": 2.1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Limit to 1 item (Control)": {
+      "main": [
+        [
+          {
+            "node": "Set Control Item",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Control Item": {
+      "main": [
+        [
+          {
+            "node": "Limit to 1 item2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit to 1 item2": {
+      "main": [
+        [
+          {
+            "node": "n8n_GScript_Integridade_Embargos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agendamento (7h)": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Executar Cruces (Query)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VerdiCode": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "VerdiCode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Executar Cruces (Query)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Limit to 1 item (Before Wait1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit to 1 item (Before Wait1)": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n_GScript_Integridade_Embargos": {
+      "main": [
+        [
+          {
+            "node": "Limit to 1 item3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit to 1 item3": {
+      "main": [
+        [
+          {
+            "node": "Create a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Limit to 1 item (Control)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6f10651b-a176-46e8-a20c-74e30e50b0de",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "08a808bd1fbf06e835e46ca3b91723ca682cf363871bc0b0ff3e27c8603f1ffe"
+  },
+  "id": "RmR9vUMZX6KNf44r",
+  "tags": []
+}

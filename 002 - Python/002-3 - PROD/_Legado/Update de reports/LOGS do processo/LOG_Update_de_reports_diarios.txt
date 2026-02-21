@@ -1,0 +1,112 @@
+Arquivo 1 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\006 - Dashboard Entradas Brasil e CORP\Versão 2\Data Self Information - Base ativa.xlsx
+Start: 2025-06-05 08:55:11
+End: 2025-06-05 08:56:35
+Duração: 1.39 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 2 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\006 - Dashboard Entradas Brasil e CORP\Versão 2\Data Self Information - Entradas e desfechos.xlsx
+Start: 2025-06-05 08:56:37
+End: 2025-06-05 09:07:09
+Duração: 10.54 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 3 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\006 - Dashboard Entradas Brasil e CORP\Versão 2\Data Self Information - TPN e SI.xlsx
+Start: 2025-06-05 09:07:11
+End: 2025-06-05 09:08:03
+Duração: 0.87 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 4 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\028 - Controle operacional Legal OPS\002 - Versão 3\Push Controle Operacional.xlsx
+Start: 2025-06-05 09:08:07
+Erro: (-2147352567, 'Exceção.', (0, 'Microsoft Excel', 'Não foi possível encontrar G:\\Drives compartilhados\\Legales_Analytics\\006 - Reports e Acompanhamentos\\028 - Controle operacional Legal OPS\\002 - Versão 3\\Push Controle Operacional.xlsx. É possível que ele tenha sido movido, renomeado ou excluído?', 'xlmain11.chm', 0, -2146827284), None)
+Horário do Erro: 2025-06-05 09:08:13
+Status: Não processado
+------------------------------------------
+Arquivo 5 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\005 - Dashboard Acomp de Tarefas\Push Acompanhamento de Tarefas.xlsx
+Start: 2025-06-05 09:08:14
+End: 2025-06-05 09:11:33
+Duração: 3.32 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 6 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\033 - Dashboard Penal\002 - Versão 2\Push dashboard Penal - Quantidade.xlsx
+Start: 2025-06-05 09:11:36
+End: 2025-06-05 09:15:14
+Duração: 3.64 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 7 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\001 - Databases_e_dimensões\Processo_2_Input_BigQuery [FAAS]\003 - Bases Legales MLA x MLM\Push legales MLA e MLM.xlsx
+Start: 2025-06-05 09:15:22
+End: 2025-06-05 09:16:50
+Duração: 1.45 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 8 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\001 - Databases_e_dimensões\Processo_2_Input_BigQuery [FAAS]\001 - Bases Legales\Push projeto FAAS.xlsx
+Start: 2025-06-05 09:16:51
+End: 2025-06-05 09:19:39
+Duração: 2.80 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 9 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\001 - Databases_e_dimensões\Processo_3_Cust_IDS_MLA_MLM\Push inf MLA e MLM.xlsx
+Start: 2025-06-05 09:19:40
+End: 2025-06-05 09:21:06
+Duração: 1.43 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 10 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\046 - Pagamentos e garantia\Push Pagamentos em Garantia.xlsx
+Start: 2025-06-05 09:21:11
+End: 2025-06-05 09:22:17
+Duração: 1.10 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 11 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\048 - Dashboard Aguardando informações\Push Aguardando Informações.xlsx
+Start: 2025-06-05 09:22:21
+Erro: (-2147352567, 'Exceção.', (0, 'Microsoft Excel', 'Não foi possível encontrar G:\\Drives compartilhados\\Legales_Analytics\\006 - Reports e Acompanhamentos\\048 - Dashboard Aguardando informações\\Push Aguardando Informações.xlsx. É possível que ele tenha sido movido, renomeado ou excluído?', 'xlmain11.chm', 0, -2146827284), None)
+Horário do Erro: 2025-06-05 09:22:26
+Status: Não processado
+------------------------------------------
+Arquivo 12 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\050 - Bases Comite\Extrato - Base comite.xlsx
+Start: 2025-06-05 09:22:27
+End: 2025-06-05 09:24:30
+Duração: 2.04 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 13 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\003 - Big Base DRE\002 - Modelo Tableau\Push e informações - DRE.xlsx
+Start: 2025-06-05 09:24:31
+End: 2025-06-05 09:26:44
+Duração: 2.21 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 14 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\065 - Dashboard Conta Invadida\Push Conta Invadida.xlsx
+Start: 2025-06-05 09:26:45
+End: 2025-06-05 09:29:00
+Duração: 2.26 minutos
+Status: Processamento Ok
+------------------------------------------
+Arquivo 15 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\036 - Dashboard Trabalhista\Novo modelo 2024\Data Self Information Trabalhista - Base ativa.xlsx
+Start: 2025-06-05 09:29:05
+Erro: (-2147352567, 'Exceção.', (0, 'Microsoft Excel', 'Não foi possível encontrar G:\\Drives compartilhados\\Legales_Analytics\\006 - Reports e Acompanhamentos\\036 - Dashboard Trabalhista\\Novo modelo 2024\\Data Self Information Trabalhista - Base ativa.xlsx. É possível que ele tenha sido movido, renomeado ou excluído?', 'xlmain11.chm', 0, -2146827284), None)
+Horário do Erro: 2025-06-05 09:29:10
+Status: Não processado
+------------------------------------------
+Arquivo 16 de 18
+Arquivo: G:\Drives compartilhados\Legales_Analytics\006 - Reports e Acompanhamentos\036 - Dashboard Trabalhista\Novo modelo 2024\Data Self Information Trabalhista - Entradas e desfechos.xlsx
+Start: 2025-06-05 09:29:11
+Erro: (-2147352567, 'Exceção.', (0, 'Microsoft Excel', 'Não foi possível encontrar G:\\Drives compartilhados\\Legales_Analytics\\006 - Reports e Acompanhamentos\\036 - Dashboard Trabalhista\\Novo modelo 2024\\Data Self Information Trabalhista - Entradas e desfechos.xlsx. É possível que ele tenha sido movido, renomeado ou excluído?', 'xlmain11.chm', 0, -2146827284), None)
+Horário do Erro: 2025-06-05 09:29:17
+Status: Não processado
+------------------------------------------

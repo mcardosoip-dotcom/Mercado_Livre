@@ -1,0 +1,526 @@
+================================================================================
+DIAGNOSTICO: Colunas eLAW - XLSX (STAGE / Legado_eLAW) vs Parquet vs SQL (Step5/6)
+================================================================================
+
+--- Database_eLAW_Acompanhamento_de_tarefas_CORP_CX ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Acompanhamento_de_tarefas_CORP_CX.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Acompanhamento_de_tarefas_CORP_CX.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Acompanhamento_de_tarefas_CORP_CX.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Acompanhamento_de_tarefas_CORP_CX.xlsx
+  Total colunas XLSX (apos limpeza): 80
+  Total colunas Parquet: 80
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): materia
+            XLSX tem: materia=True, processo_materia=False
+            Parquet tem: materia=True, processo_materia=False
+  Total colunas XLSX: 80 | Parquet: 80 | Iguais (intersecao): 80
+
+--- Database_eLAW_Amelia ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Amelia.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Amelia.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Amelia.parquet (existe: True)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  Total colunas Parquet: 26
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): N/A
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Colunas so no Parquet (XLSX nao lido): 26
+    - advogado_da_parte_contraria
+    - area_do_direito
+    - data_audiencia_inicial
+    - data_registrado
+    - numero_do_processo
+    - pais
+    - parte_contraria_cpf_cnpj
+    - parte_contraria_nome
+    - processo_audiencia_ficticia
+    - processo_cust_id_autor
+    - processo_e_high_risk_confirmado_pelo_pf
+    - processo_fase_estado_estado
+    - processo_fase_estado_fase
+    - processo_id
+    - processo_id_da_operacao_mp
+    - processo_id_do_anuncio
+    - processo_invoca_hipervulnerabilidad
+    - processo_o_documento_de_identidade_da_reclamacao_corresponde_ao_da_compra
+    - processo_o_objeto_da_reclamacao_e_pdd_on_ou_pnr_on
+    - processo_o_usuario_reclama_por_dois_ou_mais_produtos_diferentes
+    ... e mais 6
+  Total colunas XLSX: 0 | Parquet: 26 | Iguais (intersecao): 0
+
+--- Database_eLAW_Contencioso_Brasil_Incoming ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Contencioso_Brasil_Incoming.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Contencioso_Brasil_Incoming.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Contencioso_Brasil_Incoming.parquet (existe: True)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  Total colunas Parquet: 115
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): processo_materia
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=True
+  Colunas so no Parquet (XLSX nao lido): 115
+    - acao
+    - acao_1
+    - advogado_da_parte_contraria_cpf
+    - advogado_da_parte_contraria_nome
+    - advogado_escritorio
+    - advogado_parte_contraria_contumaz
+    - advogado_responsavel
+    - advogados_participantes
+    - area_do_direito
+    - audiencia_pendente_data
+    - campos_de_alteracao_de_valor_identificacao_do_pagamento
+    - caratula
+    - causas_raizes
+    - causas_raizes_1
+    - causas_raizes_2
+    - cbt
+    - centro_custo_nome
+    - centro_de_custo_codigo
+    - cliente
+    - comportamento_do_usuario_cx
+    ... e mais 95
+  Total colunas XLSX: 0 | Parquet: 115 | Iguais (intersecao): 0
+
+--- Database_eLAW_Contencioso_Brasil_Ongoing ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Contencioso_Brasil_Ongoing.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Contencioso_Brasil_Ongoing.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Contencioso_Brasil_Ongoing.parquet (existe: True)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  Total colunas Parquet: 115
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): processo_materia
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=True
+  Colunas so no Parquet (XLSX nao lido): 115
+    - acao
+    - acao_1
+    - advogado_da_parte_contraria_cpf
+    - advogado_da_parte_contraria_nome
+    - advogado_escritorio
+    - advogado_parte_contraria_contumaz
+    - advogado_responsavel
+    - advogados_participantes
+    - area_do_direito
+    - audiencia_pendente_data
+    - campos_de_alteracao_de_valor_identificacao_do_pagamento
+    - caratula
+    - causas_raizes
+    - causas_raizes_1
+    - causas_raizes_2
+    - cbt
+    - centro_custo_nome
+    - centro_de_custo_codigo
+    - cliente
+    - comportamento_do_usuario_cx
+    ... e mais 95
+  Total colunas XLSX: 0 | Parquet: 115 | Iguais (intersecao): 0
+
+--- Database_eLAW_Contencioso_Brasil_Outgoing ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Contencioso_Brasil_Outgoing.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Contencioso_Brasil_Outgoing.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Contencioso_Brasil_Outgoing.parquet (existe: True)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  Total colunas Parquet: 115
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): processo_materia
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=True
+  Colunas so no Parquet (XLSX nao lido): 115
+    - acao
+    - acao_1
+    - advogado_da_parte_contraria_cpf
+    - advogado_da_parte_contraria_nome
+    - advogado_escritorio
+    - advogado_parte_contraria_contumaz
+    - advogado_responsavel
+    - advogados_participantes
+    - area_do_direito
+    - audiencia_pendente_data
+    - campos_de_alteracao_de_valor_identificacao_do_pagamento
+    - caratula
+    - causas_raizes
+    - causas_raizes_1
+    - causas_raizes_2
+    - cbt
+    - centro_custo_nome
+    - centro_de_custo_codigo
+    - cliente
+    - comportamento_do_usuario_cx
+    ... e mais 95
+  Total colunas XLSX: 0 | Parquet: 115 | Iguais (intersecao): 0
+
+--- Database_eLAW_Contencioso_Hispanos_Incoming ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Contencioso_Hispanos_Incoming.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Contencioso_Hispanos_Incoming.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Contencioso_Hispanos_Incoming.parquet (existe: True)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  Total colunas Parquet: 115
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): processo_materia
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=True
+  Colunas so no Parquet (XLSX nao lido): 115
+    - acao
+    - acao_1
+    - advogado_da_parte_contraria_cpf
+    - advogado_da_parte_contraria_nome
+    - advogado_escritorio
+    - advogado_parte_contraria_contumaz
+    - advogado_responsavel
+    - advogados_participantes
+    - area_do_direito
+    - audiencia_pendente_data
+    - campos_de_alteracao_de_valor_identificacao_do_pagamento
+    - caratula
+    - causas_raizes
+    - causas_raizes_1
+    - causas_raizes_2
+    - cbt
+    - centro_custo_nome
+    - centro_de_custo_codigo
+    - cliente
+    - comportamento_do_usuario_cx
+    ... e mais 95
+  Total colunas XLSX: 0 | Parquet: 115 | Iguais (intersecao): 0
+
+--- Database_eLAW_Contencioso_Hispanos_Ongoing ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Contencioso_Hispanos_Ongoing.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Contencioso_Hispanos_Ongoing.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Contencioso_Hispanos_Ongoing.parquet (existe: True)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  Total colunas Parquet: 115
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): processo_materia
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=True
+  Colunas so no Parquet (XLSX nao lido): 115
+    - acao
+    - acao_1
+    - advogado_da_parte_contraria_cpf
+    - advogado_da_parte_contraria_nome
+    - advogado_escritorio
+    - advogado_parte_contraria_contumaz
+    - advogado_responsavel
+    - advogados_participantes
+    - area_do_direito
+    - audiencia_pendente_data
+    - campos_de_alteracao_de_valor_identificacao_do_pagamento
+    - caratula
+    - causas_raizes
+    - causas_raizes_1
+    - causas_raizes_2
+    - cbt
+    - centro_custo_nome
+    - centro_de_custo_codigo
+    - cliente
+    - comportamento_do_usuario_cx
+    ... e mais 95
+  Total colunas XLSX: 0 | Parquet: 115 | Iguais (intersecao): 0
+
+--- Database_eLAW_Contencioso_Hispanos_Outgoing ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Contencioso_Hispanos_Outgoing.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Contencioso_Hispanos_Outgoing.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Contencioso_Hispanos_Outgoing.parquet (existe: True)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  Total colunas Parquet: 115
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): processo_materia
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=True
+  Colunas so no Parquet (XLSX nao lido): 115
+    - acao
+    - acao_1
+    - advogado_da_parte_contraria_cpf
+    - advogado_da_parte_contraria_nome
+    - advogado_escritorio
+    - advogado_parte_contraria_contumaz
+    - advogado_responsavel
+    - advogados_participantes
+    - area_do_direito
+    - audiencia_pendente_data
+    - campos_de_alteracao_de_valor_identificacao_do_pagamento
+    - caratula
+    - causas_raizes
+    - causas_raizes_1
+    - causas_raizes_2
+    - cbt
+    - centro_custo_nome
+    - centro_de_custo_codigo
+    - cliente
+    - comportamento_do_usuario_cx
+    ... e mais 95
+  Total colunas XLSX: 0 | Parquet: 115 | Iguais (intersecao): 0
+
+--- Database_eLAW_Divergencia_empresas ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Divergencia_empresas.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Divergencia_empresas.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Divergencia_empresas.parquet (existe: False)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  [AVISO] Parquet nao encontrado ou erro na leitura.
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): N/A
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Total colunas XLSX: 0 | Parquet: 0 | Iguais (intersecao): 0
+
+--- Database_eLAW_Extracao_multas ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Extracao_multas.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Extracao_multas.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Extracao_multas.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Extracao_multas.xlsx
+  Total colunas XLSX (apos limpeza): 4
+  Total colunas Parquet: 4
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): N/A
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Total colunas XLSX: 4 | Parquet: 4 | Iguais (intersecao): 4
+
+--- Database_eLAW_Obrigacoes_de_Fazer ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Obrigacoes_de_Fazer.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Obrigacoes_de_Fazer.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Obrigacoes_de_Fazer.parquet (existe: True)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  Total colunas Parquet: 25
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): N/A
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Colunas so no Parquet (XLSX nao lido): 25
+    - area_do_direito
+    - data_de_confirmacao
+    - data_registrado
+    - descricao_evento_concluido
+    - fase_de_workflow
+    - id
+    - objeto
+    - processo_adicionar_periodo_de_referencia
+    - processo_adicionar_periodo_de_referencia_grupo
+    - processo_chave_pix
+    - processo_cpf
+    - processo_cust_id_autor
+    - processo_e_mail_do_usuario
+    - processo_id
+    - processo_id_da_operacao_mp
+    - processo_id_da_venda
+    - processo_id_do_anuncio
+    - processo_prazo_para_cumprimento
+    - processo_qual_a_solicitacao_da_obf
+    - processo_tem_multa_fixada
+    ... e mais 5
+  Total colunas XLSX: 0 | Parquet: 25 | Iguais (intersecao): 0
+
+--- Database_eLAW_Pagamentos_e_garantia ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Pagamentos_e_garantia.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Pagamentos_e_garantia.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Pagamentos_e_garantia.parquet (existe: False)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  [AVISO] Parquet nao encontrado ou erro na leitura.
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): N/A
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Total colunas XLSX: 0 | Parquet: 0 | Iguais (intersecao): 0
+
+--- Database_eLAW_Seguimiento_RPA_Pagos ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Seguimiento_RPA_Pagos.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Seguimiento_RPA_Pagos.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Seguimiento_RPA_Pagos.parquet (existe: True)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  Total colunas Parquet: 7
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): N/A
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Colunas so no Parquet (XLSX nao lido): 7
+    - data_registrado
+    - processo_id
+    - status
+    - sub_tipo
+    - valor
+    - valores_beneficiario_del_pago
+    - valores_custid_o_email
+  Total colunas XLSX: 0 | Parquet: 7 | Iguais (intersecao): 0
+
+--- Database_eLAW_Seguimiento_RPA_Tarefas ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Seguimiento_RPA_Tarefas.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Seguimiento_RPA_Tarefas.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Seguimiento_RPA_Tarefas.parquet (existe: True)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  Total colunas Parquet: 13
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): N/A
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Colunas so no Parquet (XLSX nao lido): 13
+    - area_do_direito
+    - beneficiario_del_pago
+    - data_de_confirmacao
+    - data_pagamento
+    - data_registrado
+    - forma_de_pagamento
+    - id
+    - processo_id
+    - processo_resultado_da_negociacao
+    - status
+    - sub_area_do_direito
+    - usuario_confirmado
+    - valor_total_pagamentos
+  Total colunas XLSX: 0 | Parquet: 13 | Iguais (intersecao): 0
+
+--- Database_eLAW_Tarefas_Agendadas_Aguardando_Informações ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Tarefas_Agendadas_Aguardando_Informações.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Aguardando_Informações.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Tarefas_Agendadas_Aguardando_Informações.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Aguardando_Informações.xlsx
+  Total colunas XLSX (apos limpeza): 19
+  Total colunas Parquet: 19
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): materia
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Total colunas XLSX: 19 | Parquet: 19 | Iguais (intersecao): 19
+
+--- Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_CAP ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_CAP.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_CAP.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_CAP.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_CAP.xlsx
+  Total colunas XLSX (apos limpeza): 80
+  Total colunas Parquet: 80
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): materia
+            XLSX tem: materia=True, processo_materia=False
+            Parquet tem: materia=True, processo_materia=False
+  Total colunas XLSX: 80 | Parquet: 80 | Iguais (intersecao): 80
+
+--- Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_CAP_CX ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_CAP.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_CAP.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_CAP_CX.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_CAP.xlsx
+  Total colunas XLSX (apos limpeza): 80
+  Total colunas Parquet: 80
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): materia
+            XLSX tem: materia=True, processo_materia=False
+            Parquet tem: materia=True, processo_materia=False
+  Total colunas XLSX: 80 | Parquet: 80 | Iguais (intersecao): 80
+
+--- Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_DR ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_DR.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_DR.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_DR.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_DR.xlsx
+  Total colunas XLSX (apos limpeza): 80
+  Total colunas Parquet: 80
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): materia
+            XLSX tem: materia=True, processo_materia=False
+            Parquet tem: materia=True, processo_materia=False
+  Total colunas XLSX: 80 | Parquet: 80 | Iguais (intersecao): 80
+
+--- Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_OPS_Enli ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_OPS.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_OPS.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_OPS_Enli.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_OPS.xlsx
+  Total colunas XLSX (apos limpeza): 80
+  Total colunas Parquet: 80
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): materia
+            XLSX tem: materia=True, processo_materia=False
+            Parquet tem: materia=True, processo_materia=False
+  Total colunas XLSX: 80 | Parquet: 80 | Iguais (intersecao): 80
+
+--- Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_OPS_Inter ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_OPS.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_OPS.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_OPS_Inter.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendadas_Subsidios_Hispanos_OPS.xlsx
+  Total colunas XLSX (apos limpeza): 80
+  Total colunas Parquet: 80
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): materia
+            XLSX tem: materia=True, processo_materia=False
+            Parquet tem: materia=True, processo_materia=False
+  Total colunas XLSX: 80 | Parquet: 80 | Iguais (intersecao): 80
+
+--- Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Audiencias ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Audiencias.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Audiencias.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Audiencias.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Audiencias.xlsx
+  Total colunas XLSX (apos limpeza): 34
+  Total colunas Parquet: 34
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): materia
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Total colunas XLSX: 34 | Parquet: 34 | Iguais (intersecao): 34
+
+--- Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Confirmados.xlsx
+  Total colunas XLSX (apos limpeza): 34
+  Total colunas Parquet: 34
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): materia
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Total colunas XLSX: 34 | Parquet: 34 | Iguais (intersecao): 34
+
+--- Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Garantias ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Garantias.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Garantias.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Garantias.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Garantias.xlsx
+  Total colunas XLSX (apos limpeza): 35
+  Total colunas Parquet: 35
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): materia
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Total colunas XLSX: 35 | Parquet: 35 | Iguais (intersecao): 35
+
+--- Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Legado ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Legado.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Legado.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Legado.parquet (existe: False)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  [AVISO] Parquet nao encontrado ou erro na leitura.
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): N/A
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Total colunas XLSX: 0 | Parquet: 0 | Iguais (intersecao): 0
+
+--- Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes.xlsx (existe: True)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes.parquet (existe: True)
+  Origem XLSX lido: G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Database_eLAW_Tarefas_Agendamentos_Subsidios_Clean_Pendentes.xlsx
+  Total colunas XLSX (apos limpeza): 34
+  Total colunas Parquet: 34
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): materia
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Total colunas XLSX: 34 | Parquet: 34 | Iguais (intersecao): 34
+
+--- Relatorio_de_Garantia_Veiculo ---
+  XLSX (STAGE): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Relatorio_de_Garantia_Veiculo.xlsx (existe: False)
+  XLSX (Legado_eLAW): G:\Drives compartilhados\Legales_Analytics\001 - Base\STAGE\Legado_eLAW\Relatorio_de_Garantia_Veiculo.xlsx (existe: False)
+  Parquet: G:\Drives compartilhados\Legales_Analytics\001 - Base\001-01 - eLAW\Relatorio_de_Garantia_Veiculo.parquet (existe: True)
+  [AVISO] XLSX nao encontrado ou erro na leitura. Colunas so do Parquet.
+  Total colunas Parquet: 25
+  [Pipeline] Coluna esperada pelo SQL (Step5/6): N/A
+            XLSX tem: materia=False, processo_materia=False
+            Parquet tem: materia=False, processo_materia=False
+  Colunas so no Parquet (XLSX nao lido): 25
+    - advogado_responsavel
+    - area_do_direito
+    - data
+    - data_registrado
+    - data_registrado_1
+    - descricao
+    - id
+    - objeto
+    - objeto_1
+    - processo_classificacao
+    - processo_fase_estado_estado
+    - processo_fase_estado_fase
+    - processo_id
+    - processo_objeto_objeto
+    - processo_objeto_unidade_de_negocio
+    - processo_procedimento_judicial
+    - status
+    - status_1
+    - sub_area_do_direito
+    - sub_tipo
+    ... e mais 5
+  Total colunas XLSX: 0 | Parquet: 25 | Iguais (intersecao): 0
+
+================================================================================
+RESUMO: Divergencias materia / processo_materia (possivel mudanca nas bases eLAW)
+================================================================================
+  Nenhum conflito detectado entre nome esperado pelo SQL e colunas atuais.

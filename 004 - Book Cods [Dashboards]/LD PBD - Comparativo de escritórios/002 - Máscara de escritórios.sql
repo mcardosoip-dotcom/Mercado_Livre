@@ -1,0 +1,1 @@
+select * from pdme000426-c1s7scatwm0-furyid.STG.DIM_MASC_PARCEIROS
